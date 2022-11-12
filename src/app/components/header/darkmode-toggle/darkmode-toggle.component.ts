@@ -3,7 +3,7 @@ import { ColorSchemeService } from 'src/app/services/color-scheme.service';
 import { ThemeMode } from 'src/app/types';
 
 @Component({
-  selector: 'app-darkmode-toggle',
+  selector: '[app-darkmode-toggle]',
   templateUrl: './darkmode-toggle.component.html',
   styleUrls: ['./darkmode-toggle.component.scss'],
 })
