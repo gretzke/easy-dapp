@@ -11,15 +11,15 @@ export interface AppState {
 
 export const initialState: AppState = {
   appConfig: {
-    darkmode: false,
+    darkmode: 'light',
   },
 };
 
 const appConfigReducer = createReducer(
   initialState.appConfig,
-  on(Actions.toggleDarkMode, (state) => ({
+  on(Actions.setDarkMode, (state, action) => ({
     ...state,
-    darkmode: !state.darkmode,
+    darkmode: action.theme,
   }))
 );
 
@@ -29,7 +29,7 @@ export const reducers: ActionReducerMap<AppState> = {
 
 export function localStorageSyncReducer(actionReducer: ActionReducer<AppState>): ActionReducer<AppState> {
   return localStorageSync({
-    keys: ['appConfig'],
+    keys: [],
     rehydrate: true,
   })(actionReducer);
 }

@@ -1,0 +1,9 @@
+<button
+  type="button"
+  class="mr-2 flex-shrink-0 bg-white p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-2 dark:focus:ring-white dark:focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+  (click)="toggleDarkMode()"
+>
+  <span class="sr-only">View notifications</span>
+  <div class="icon h-6 w-6 bg-gray-400 hover:bg-gray-500 dark:hover:bg-white" name="sun" *ngIf="darkmode === 'dark'"></div>
+  <div class="icon h-6 w-6 bg-gray-400 hover:bg-gray-500 dark:hover:bg-white" name="moon" *ngIf="darkmode === 'light'"></div>
+</button>

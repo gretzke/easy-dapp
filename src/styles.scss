@@ -1,1 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.icon {
+    -webkit-mask-size:contain; /* OR cover OR fixed values */
+  
+    -webkit-mask-position:center;
+    -webkit-mask-repeat:no-repeat;
+    
+    mask-size:contain; /* OR cover OR fixed values */
+    
+    mask-position:center;
+    mask-repeat:no-repeat;
+    &[name*="bell"] {
+        mask-image: url(/svg/bell.svg);
+    }
+    &[name*="sun"] {
+        mask-image: url(/svg/sun.svg);
+    }
+    &[name*="moon"] {
+        mask-image: url(/svg/moon.svg);
+    }
+    &[name*="search"] {
+        mask-image: url(/svg/search.svg);
+    }
+    &[name*="menu"] {
+        mask-image: url(/svg/menu.svg);
+    }
+    &[name*="x"] {
+        mask-image: url(/svg/x.svg);
+    }
+}

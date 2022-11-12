@@ -1,2 +1,7 @@
-<h1>{{ 'PAGES.HOME.TITLE' | translate }}</h1>
-<router-outlet></router-outlet>
+<app-background></app-background>
+<app-header></app-header>
+<div class="uk-container">
+  <div class="uk-padding-medium-top"></div>
+  <h1 class="uk-heading">{{ 'PAGES.HOME.TITLE' | translate }}</h1>
+  <router-outlet style="z-index: 1"></router-outlet>
+</div>

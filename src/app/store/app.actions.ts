@@ -1,6 +1,4 @@
-import { createAction, props } from "@ngrx/store";
+import { createAction, props } from '@ngrx/store';
+import { ThemeMode } from '../types';
 
-export const toggleDarkMode = createAction(
-  "[CLIENT CONFIG] toggle dark mode",
-  props<{ src: string }>()
-);
+export const setDarkMode = createAction('[CLIENT CONFIG] toggle dark mode', props<{ src: string; theme: ThemeMode }>());
