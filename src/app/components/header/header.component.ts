@@ -19,6 +19,10 @@ import { Component } from '@angular/core';
 })
 export class HeaderComponent {
   isMenu = false;
+  links = [
+    { name: 'Dashboard', path: '/' },
+    { name: 'About', path: '/about' },
+  ];
 
   constructor() {}
 

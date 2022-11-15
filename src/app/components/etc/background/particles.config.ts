@@ -5,19 +5,16 @@ export const particlesOptions = {
   fullScreen: { enable: true, zIndex: -1 },
   particles: {
     number: {
-      value: 50,
+      value: 25,
     },
     shape: {
       type: 'circle',
     },
-    opacity: {
-      value: 0.3,
-    },
     size: {
-      value: 400,
+      value: 200,
       random: {
-        enable: false,
-        minimumValue: 200,
+        enable: true,
+        minimumValue: 100,
       },
     },
     move: {
@@ -38,8 +35,8 @@ export const particlesOptions = {
     },
   },
   style: {
-    filter: 'blur(50px)',
-    transform: 'scale(1.1)',
+    filter: 'blur(60px)',
+    transform: 'scale(1.3)',
   },
   detectRetina: true,
   themes: [
@@ -51,11 +48,14 @@ export const particlesOptions = {
       },
       options: {
         background: {
-          color: '#f7f8ef',
+          color: '#ffffff',
         },
         particles: {
           color: {
-            value: ['#0A2463', '#A24936', '#9882AC', '#75DDDD', '#2EC0F9'],
+            value: ['#ED1C24', '#067BC2', '#C879FF', '#9DFFF9', '#45F0DF'],
+          },
+          opacity: {
+            value: 0.1,
           },
         },
       },
@@ -68,11 +68,14 @@ export const particlesOptions = {
       },
       options: {
         background: {
-          color: '#080710',
+          color: '#000000',
         },
         particles: {
           color: {
-            value: ['#0A2463', '#A24936', '#9882AC', '#75DDDD', '#2EC0F9'],
+            value: ['#ED1C24', '#067BC2', '#C879FF', '#9DFFF9', '#45F0DF'],
+          },
+          opacity: {
+            value: 0.1,
           },
         },
       },

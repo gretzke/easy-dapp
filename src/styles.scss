@@ -2,32 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-.icon {
-    -webkit-mask-size:contain; /* OR cover OR fixed values */
-  
-    -webkit-mask-position:center;
-    -webkit-mask-repeat:no-repeat;
-    
-    mask-size:contain; /* OR cover OR fixed values */
-    
-    mask-position:center;
-    mask-repeat:no-repeat;
-    &[name*="bell"] {
-        mask-image: url(/svg/bell.svg);
-    }
-    &[name*="sun"] {
-        mask-image: url(/svg/sun.svg);
-    }
-    &[name*="moon"] {
-        mask-image: url(/svg/moon.svg);
-    }
-    &[name*="search"] {
-        mask-image: url(/svg/search.svg);
-    }
-    &[name*="menu"] {
-        mask-image: url(/svg/menu.svg);
-    }
-    &[name*="x"] {
-        mask-image: url(/svg/x.svg);
-    }
+.rounded-config {
+    @apply rounded-2xl;
+}
+
+.button-header {
+    @apply text-gray-900; @apply hover:bg-gray-50; @apply hover:text-gray-900; @apply rounded-config; @apply px-3; @apply py-2; @apply text-sm; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
+}
+
+.input-icon {
+    @apply pl-10; @apply pr-3; @apply py-2; @apply border; @apply border-gray-300; @apply rounded-config; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-indigo-500; @apply focus:border-indigo-500; @apply sm:text-sm; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:border-white; @apply dark:focus:bg-white; @apply dark:focus:text-gray-900; @apply dark:focus:placeholder-gray-500; @apply dark:focus:ring-white;
+}
+
+.button-primary {
+    @apply rounded-config; @apply border; @apply border-transparent; @apply bg-indigo-600; @apply px-4; @apply py-2; @apply text-sm; @apply font-medium; @apply text-white; @apply shadow-sm; @apply hover:bg-indigo-700; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-indigo-500; @apply focus:ring-offset-2;
+}
+
+.button-toggle {
+    @apply inline-flex; @apply items-center; @apply justify-center; @apply p-2; @apply rounded-config; @apply text-gray-400; @apply hover:text-gray-500; @apply hover:bg-gray-100; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-inset; @apply focus:ring-indigo-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:outline-none; @apply dark:focus:ring-2; @apply dark:focus:ring-transparent; @apply dark:focus:ring-offset-2; @apply dark:focus:ring-offset-gray-800
+}
+
+.button-icon {
+    @apply flex-shrink-0; @apply bg-white; @apply p-1; @apply text-gray-400; @apply rounded-full; @apply hover:text-gray-500; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-offset-2; @apply focus:ring-indigo-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:ring-2; @apply dark:focus:ring-gray-600; @apply dark:focus:ring-offset-2; @apply dark:focus:ring-offset-gray-800;
+}
+
+.button-menu-mobile {
+    @apply block; @apply border-transparent; @apply text-gray-600; @apply hover:bg-gray-50; @apply hover:border-indigo-500; @apply hover:text-gray-800; @apply pl-3; @apply pr-4; @apply py-2; @apply border-l-4; @apply text-base; @apply font-medium;
 }

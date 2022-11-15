@@ -5,19 +5,7 @@
         <div app-header-logo></div>
         <div class="hidden lg:ml-6 lg:block">
           <div class="flex space-x-4">
-            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-            <a
-              href="#"
-              class="text-gray-900 hover:bg-gray-50 hover:text-gray-900 rounded-md px-3 py-2 text-sm font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#"
-              class="text-gray-900 hover:bg-gray-50 hover:text-gray-900 rounded-md px-3 py-2 text-sm font-medium dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              Team
-            </a>
+            <a href="#" class="button-header" *ngFor="let link of links"> {{ link.name }} </a>
           </div>
         </div>
       </div>
@@ -28,47 +16,28 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <div app-icon name="search"></div>
             </div>
-            <input
-              id="search"
-              name="search"
-              class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-transparent dark:placeholder-gray-400 dark:focus:border-white dark:focus:bg-white dark:focus:text-gray-900 dark:focus:placeholder-gray-500 dark:focus:ring-white"
-              placeholder="Search"
-              type="search"
-            />
+            <input id="search" name="search" class="block w-full input-icon" placeholder="Search" type="search" />
           </div>
         </div>
       </div>
       <div class="flex items-center lg:hidden">
-        <!-- Mobile menu button -->
-        <button
-          type="button"
-          (click)="toggleMenu()"
-          class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-          aria-controls="mobile-menu"
-          aria-expanded="false"
-        >
+        <button type="button" (click)="toggleMenu()" class="button-toggle" aria-controls="mobile-menu" aria-expanded="false">
           <span class="sr-only">Open main menu</span>
           <div app-icon name="menu" *ngIf="!isMenu"></div>
           <div app-icon name="x" *ngIf="isMenu"></div>
         </button>
       </div>
       <div class="hidden lg:ml-4 lg:flex lg:items-center">
-        <div class="flex-shrink-0">
-          <button
-            type="button"
-            class="mr-3 relative inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            <span>Connect Wallet</span>
-          </button>
-        </div>
         <div app-darkmode-toggle></div>
-        <button
-          type="button"
-          class="flex-shrink-0 bg-white p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-2 dark:focus:ring-white dark:focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-        >
+        <button type="button" class="button-icon">
           <span class="sr-only">View notifications</span>
           <div app-icon name="bell"></div>
         </button>
+        <div class="flex-shrink-0">
+          <button type="button" class="ml-3 relative button-primary">
+            <span>Connect Wallet</span>
+          </button>
+        </div>
 
         <!-- Profile dropdown -->
         <div class="ml-4 relative flex-shrink-0">
@@ -98,7 +67,6 @@
             aria-labelledby="user-menu-button"
             tabindex="-1"
           >
-            <!-- Active: "bg-gray-100", Not Active: "" -->
             <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
             <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
             <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
@@ -111,23 +79,9 @@
   <!-- Mobile menu, show/hide based on menu state. -->
   <div *ngIf="isMenu" class="lg:hidden" id="mobile-menu">
     <div class="pt-2 pb-3 space-y-1">
-      <!-- Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800" -->
-      <a href="#" class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Dashboard</a>
-      <a
-        href="#"
-        class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-        >Team</a
-      >
-      <a
-        href="#"
-        class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-        >Projects</a
-      >
-      <a
-        href="#"
-        class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-        >Calendar</a
-      >
+      <a href="#" class="button-menu-mobile" *ngFor="let link of links">
+        {{ link.name }}
+      </a>
     </div>
     <div class="pt-4 pb-3 border-t border-gray-200">
       <div class="flex items-center px-4">
@@ -142,18 +96,15 @@
           <div class="text-base font-medium text-gray-800">Tom Cook</div>
           <div class="text-sm font-medium text-gray-500">tom@example.com</div>
         </div>
-        <button
-          type="button"
-          class="ml-auto flex-shrink-0 bg-white p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
+        <button type="button" class="ml-auto button-icon">
           <span class="sr-only">View notifications</span>
           <div app-icon name="bell"></div>
         </button>
       </div>
       <div class="mt-3 space-y-1">
-        <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Your Profile</a>
-        <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Settings</a>
-        <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Sign out</a>
+        <a href="#" class="block button-menu-mobile">Your Profile</a>
+        <a href="#" class="block button-menu-mobile">Settings</a>
+        <a href="#" class="block button-menu-mobile">Sign out</a>
       </div>
     </div>
   </div>
