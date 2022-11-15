@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ColorSchemeService } from 'src/app/services/color-scheme.service';
-import { ThemeMode } from 'src/app/types';
+import { UIService } from 'src/app/services/ui.service';
+import { ThemeMode } from 'src/types';
 
 @Component({
   selector: '[app-darkmode-toggle]',
@@ -10,15 +10,14 @@ import { ThemeMode } from 'src/app/types';
 export class DarkmodeToggleComponent implements OnInit {
   darkmode!: ThemeMode;
 
-  constructor(private colorSchemeService: ColorSchemeService) {
-    this.colorSchemeService.load();
-    this.darkmode = this.colorSchemeService.currentActive();
+  constructor(private ui: UIService) {
+    this.darkmode = this.ui.currentActiveTheme();
   }
 
   ngOnInit(): void {}
 
   toggleDarkMode() {
     this.darkmode = this.darkmode === 'dark' ? 'light' : 'dark';
-    this.colorSchemeService.update(this.darkmode);
+    this.ui.updateTheme(this.darkmode);
   }
 }

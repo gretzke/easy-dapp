@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ColorSchemeService } from 'src/app/services/color-scheme.service';
+import { UIService } from 'src/app/services/ui.service';
 import { setDarkMode } from 'src/app/store/app.actions';
 import { darkModeSelector } from 'src/app/store/app.selector';
-import { ThemeMode } from 'src/app/types';
+import { ThemeMode } from 'src/types';
 import { loadFull } from 'tsparticles';
 import { Container, Engine } from 'tsparticles-engine';
 import { particlesOptions } from './particles.config';
@@ -17,7 +17,7 @@ export class BackgroundComponent implements OnInit {
   id = 'tsparticles';
   particlesOptions = particlesOptions;
 
-  constructor(private colorSchemeService: ColorSchemeService) {}
+  constructor(private ui: UIService) {}
 
   ngOnInit(): void {}
 
@@ -31,6 +31,6 @@ export class BackgroundComponent implements OnInit {
   }
 
   particlesLoaded(container: Container): void {
-    this.colorSchemeService.setContainer(container);
+    this.ui.setBackgroundContainer(container);
   }
 }
