@@ -1,6 +1,6 @@
 import { ActionReducer, ActionReducerMap, createReducer, on } from '@ngrx/store';
 import { localStorageSync } from 'ngrx-store-localstorage';
-import { IAppConfig } from '../types';
+import { IAppConfig } from '../../types';
 import * as Actions from './app.actions';
 
 export const appStateKey = 'appState';

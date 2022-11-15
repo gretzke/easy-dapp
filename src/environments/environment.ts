@@ -2,8 +2,22 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  production: false
+import { IEnvironment } from 'src/types/environment';
+
+export const environment: IEnvironment = {
+  production: false,
+  testnet: {
+    moralis: {
+      appId: 'JneBzc2sKU3ZhsceqDYC3AVUVIDfuexnRUfPmLwd',
+      serverUrl: 'https://rzcm1zrj4ulu.grandmoralis.com:2053/server',
+    },
+  },
+  mainnet: {
+    moralis: {
+      appId: 'kgIgSN4rFRJuCcKgUOfE3CtFbkqISLZ5AQtnIzw1',
+      serverUrl: 'https://uo0u1wohehqw.grandmoralis.com:2053/server',
+    },
+  },
 };
 
 /*

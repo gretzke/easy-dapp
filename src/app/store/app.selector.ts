@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-import { IAppConfig } from '../types';
+import { IAppConfig } from '../../types';
 import { AppState } from './app.reducer';
 
 export const selectAppState = (state: any): AppState => state;
