@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="flex items-center lg:hidden">
-        <button type="button" (click)="toggleMenu()" class="button-toggle" aria-controls="mobile-menu" aria-expanded="false">
+        <button type="button" (click)="toggleMenu()" class="button-icon" aria-controls="mobile-menu" aria-expanded="false">
           <span class="sr-only">Open main menu</span>
           <div app-icon name="menu" *ngIf="!isMenu"></div>
           <div app-icon name="x" *ngIf="isMenu"></div>
@@ -29,15 +29,11 @@
       </div>
       <div class="hidden lg:ml-4 lg:flex lg:items-center">
         <div app-darkmode-toggle></div>
-        <button type="button" class="button-icon">
+        <button type="button" class="button-icon-round">
           <span class="sr-only">View notifications</span>
           <div app-icon name="bell"></div>
         </button>
-        <div class="flex-shrink-0">
-          <button type="button" class="ml-3 relative button-primary">
-            <span>Connect Wallet</span>
-          </button>
-        </div>
+        <div class="flex-shrink-0 ml-3" app-header-wallet-button></div>
 
         <!-- Profile dropdown -->
         <div class="ml-4 relative flex-shrink-0">
@@ -78,34 +74,11 @@
 
   <!-- Mobile menu, show/hide based on menu state. -->
   <div *ngIf="isMenu" class="lg:hidden" id="mobile-menu">
-    <div class="pt-2 pb-3 space-y-1">
+    <div class="py-2 space-y-1">
       <a href="#" class="button-menu-mobile" *ngFor="let link of links">
         {{ link.name }}
       </a>
     </div>
-    <div class="pt-4 pb-3 border-t border-gray-200">
-      <div class="flex items-center px-4">
-        <div class="flex-shrink-0">
-          <img
-            class="h-10 w-10 rounded-full"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            alt=""
-          />
-        </div>
-        <div class="ml-3">
-          <div class="text-base font-medium text-gray-800">Tom Cook</div>
-          <div class="text-sm font-medium text-gray-500">tom@example.com</div>
-        </div>
-        <button type="button" class="ml-auto button-icon">
-          <span class="sr-only">View notifications</span>
-          <div app-icon name="bell"></div>
-        </button>
-      </div>
-      <div class="mt-3 space-y-1">
-        <a href="#" class="block button-menu-mobile">Your Profile</a>
-        <a href="#" class="block button-menu-mobile">Settings</a>
-        <a href="#" class="block button-menu-mobile">Sign out</a>
-      </div>
-    </div>
+    <div class="flex justify-center border-t border-gray-200 dark:border-gray-700 py-4" app-header-wallet-button></div>
   </div>
 </nav>

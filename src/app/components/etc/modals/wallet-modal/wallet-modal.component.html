@@ -1,0 +1,44 @@
+<div *ngIf="showModal" class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div @opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+  <div class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex min-h-full items-end justify-center p-4 text-center lg:items-center lg:p-0">
+      <div
+        @opacityTranslateY
+        appClickOutside
+        class="relative transform overflow-hidden rounded-config bg px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6"
+        (clickOutside)="showModal = false"
+      >
+        <div class="absolute top-0 right-0 pt-4 pr-4">
+          <button type="button" class="button-icon" (click)="showModal = false">
+            <span class="sr-only">Close</span>
+            <div app-icon class="button-icon" name="x"></div>
+          </button>
+        </div>
+        <div class="sm:flex sm:items-start">
+          <div class="my-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg font-medium leading-6" id="modal-title">Connect Wallet</h3>
+          </div>
+        </div>
+        <span class="isolate inline-flex text-center rounded-config shadow-sm w-full">
+          <button
+            type="button"
+            class="flex flex-col justify-center w-full card items-center rounded-l-config px-4 py-4 font-medium"
+            (click)="connect('metamask')"
+          >
+            <img class="h-20 w-20" src="./assets/img/metamask.svg" alt="metamask" />
+            <h4>MetaMask</h4>
+          </button>
+          <button
+            type="button"
+            class="flex flex-col justify-center w-full card items-center rounded-r-config px-4 py-4 font-medium"
+            (click)="connect('walletconnect')"
+          >
+            <img class="h-20 w-20" src="./assets/img/walletconnect.svg" alt="metamask" />
+            <h4>WalletConnect</h4>
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

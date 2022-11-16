@@ -16,6 +16,9 @@ import { HeaderLinksComponent } from './components/header/header-links/header-li
 import { HeaderLogoComponent } from './components/header/header-logo/header-logo.component';
 import { HeaderComponent } from './components/header/header.component';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
+import { WalletModalComponent } from './components/etc/modals/wallet-modal/wallet-modal.component';
+import { HeaderWalletButtonComponent } from './components/header/header-wallet-button/header-wallet-button.component';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -28,6 +31,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     HeaderLogoComponent,
     DarkmodeToggleComponent,
     IconComponent,
+    WalletModalComponent,
+    HeaderWalletButtonComponent,
+    ClickOutsideDirective,
   ],
   imports: [
     BrowserModule,

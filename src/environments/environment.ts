@@ -6,18 +6,7 @@ import { IEnvironment } from 'src/types/environment';
 
 export const environment: IEnvironment = {
   production: false,
-  testnet: {
-    moralis: {
-      appId: 'JneBzc2sKU3ZhsceqDYC3AVUVIDfuexnRUfPmLwd',
-      serverUrl: 'https://rzcm1zrj4ulu.grandmoralis.com:2053/server',
-    },
-  },
-  mainnet: {
-    moralis: {
-      appId: 'kgIgSN4rFRJuCcKgUOfE3CtFbkqISLZ5AQtnIzw1',
-      serverUrl: 'https://uo0u1wohehqw.grandmoralis.com:2053/server',
-    },
-  },
+  walletConnectId: '8e6b5ffdcbc9794bf9f4a1952578365b',
 };
 
 /*
