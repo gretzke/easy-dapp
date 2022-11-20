@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { UIService } from 'src/app/services/ui.service';
-import { setDarkMode } from 'src/app/store/app.actions';
-import { darkModeSelector } from 'src/app/store/app.selector';
-import { ThemeMode } from 'src/types';
 import { loadFull } from 'tsparticles';
 import { Container, Engine } from 'tsparticles-engine';
 import { particlesOptions } from './particles.config';

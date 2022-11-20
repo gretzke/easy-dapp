@@ -1,70 +1,63 @@
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Injectable, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { Store } from '@ngrx/store';
+import blockies from 'blockies-ts';
+import { Observable, of } from 'rxjs';
 import { Container } from 'tsparticles-engine';
 import { ThemeMode } from '../../types';
+import { setDarkmode } from '../store/app.actions';
+import { darkmodeSelector } from '../store/app.selector';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UIService {
+export class UIService implements OnInit {
   private renderer: Renderer2;
-  private colorScheme!: ThemeMode;
+  theme: ThemeMode = 'dark';
   container?: Container;
 
-  constructor(rendererFactory: RendererFactory2) {
+  constructor(private store: Store<{}>, rendererFactory: RendererFactory2) {
     // Create new renderer from renderFactory, to make it possible to use renderer2 in a service
     this.renderer = rendererFactory.createRenderer(null, null);
-    this._init();
+    this.store.select(darkmodeSelector).subscribe((theme) => {
+      console.log('theme', theme);
+      if (theme === undefined) {
+        this._detectPrefersColorScheme();
+      } else {
+        this.updateTheme(theme);
+      }
+    });
   }
 
-  private _init() {
-    this._getColorScheme();
-    this.renderer.addClass(document.body, this.colorScheme);
-  }
+  ngOnInit() {}
 
   public updateTheme(scheme: ThemeMode) {
-    this._setColorScheme(scheme);
-    this.renderer.removeClass(document.body, this.colorScheme === 'dark' ? 'light' : 'dark');
+    this.theme = scheme;
+    this.renderer.removeClass(document.body, scheme === 'dark' ? 'light' : 'dark');
     this.renderer.addClass(document.body, scheme);
-  }
-
-  public currentActiveTheme(): ThemeMode {
-    return this.colorScheme;
+    if (this.container) {
+      this.container.loadTheme(scheme);
+    }
   }
 
   public setBackgroundContainer(container: Container) {
     this.container = container;
-    this.container.loadTheme(this.colorScheme);
+    this.container.loadTheme(this.theme);
   }
 
-  private _getColorScheme() {
-    const localStorageColorScheme = localStorage.getItem('prefers-color') as ThemeMode;
-    // Check if any prefers-color-scheme is stored in localStorage
-    if (localStorageColorScheme) {
-      // Save prefers-color-scheme from localStorage
-      this.colorScheme = localStorageColorScheme;
-    } else {
-      // If no prefers-color-scheme is stored in localStorage, try to detect OS default prefers-color-scheme
-      this._detectPrefersColorScheme();
-    }
+  public generateProfilePicture(address: string): Observable<SafeResourceUrl> {
+    const url = blockies.create({ seed: address, size: 10, scale: 4 }).toDataURL();
+    return of(url);
   }
 
   private _detectPrefersColorScheme() {
+    // dark is default
+    let detectedMode: ThemeMode = 'dark';
     // Detect if prefers-color-scheme is supported
     if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {
       // Set colorScheme to Dark if prefers-color-scheme is dark. Otherwise, set it to Light.
-      this.colorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    } else {
-      // If the browser does not support prefers-color-scheme, set the default to dark.
-      this.colorScheme = 'dark';
+      detectedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-  }
-
-  private _setColorScheme(scheme: ThemeMode) {
-    this.colorScheme = scheme;
-    // Save prefers-color-scheme to localStorage
-    localStorage.setItem('prefers-color', scheme);
-    if (this.container) {
-      this.container.loadTheme(scheme);
-    }
+    this.store.dispatch(setDarkmode({ src: UIService.name, theme: detectedMode }));
   }
 }

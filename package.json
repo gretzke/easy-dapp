@@ -20,6 +20,7 @@
     "@angular/router": "~14.2.10",
     "@ngrx/effects": "^14.3.2",
     "@ngrx/store": "^14.3.2",
+    "@ngrx/store-devtools": "^14.3.2",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "@tailwindcss/forms": "^0.5.3",

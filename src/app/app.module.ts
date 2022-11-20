@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgParticlesModule } from 'ng-particles';
@@ -19,6 +20,8 @@ import { localStorageSyncReducer, reducers } from './store/app.reducer';
 import { WalletModalComponent } from './components/etc/modals/wallet-modal/wallet-modal.component';
 import { HeaderWalletButtonComponent } from './components/header/header-wallet-button/header-wallet-button.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { environment } from 'src/environments/environment';
+import { AppEffects } from './store/app.effects';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -40,7 +43,12 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     AppRoutingModule,
     HttpClientModule,
     StoreModule.forRoot(reducers, { metaReducers: [localStorageSyncReducer] }),
-    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+    }),
+    EffectsModule.forRoot([AppEffects]),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
