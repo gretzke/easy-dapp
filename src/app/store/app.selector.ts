@@ -11,3 +11,5 @@ export const darkmodeSelector = createSelector(selectAppConfigState, (state) => 
 export const chainIdSelector = createSelector(selectChainDataState, (state) => state.chainId);
 
 export const userSelector = createSelector(selectChainDataState, (state) => state.user);
+
+export const chainSelector = createSelector(selectChainDataState, (state) => state);

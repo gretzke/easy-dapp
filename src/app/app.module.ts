@@ -22,6 +22,7 @@ import { HeaderWalletButtonComponent } from './components/header/header-wallet-b
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { environment } from 'src/environments/environment';
 import { AppEffects } from './store/app.effects';
+import { HomeComponent } from './components/pages/home/home.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -37,6 +38,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     WalletModalComponent,
     HeaderWalletButtonComponent,
     ClickOutsideDirective,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
