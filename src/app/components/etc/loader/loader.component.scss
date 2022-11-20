@@ -1,0 +1,43 @@
+:host{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 9999;
+    // margin: 0;
+    // padding: 0;
+    // min-height: 100vh;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    background-color: #000;
+}
+
+.wrapper{
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .l{
+    box-sizing: initial;
+    width: calc(100% - 9px);
+    height: calc(100% - 9px);
+    border-radius: 50%;
+    position: absolute;
+    border-top: 5px solid red;
+    animation: spin 2s ease-out infinite;
+  }  
+  @keyframes spin{
+    20%{
+      width: #{"calc(100% - 9px)"};
+    }
+    
+    100%{
+      transform: rotate(-360deg);
+    }
+  }
