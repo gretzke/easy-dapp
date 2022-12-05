@@ -1,6 +1,7 @@
 import { ActionReducer, ActionReducerMap, createReducer, on } from '@ngrx/store';
 import { localStorageSync } from 'ngrx-store-localstorage';
-import { IAppConfig, IChainData } from '../../types';
+import { IDapps } from 'src/types/api';
+import { IAppConfig, IChainData, IUser } from '../../types';
 import * as Actions from './app.actions';
 
 export const appStateKey = 'appState';
@@ -8,6 +9,8 @@ export const appStateKey = 'appState';
 export interface AppState {
   appConfig: IAppConfig;
   chainData: IChainData;
+  user: IUser | undefined;
+  dapps: IDapps;
 }
 
 export const initialState: AppState = {
@@ -16,8 +19,10 @@ export const initialState: AppState = {
   },
   chainData: {
     chainId: 1,
-    user: undefined,
+    wallet: undefined,
   },
+  user: undefined,
+  dapps: [],
 };
 
 const appConfigReducer = createReducer(
@@ -32,20 +37,33 @@ const chainDataReducer = createReducer(
     chainId: action.chainId,
   })),
 
-  on(Actions.setUser, (state, action) => ({
+  on(Actions.setWallet, (state, action) => ({
     ...state,
-    user: action.user,
+    wallet: action.wallet,
   })),
 
-  on(Actions.resetUser, (state) => ({
+  on(Actions.resetWallet, (state) => ({
     ...state,
-    user: undefined,
+    wallet: undefined,
   }))
+);
+
+const dappsReducer = createReducer(
+  initialState.dapps,
+  on(Actions.setDapps, (_, action) => action.dapps)
+);
+
+const userReducer = createReducer(
+  initialState.user,
+  on(Actions.setUser, (_, action) => action.user),
+  on(Actions.resetUser, () => undefined)
 );
 
 export const reducers: ActionReducerMap<AppState> = {
   appConfig: appConfigReducer,
   chainData: chainDataReducer,
+  dapps: dappsReducer,
+  user: userReducer,
 };
 
 export function localStorageSyncReducer(actionReducer: ActionReducer<AppState>): ActionReducer<AppState> {

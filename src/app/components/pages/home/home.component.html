@@ -1,8 +1,7 @@
-<h1>{{ 'PAGES.HOME.TITLE' | translate }}</h1>
-<br />
-<button class="button-primary" (click)="getNum()">Load Number</button>
-<span>
-  {{ num }}
-</span>
-<br /><br />
-<button class="button-primary" (click)="setNum()">Set Number to 10</button>
+<div *ngFor="let dapp of dapps" class="card flex items-center justify-between mb-4">
+  <div>
+    <p class="text-2xl">{{ dapp.config.name }}</p>
+    <p class="text-xl text-muted">{{ dapp.address }}</p>
+  </div>
+  <fa-icon class="text-2xl mr-2 cursor-pointer" [icon]="faArrowRight" (click)="navigate(dapp)"></fa-icon>
+</div>

@@ -5,15 +5,15 @@ import { Component } from '@angular/core';
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-  isMenu = false;
+  showMenu = false;
   links = [
     { name: 'Dashboard', path: '/' },
-    { name: 'About', path: '/about' },
+    { name: 'New Dapp', path: '/new-dapp' },
   ];
 
   constructor() {}
 
   toggleMenu() {
-    this.isMenu = !this.isMenu;
+    this.showMenu = !this.showMenu;
   }
 }

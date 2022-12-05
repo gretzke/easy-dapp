@@ -1,0 +1,63 @@
+<div class="card" *ngIf="contract">
+  <div class="flex justify-between pb-4">
+    <div>
+      <div class="text-2xl pb-2">
+        <p *ngIf="!edit" class="edit-text">
+          {{ contract.config.name === '' ? 'Contract Interaction' : contract.config.name }}
+        </p>
+        <div app-edit-input *ngIf="edit" [value]="contract.config.name" placeholder="Title" (valueUpdated)="setName($event)"></div>
+      </div>
+      <div
+        app-edit-input
+        class="pb-2"
+        *ngIf="edit && firstDeployment"
+        placeholder="URL"
+        [value]="contract.url"
+        hint="Your Dapp will be reachable under this URL, you cannot change it later."
+        [error]="urlError"
+        (valueUpdated)="setUrl($event)"
+      ></div>
+      <div>
+        <p *ngIf="!edit">{{ contract.config.description }}</p>
+        <div
+          app-edit-text-area
+          *ngIf="edit"
+          [value]="contract.config.description"
+          placeholder="Description"
+          (valueUpdated)="setDescription($event)"
+        ></div>
+      </div>
+    </div>
+    <!-- <fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save -->
+    <button class="button-primary" *ngIf="!edit" (click)="edit = true"><fa-icon [icon]="faPenToSquare" class="mr-2"></fa-icon> Edit</button>
+    <button class="button-primary" *ngIf="edit" (click)="saveDapp()"><fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save</button>
+  </div>
+  <div>
+    <div class="block">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex" aria-label="Tabs">
+          <button [class]="'tab' + (read ? ' active' : '')" (click)="read = true">Read Contract</button>
+          <button [class]="'tab' + (!read ? ' active' : '')" (click)="read = false">Write Contract</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="read">
+    <div
+      app-read-field
+      class="border-y first:border-t-transparent last:border-b-transparent"
+      *ngFor="let field of readFunctions; let i = index"
+      [field]="field"
+      [index]="i"
+    ></div>
+  </div>
+  <div *ngIf="!read">
+    <div
+      app-write-field
+      class="border-y first:border-t-transparent last:border-b-transparent"
+      *ngFor="let field of writeFunctions; let i = index"
+      [field]="field"
+      [index]="i"
+    ></div>
+  </div>
+</div>

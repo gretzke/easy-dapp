@@ -20,7 +20,6 @@ export class UIService implements OnInit {
     // Create new renderer from renderFactory, to make it possible to use renderer2 in a service
     this.renderer = rendererFactory.createRenderer(null, null);
     this.store.select(darkmodeSelector).subscribe((theme) => {
-      console.log('theme', theme);
       if (theme === undefined) {
         this._detectPrefersColorScheme();
       } else {

@@ -7,6 +7,7 @@ import { IEnvironment } from 'src/types/environment';
 export const environment: IEnvironment = {
   production: false,
   walletConnectId: '8e6b5ffdcbc9794bf9f4a1952578365b',
+  firebaseUrl: 'http://localhost:5001/easydapp-56895/europe-west1/',
 };
 
 /*

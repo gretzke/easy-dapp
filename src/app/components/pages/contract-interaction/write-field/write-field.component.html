@@ -1,0 +1,12 @@
+<div class="p-4 text-xl" *ngIf="field !== undefined">
+  <p class="mr-2">{{ field.name }}</p>
+  <app-contract-input-field
+    class="block my-5"
+    *ngFor="let input of field.inputs; let i = index"
+    [type]="input"
+    (valueUpdated)="args[index] = $event"
+  ></app-contract-input-field>
+  <app-contract-input-field *ngIf="field.stateMutability === 'payable'"></app-contract-input-field>
+  <p *ngIf="field.stateMutability === 'payable'">TODO: implement sending value</p>
+  <button class="button-primary" (click)="sendTx()" [disabled]="!allArgsValid">Send Transaction</button>
+</div>

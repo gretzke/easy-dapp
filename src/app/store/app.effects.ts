@@ -1,12 +1,52 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map, mergeMap } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { IAbiResponse, IApiError, IMessageResponse, IVerificationResponse } from '../../types/api';
+import { setContract } from '../components/pages/contract-interaction/store/contract.actions';
+import { EthereumService } from '../services/ethereum.service';
+import { FirebaseService } from '../services/firebase.service';
+import { NotificationService } from '../services/notification.service';
 import { UIService } from '../services/ui.service';
-import { setUser, userChanged } from './app.actions';
+import {
+  abiError,
+  abiResponse,
+  connectWallet,
+  getAbi,
+  getDapp,
+  getDapps,
+  login,
+  logout,
+  notify,
+  resetUser,
+  setDapps,
+  setUser,
+  setWallet,
+  signMessage,
+  submitSignature,
+  userChanged,
+} from './app.actions';
+import { chainIdSelector, walletSelector } from './app.selector';
 
 @Injectable()
 export class AppEffects {
-  constructor(private actions$: Actions, private ui: UIService) {}
+  constructor(
+    private actions$: Actions,
+    private store: Store<{}>,
+    private ui: UIService,
+    private firebase: FirebaseService,
+    private ethereum: EthereumService,
+    private notification: NotificationService
+  ) {}
+
+  connectWallet$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(connectWallet),
+        tap(() => this.ethereum.connect())
+      ),
+    { dispatch: false }
+  );
 
   setUser$ = createEffect((): any =>
     this.actions$.pipe(
@@ -14,8 +54,145 @@ export class AppEffects {
       mergeMap((action) =>
         this.ui
           .generateProfilePicture(action.address)
-          .pipe(map((img) => setUser({ src: AppEffects.name, user: { address: action.address, img } })))
+          .pipe(map((img) => setWallet({ src: AppEffects.name, wallet: { address: action.address, img } })))
       )
     )
   );
+
+  getDapps$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(getDapps),
+      withLatestFrom(this.store.select(chainIdSelector)),
+      mergeMap(([_, chainId]) =>
+        this.firebase.getDapps(chainId).pipe(
+          map((dapps) => setDapps({ src: AppEffects.name, dapps: dapps.data })),
+          catchError((error) => of(notify({ src: AppEffects.name, notificationType: 'error', message: error.message })))
+        )
+      )
+    )
+  );
+
+  getDapp$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(getDapp),
+      mergeMap((action) =>
+        this.firebase.getDapp(action.id).pipe(
+          map((dapp) => setContract({ src: AppEffects.name, contract: dapp.data })),
+          catchError((error) => of(notify({ src: AppEffects.name, notificationType: 'error', message: error.message })))
+        )
+      )
+    )
+  );
+
+  getAbi$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(getAbi),
+      withLatestFrom(this.store.select(chainIdSelector)),
+      mergeMap(([action, chainId]) =>
+        this.firebase.getAbi(chainId, action.address).pipe(
+          map((res: IAbiResponse) => {
+            return abiResponse({
+              src: AppEffects.name,
+              abi: res.data.abi,
+              id: res.data.id,
+            });
+          }),
+          catchError((e: Error) => {
+            const error = this.handleError(e.message);
+            return of(abiError({ src: AppEffects.name, message: error.message, details: error.details }));
+          })
+        )
+      )
+    )
+  );
+
+  requestMessage$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(login),
+      withLatestFrom(this.store.select(walletSelector)),
+      mergeMap(([action, wallet]) => {
+        if (wallet === undefined) {
+          this.store.dispatch(connectWallet({ src: AppEffects.name }));
+          return this.actions$.pipe(
+            ofType(setWallet),
+            concatMap(() => of(action))
+          );
+        }
+        return this.firebase.requestMessage(wallet.address).pipe(
+          map((res: IMessageResponse) => {
+            return signMessage({ src: AppEffects.name, message: res.data.message });
+          }),
+          catchError((e: Error) => {
+            const message = this.getErrorMessage(e.message);
+            return of(notify({ src: AppEffects.name, notificationType: 'error', message }));
+          })
+        );
+      })
+    )
+  );
+
+  signMessage$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(signMessage),
+      mergeMap((action) =>
+        this.ethereum
+          .signMessage(action.message)
+          .pipe(map((signature: string) => submitSignature({ src: AppEffects.name, signature, message: action.message })))
+      )
+    )
+  );
+
+  submitSignature$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(submitSignature),
+      mergeMap((action) =>
+        this.firebase.submitSignature(action.message, action.signature).pipe(
+          map((res: IVerificationResponse) => {
+            sessionStorage.setItem('jwt', res.session);
+            return setUser({ src: AppEffects.name, user: res.data });
+          }),
+          catchError((e: Error) => {
+            const message = this.getErrorMessage(e.message);
+            return of(notify({ src: AppEffects.name, notificationType: 'error', message }));
+          })
+        )
+      )
+    )
+  );
+
+  logout$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(logout),
+      tap(() => sessionStorage.removeItem('jwt')),
+      map(() => resetUser({ src: AppEffects.name }))
+    )
+  );
+
+  notifyError$ = createEffect(
+    (): any =>
+      this.actions$.pipe(
+        ofType(notify),
+        tap((action) => this.notification[action.notificationType](action.message))
+      ),
+    { dispatch: false }
+  );
+
+  private handleError(errString: string): IApiError {
+    const e = JSON.parse(errString).error;
+    const message = e.message;
+    const details = e.details;
+    return { message, details };
+  }
+
+  private getErrorMessage(errString: string): string {
+    const e = JSON.parse(errString).error;
+    let message = e.message;
+    let details = e.details;
+    if (message === 'PARSE_ERROR') {
+      if (details === 'INVALID_ADDRESS') {
+        message = 'Invalid address';
+      }
+    }
+    return message;
+  }
 }

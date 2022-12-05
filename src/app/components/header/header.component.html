@@ -5,41 +5,38 @@
         <div app-header-logo></div>
         <div class="hidden lg:ml-6 lg:block">
           <div class="flex space-x-4">
-            <a href="#" class="button-header" *ngFor="let link of links"> {{ link.name }} </a>
+            <a [routerLink]="link.path" class="button-header" *ngFor="let link of links"> {{ link.name }} </a>
           </div>
         </div>
       </div>
       <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
-        <div class="max-w-lg w-full lg:max-w-xs">
+        <div class="max-w-lg w-full lg:max-w-xs dark:text-white">
           <label for="search" class="sr-only">Search</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <div app-icon name="search"></div>
             </div>
-            <input id="search" name="search" class="block w-full input-icon" placeholder="Search" type="search" />
+            <input id="search" name="search" class="block w-full text-input input-icon" placeholder="Search" type="search" />
           </div>
         </div>
       </div>
       <div class="flex items-center lg:hidden">
         <button type="button" (click)="toggleMenu()" class="button-icon" aria-controls="mobile-menu" aria-expanded="false">
           <span class="sr-only">Open main menu</span>
-          <div app-icon name="menu" *ngIf="!isMenu"></div>
-          <div app-icon name="x" *ngIf="isMenu"></div>
+          <div app-icon name="menu" *ngIf="!showMenu"></div>
+          <div app-icon name="x" *ngIf="showMenu"></div>
         </button>
       </div>
       <div class="hidden lg:ml-4 lg:flex lg:items-center">
         <div app-darkmode-toggle></div>
-        <button type="button" class="button-icon-round">
-          <span class="sr-only">View notifications</span>
-          <div app-icon name="bell"></div>
-        </button>
+        <div app-pending-tx></div>
         <div class="flex-shrink-0 ml-3" app-header-wallet-button></div>
       </div>
     </div>
   </div>
 
   <!-- Mobile menu, show/hide based on menu state. -->
-  <div *ngIf="isMenu" class="lg:hidden" id="mobile-menu">
+  <div *ngIf="showMenu" class="lg:hidden" id="mobile-menu">
     <div class="py-2 space-y-1">
       <a href="#" class="button-menu-mobile" *ngFor="let link of links">
         {{ link.name }}

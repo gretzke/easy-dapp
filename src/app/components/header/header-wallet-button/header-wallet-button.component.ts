@@ -2,9 +2,9 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { EthereumService } from 'src/app/services/ethereum.service';
-import { userSelector } from 'src/app/store/app.selector';
-import { IUser } from 'src/types';
+import { connectWallet, login, logout } from 'src/app/store/app.actions';
+import { userSelector, walletSelector } from 'src/app/store/app.selector';
+import { IUser, IWallet } from 'src/types';
 
 @Component({
   selector: '[app-header-wallet-button]',
@@ -26,15 +26,24 @@ import { IUser } from 'src/types';
 export class HeaderWalletButtonComponent implements OnInit {
   showModal = false;
   showDropdown = false;
+  wallet$: Observable<IWallet | undefined>;
   user$: Observable<IUser | undefined>;
-
-  constructor(private ethereum: EthereumService, private store: Store<{}>) {
+  constructor(private store: Store<{}>) {
+    this.wallet$ = this.store.select(walletSelector);
     this.user$ = this.store.select(userSelector);
   }
 
   ngOnInit(): void {}
 
   connect() {
-    this.ethereum.connect('walletconnect');
+    this.store.dispatch(connectWallet({ src: HeaderWalletButtonComponent.name }));
+  }
+
+  login() {
+    this.store.dispatch(login({ src: HeaderWalletButtonComponent.name }));
+  }
+
+  logout() {
+    this.store.dispatch(logout({ src: HeaderWalletButtonComponent.name }));
   }
 }

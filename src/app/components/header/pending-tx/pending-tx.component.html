@@ -1,0 +1,37 @@
+<div class="relative">
+  <button type="button" class="button-icon-round" (click)="showDropdown = !showDropdown">
+    <span class="sr-only">View notifications</span>
+    <div app-icon name="bell"></div>
+  </button>
+  <div
+    @opacityScale
+    *ngIf="showDropdown"
+    appClickOutside
+    (clickOutside)="showDropdown = false"
+    class="dropdown w-auto"
+    role="menu"
+    aria-orientation="vertical"
+    aria-labelledby="user-menu-button"
+    tabindex="-1"
+  >
+    <div *ngIf="pendingTransactions.length === 0">No past transactions</div>
+    <div *ngIf="pendingTransactions.length > 0">
+      <div *ngFor="let tx of pendingTransactions" class="dropdown-item">
+        <div class="">
+          <p class="text-lg inline">
+            {{ tx.name }}
+          </p>
+          <a
+            *ngIf="chainId && explorers[chainId] !== undefined"
+            app-icon
+            class="button-icon float-right"
+            name="link"
+            [href]="explorers[chainId].url + '/tx/' + tx.txHash"
+            target="_blank"
+          ></a>
+        </div>
+        <p class="text-muted">{{ tx.txHash | slice: 0:30 }}...</p>
+      </div>
+    </div>
+  </div>
+</div>

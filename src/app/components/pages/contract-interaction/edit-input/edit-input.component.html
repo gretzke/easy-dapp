@@ -1,0 +1,10 @@
+<input
+  type="text"
+  class="edit-input w-full"
+  [(ngModel)]="value"
+  (ngModelChange)="valueChanged()"
+  [placeholder]="placeholder"
+  style="font-size: inherit"
+/>
+<p *ngIf="hint && !error" class="text-muted">{{ hint }}</p>
+<p *ngIf="error" class="text-red-500">{{ error }}</p>

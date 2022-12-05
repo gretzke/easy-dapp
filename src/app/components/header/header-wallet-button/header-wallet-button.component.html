@@ -1,9 +1,9 @@
 <!-- <app-wallet-modal #modal></app-wallet-modal> -->
-<button *ngIf="(user$ | async) === undefined" type="button" class="relative button-primary" (click)="connect()">
+<button *ngIf="(wallet$ | async) === undefined" type="button" class="relative button-primary" (click)="connect()">
   <span>Connect Wallet</span>
 </button>
 <!-- Profile dropdown -->
-<div class="relative flex-shrink-0" *ngIf="user$ | async as user">
+<div class="relative flex-shrink-0" *ngIf="wallet$ | async as wallet">
   <div>
     <button
       type="button"
@@ -14,20 +14,31 @@
       aria-haspopup="true"
     >
       <span class="sr-only">Open user menu</span>
-      <img class="h-8 w-8 rounded-full" [src]="user.img" alt="blockie" />
+      <img class="h-8 w-8 rounded-full" [src]="wallet.img" alt="blockie" />
     </button>
   </div>
   <div
     @opacityScale
     *ngIf="showDropdown"
-    class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+    appClickOutside
+    (clickOutside)="showDropdown = false"
+    class="dropdown whitespace-nowrap"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="user-menu-button"
     tabindex="-1"
   >
-    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+    <button class="dropdown-item" *ngIf="(user$ | async) === undefined" (click)="login()">
+      <div class="inline-flex">
+        <div app-icon name="login" class="mr-2"></div>
+        Sign in
+      </div>
+    </button>
+    <button class="dropdown-item" *ngIf="(user$ | async) !== undefined" (click)="logout()">
+      <div class="inline-flex">
+        <div app-icon name="logout" class="mr-2"></div>
+        Log out
+      </div>
+    </button>
   </div>
 </div>

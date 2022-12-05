@@ -1,0 +1,19 @@
+<form [formGroup]="form" *ngIf="type !== undefined" autocomplete="off">
+  <label for="value" class="block ml-3 text-base"
+    >{{ type.name }} <span class="text-muted">{{ type.type }}</span></label
+  >
+  <div class="mt-1 mb-5">
+    <input
+      appEnsureInput
+      [dataType]="type.internalType"
+      formControlName="value"
+      type="text"
+      name="value"
+      class="block w-full text-input"
+      [placeholder]="placeholder"
+    />
+    <p *ngIf="form.controls.value.dirty && form.controls.value.invalid" class="ml-3 mt-1 text-sm text-red-600">
+      <span *ngIf="form.controls.value.errors?.required">Required</span>
+    </p>
+  </div>
+</form>

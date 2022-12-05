@@ -1,10 +1,8 @@
+@import 'ngx-toastr/toastr';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.rounded-config {
-    @apply rounded-2xl;
-}
 
 .rounded-l-config {
     @apply rounded-l-2xl;
@@ -22,22 +20,76 @@
 }
 
 .card {
-    @apply bg-gray-100;
+    @apply bg-white/60;
+    @apply dark:bg-gray-700/40;
     @apply border;
-    @apply dark:bg-gray-700;
+    @apply border-gray-300;
     @apply dark:border-gray-600;
+    @apply dark:text-gray-100;
+    @apply md:rounded;
+    @apply px-4;
+    @apply py-4;
+}
+
+.tab {
+    @apply border-transparent; @apply w-1/2; @apply py-4; @apply px-1; @apply text-center; @apply border-b-2; @apply font-medium; @apply text-sm; @apply text-gray-400; @apply border-gray-400; @apply hover:text-gray-500; @apply hover:border-gray-500; @apply dark:text-gray-400; @apply dark:border-gray-400; @apply dark:hover:text-gray-300; @apply dark:hover:border-gray-300;
+    &.active{
+        @apply dark:border-custom-dark-400; @apply dark:text-custom-dark-500; 
+        @apply border-custom-light-400; @apply text-custom-light-500;
+    }
+}
+
+.text-muted {
+    @apply text-gray-400;
+    @apply dark:text-gray-500;
+}
+
+.dropdown {
+    @apply absolute;
+    @apply right-0;
+    @apply z-10;
+    @apply mt-2;
+    @apply py-2;
+    @apply px-4;
+    @apply origin-top-right;
+    @apply rounded;
+    @apply shadow-lg;
+    @apply ring-1;
+    @apply focus:outline-none;
+    @apply ring-black;
+    @apply ring-opacity-5;
+    @apply bg-white;
+    @apply text-gray-700;
+    @apply dark:bg-gray-800;
+    @apply dark:text-gray-300;
+
+    .dropdown-item {
+        @apply block; @apply py-2; @apply border-t;
+    }
+
+    .dropdown-item:first-child {
+        @apply border-t-0;
+    }
+}
+
+.edit-input {
+    @apply p-1; @apply border-b; @apply border-transparent; @apply border-b-gray-300; @apply bg-transparent; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:border-transparent; @apply focus:ring-0; @apply focus:border-b-gray-500;
+}
+
+.text-input {
+    @apply border; @apply border-gray-300; @apply rounded; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:border-custom-light-500; @apply dark:focus:border-custom-dark-500; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:bg-white; @apply dark:focus:text-gray-900; @apply dark:focus:placeholder-gray-500;
 }
 
 .button-header {
-    @apply text-gray-900; @apply hover:bg-gray-50; @apply hover:text-gray-900; @apply rounded-config; @apply px-3; @apply py-2; @apply text-sm; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
+    @apply text-gray-900; @apply hover:bg-gray-100; @apply hover:text-gray-900; @apply rounded; @apply px-3; @apply py-2; @apply text-sm; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
 }
 
 .input-icon {
-    @apply pl-10; @apply pr-3; @apply py-2; @apply border; @apply border-gray-300; @apply rounded-config; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-indigo-500; @apply focus:border-indigo-500; @apply sm:text-sm; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:border-white; @apply dark:focus:bg-white; @apply dark:focus:text-gray-900; @apply dark:focus:placeholder-gray-500; @apply dark:focus:ring-white;
+    @apply pl-10; @apply pr-3; @apply py-2;
 }
 
 .button-primary {
-    @apply rounded-config; @apply border; @apply border-transparent; @apply bg-indigo-600; @apply px-4; @apply py-2; @apply text-sm; @apply font-medium; @apply text-white; @apply shadow-sm; @apply hover:bg-indigo-700; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-indigo-500; @apply focus:ring-offset-2;
+    @apply max-h-10; @apply rounded; @apply border; @apply border-transparent; @apply bg-custom-light-500; @apply dark:bg-custom-dark-500; @apply px-4; @apply py-2; @apply text-sm; @apply font-medium; @apply text-white; @apply shadow-sm; @apply hover:bg-custom-light-550; @apply dark:hover:bg-custom-dark-550; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:ring-offset-2; @apply disabled:bg-custom-light-550; @apply dark:disabled:bg-custom-dark-550;
 }
 
 .button-icon {
@@ -45,9 +97,9 @@
 }
 
 .button-icon-round {
-    @apply flex-shrink-0; @apply bg-white; @apply p-1; @apply text-gray-400; @apply rounded-full; @apply hover:text-gray-500; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-offset-2; @apply focus:ring-indigo-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:ring-2; @apply dark:focus:ring-gray-600; @apply dark:focus:ring-offset-2; @apply dark:focus:ring-offset-gray-800;
+    @apply flex-shrink-0; @apply bg-white; @apply p-1; @apply text-gray-400; @apply rounded-full; @apply hover:text-gray-500; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-offset-2; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:ring-2;  @apply dark:focus:ring-offset-2; @apply dark:focus:ring-offset-gray-800;
 }
 
 .button-menu-mobile {
-    @apply block; @apply border-transparent; @apply text-gray-600; @apply hover:bg-gray-50; @apply hover:border-indigo-500; @apply hover:text-gray-800; @apply pl-3; @apply pr-4; @apply py-2; @apply border-l-4; @apply text-base; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
+    @apply block; @apply border-transparent; @apply text-gray-600; @apply hover:bg-gray-50; @apply hover:border-custom-light-500; @apply dark:hover:border-custom-dark-500; @apply hover:text-gray-800; @apply pl-3; @apply pr-4; @apply py-2; @apply border-l-4; @apply text-base; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
 }

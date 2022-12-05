@@ -1,26 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { EthereumService } from 'src/app/services/ethereum.service';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { dappsSelector } from 'src/app/store/app.selector';
+import { IDapp } from 'src/types/abi';
+import { IDapps } from 'src/types/api';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-  public num = 0;
+export class HomeComponent implements OnInit, OnDestroy {
+  faArrowRight = faArrowRight;
+  public dapps: IDapps = [];
+  private subscription: Subscription;
 
-  constructor(private ethereum: EthereumService) {}
+  constructor(private store: Store<{}>, private ethereum: EthereumService, private router: Router, private firebase: FirebaseService) {
+    this.subscription = this.store.select(dappsSelector).subscribe((dapps) => {
+      this.dapps = dapps;
+    });
+  }
 
   ngOnInit(): void {}
 
-  public async getNum(): Promise<void> {
-    if (this.ethereum.contract === null) return;
-    const result = await this.ethereum.contract.get('num');
-    this.num = result.toNumber();
+  async navigate(dapp: IDapp) {
+    this.router.navigate(['/app', dapp.owner, dapp.url], {});
   }
 
-  public async setNum(): Promise<void> {
-    if (this.ethereum.contract === null) return;
-    await this.ethereum.contract.set('setNum', [5]);
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

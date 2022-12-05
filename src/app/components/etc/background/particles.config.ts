@@ -5,7 +5,7 @@ export const particlesOptions = {
   fullScreen: { enable: true, zIndex: -1 },
   particles: {
     number: {
-      value: 25,
+      value: 15,
     },
     shape: {
       type: 'circle',
@@ -88,8 +88,8 @@ export const particlesOptions = {
       y: 150,
     },
     rate: {
-      delay: 0.2,
-      quantity: 2,
+      delay: 2,
+      quantity: 1,
     },
     size: {
       width: 100,

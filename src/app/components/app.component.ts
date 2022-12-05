@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
-import { resetUser, setUser } from '../store/app.actions';
+import { resetWallet, setWallet } from '../store/app.actions';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +16,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.actions.pipe(ofType(setUser, resetUser), take(1)).subscribe(() => {
-      console.log('test');
+    this.actions.pipe(ofType(setWallet, resetWallet), take(1)).subscribe(() => {
       this.loading = false;
     });
   }

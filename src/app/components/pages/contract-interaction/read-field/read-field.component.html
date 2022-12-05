@@ -1,0 +1,4 @@
+<div class="p-4 text-xl" *ngIf="field !== undefined && (contractState$ | async) as contractState">
+  <p class="mr-2">{{ field.name }}</p>
+  <p *ngIf="field.inputs.length === 0">{{ contractState[field.name] }}</p>
+</div>
