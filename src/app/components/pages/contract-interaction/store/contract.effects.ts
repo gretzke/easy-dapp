@@ -3,13 +3,22 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ContractTransaction } from 'ethers';
-import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { catchError, concatMap, from, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
 import { watchPendingTransaction } from 'src/app/components/header/pending-tx/store/pendingtx.actions';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { login, notify, setUser } from 'src/app/store/app.actions';
 import { chainIdSelector, userSelector, walletSelector } from 'src/app/store/app.selector';
-import { getContractState, createDapp, sendContractTx, setContractState, setContract } from './contract.actions';
+import { ContractDataType } from 'src/types/abi';
+import {
+  getContractState,
+  createDapp,
+  sendContractTx,
+  setContractState,
+  setContract,
+  readContract,
+  setContractStateVariable,
+} from './contract.actions';
 import { contractSelector } from './contract.selector';
 
 @Injectable()
@@ -50,6 +59,20 @@ export class ContractEffects {
               chainId: ci.chainId,
             })
           ),
+          catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
+        );
+      })
+    )
+  );
+
+  readContract$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(readContract),
+      withLatestFrom(this.store.select(contractSelector)),
+      mergeMap(([action, contract]) => {
+        const ci = this.ethereum.getContractInstance(contract!.address, contract!.abi);
+        return from(ci.get(action.method, action.args)).pipe(
+          map((val: ContractDataType) => setContractStateVariable({ src: ContractEffects.name, key: action.method, val })),
           catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
         );
       })

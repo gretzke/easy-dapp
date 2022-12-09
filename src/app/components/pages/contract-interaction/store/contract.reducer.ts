@@ -22,7 +22,8 @@ const contractReducer = createReducer(
 const stateReducer = createReducer(
   initialState.state,
   on(Actions.getContractState, (_) => ({})),
-  on(Actions.setContractState, (_, action) => action.state)
+  on(Actions.setContractState, (_, action) => action.state),
+  on(Actions.setContractStateVariable, (state, action) => ({ ...state, [action.key]: action.val }))
 );
 
 export const contractStateReducer: ActionReducerMap<ContractState> = {

@@ -1,4 +1,27 @@
-<div class="p-4 text-xl" *ngIf="field !== undefined && (contractState$ | async) as contractState">
-  <p class="mr-2">{{ field.name }}</p>
-  <p *ngIf="field.inputs.length === 0">{{ contractState[field.name] }}</p>
+<div class="p-6 text-xl" *ngIf="field !== undefined && (contractState$ | async) as contractState">
+  <div class="flex justify-between items-center">
+    <span class="text-xl mr-2">{{ field.name }}</span>
+    <div class="border-b w-full flex-grow"></div>
+    <button class="button-icon-round border text-sm" (click)="collapsed = !collapsed">
+      <fa-icon [icon]="faChevronUp" [@iconRotation]="collapsed ? 'open' : 'closed'"></fa-icon>
+    </button>
+  </div>
+  <div *ngIf="!collapsed" @collapse>
+    <app-contract-input-field
+      class="block my-5"
+      *ngFor="let input of field.inputs; let i = index"
+      [type]="input"
+      (valueUpdated)="setArg(i, $event)"
+    ></app-contract-input-field>
+    <button class="button-primary" *ngIf="field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
+    <div *ngFor="let output of field.outputs; let i = index">
+      <div class="pt-3 text-gray-700 dark:text-gray-300" *ngIf="contractState[field.name] !== undefined">
+        <p class="text-lg sm:text-md">
+          <span class="mr-2" *ngIf="output.name !== ''">{{ output.name }}</span>
+          <span class="text-muted">{{ output.internalType }}:</span>
+          {{ getValue(contractState[field.name], output, i) }}
+        </p>
+      </div>
+    </div>
+  </div>
 </div>

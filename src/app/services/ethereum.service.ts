@@ -4,10 +4,9 @@ import { configureChains, createClient, fetchSigner, getAccount, watchAccount, w
 import { ClientCtrl, ConfigCtrl, ConfigOptions, ModalCtrl } from '@web3modal/core';
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
 import { ethers } from 'ethers';
-import { EMPTY, from, Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { chains } from 'src/helpers/chainConfig';
-import { Web3Provider } from 'src/types';
 import { getDapps, resetWallet, setChainId, userChanged } from '../store/app.actions';
 import { chainSelector, darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';

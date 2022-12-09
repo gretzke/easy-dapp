@@ -28,7 +28,6 @@
         ></div>
       </div>
     </div>
-    <!-- <fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save -->
     <button class="button-primary" *ngIf="!edit" (click)="edit = true"><fa-icon [icon]="faPenToSquare" class="mr-2"></fa-icon> Edit</button>
     <button class="button-primary" *ngIf="edit" (click)="saveDapp()"><fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save</button>
   </div>
@@ -43,21 +42,9 @@
     </div>
   </div>
   <div *ngIf="read">
-    <div
-      app-read-field
-      class="border-y first:border-t-transparent last:border-b-transparent"
-      *ngFor="let field of readFunctions; let i = index"
-      [field]="field"
-      [index]="i"
-    ></div>
+    <div *ngFor="let field of readFunctions; let i = index" app-read-field [field]="field" [index]="i"></div>
   </div>
   <div *ngIf="!read">
-    <div
-      app-write-field
-      class="border-y first:border-t-transparent last:border-b-transparent"
-      *ngFor="let field of writeFunctions; let i = index"
-      [field]="field"
-      [index]="i"
-    ></div>
+    <div *ngFor="let field of writeFunctions; let i = index" app-write-field [field]="field" [index]="i"></div>
   </div>
 </div>

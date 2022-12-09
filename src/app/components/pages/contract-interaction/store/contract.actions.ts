@@ -8,9 +8,16 @@ export const getContractState = createAction('[CONTRACT] get contract state', pr
 
 export const setContractState = createAction('[CONTRACT] set contract state', props<{ src: string; state: IContractState }>());
 
+export const setContractStateVariable = createAction(
+  '[CONTRACT] set contract state variable',
+  props<{ src: string; key: string; val: ContractDataType }>()
+);
+
 export const sendContractTx = createAction(
   '[CONTRACT] send contract tx',
-  props<{ src: string; address: string; method: string; args: ContractDataType[] }>()
+  props<{ src: string; method: string; args: ContractDataType[] }>()
 );
+
+export const readContract = createAction('[CONTRACT] read contract', props<{ src: string; method: string; args: ContractDataType[] }>());
 
 export const createDapp = createAction('[CONTRACT] save dapp', props<{ src: string; contract: IContract }>());

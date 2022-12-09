@@ -89,7 +89,7 @@
 }
 
 .button-primary {
-    @apply max-h-10; @apply rounded; @apply border; @apply border-transparent; @apply bg-custom-light-500; @apply dark:bg-custom-dark-500; @apply px-4; @apply py-2; @apply text-sm; @apply font-medium; @apply text-white; @apply shadow-sm; @apply hover:bg-custom-light-550; @apply dark:hover:bg-custom-dark-550; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:ring-offset-2; @apply disabled:bg-custom-light-550; @apply dark:disabled:bg-custom-dark-550;
+    @apply max-h-10; @apply rounded; @apply border; @apply border-transparent; @apply bg-custom-light-500; @apply dark:bg-custom-dark-500; @apply px-4; @apply py-2; @apply text-sm; @apply font-medium; @apply text-white; @apply shadow-sm; @apply hover:bg-custom-light-550; @apply dark:hover:bg-custom-dark-550; @apply focus:outline-none; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply disabled:bg-custom-light-550; @apply dark:disabled:bg-custom-dark-550;
 }
 
 .button-icon {
@@ -97,7 +97,12 @@
 }
 
 .button-icon-round {
-    @apply flex-shrink-0; @apply bg-white; @apply p-1; @apply text-gray-400; @apply rounded-full; @apply hover:text-gray-500; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-offset-2; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:ring-2;  @apply dark:focus:ring-offset-2; @apply dark:focus:ring-offset-gray-800;
+    @apply flex-shrink-0; @apply bg-white; @apply p-1; @apply text-gray-400; @apply rounded-full; @apply hover:text-gray-500; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-offset-0; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:ring-2;  @apply dark:focus:ring-offset-0; @apply dark:focus:ring-offset-gray-800; @apply aspect-square;
+    @apply flex; @apply items-center;
+
+    &border {
+        @apply border; @apply border-gray-300; @apply dark:border-gray-600;
+    }
 }
 
 .button-menu-mobile {

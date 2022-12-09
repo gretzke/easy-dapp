@@ -18,13 +18,13 @@ export class ContractBuilder {
   public getContractState(): Observable<IContractState> {
     const functionsToCall = this.readFunctions
       .filter((f) => f.inputs.length === 0)
-      .map(async (f) => ({ key: f.name, value: await this.get(f.name) }));
+      .map(async (f) => ({ key: f.name, value: await this.get(f.name, []) }));
 
     return from(Promise.all(functionsToCall).then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
   }
 
-  public get(functionName: string, ...args: any[]): Promise<ContractDataType> {
-    return this.contract()[functionName](...args);
+  public get(functionName: string, args: any[]): Promise<ContractDataType> {
+    return this.contract()[functionName](...args) as Promise<ContractDataType>;
   }
 
   public set(functionName: string, args: any[]): Observable<ContractTransaction> {
@@ -41,7 +41,6 @@ export class ContractABI {
   public abi: ABI;
   constructor(abi: string) {
     this.abi = JSON.parse(abi);
-    console.log(abi, this.abi);
   }
 
   public readFunctions(): ABI {

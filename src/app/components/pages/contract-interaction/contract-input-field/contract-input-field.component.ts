@@ -14,6 +14,9 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
   @Output() valueUpdated = new EventEmitter<ContractDataType>();
   public form: FormGroup;
   private subscription: Subscription;
+  private uintRegex = /^uint\d*$/;
+  private intRegex = /^int\d*$/;
+  private bytesRegex = /^bytes\d*$/;
 
   constructor() {
     this.form = new FormGroup({
@@ -32,16 +35,15 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
 
   // TODO: add validation and error handling
   get placeholder() {
-    switch (this.type?.internalType) {
-      case 'address':
-        return '0xA1337b...';
-      case 'uint256':
-        return '1337';
-      case 'string':
-        return 'Hello World';
-      default:
-        return '';
-    }
+    const t = this.type?.type;
+    if (!t) return '';
+    if (t === 'address') return '0xA1337b...';
+    if (this.uintRegex.test(t)) return '1337';
+    if (this.intRegex.test(t)) return '-1337';
+    if (this.bytesRegex.test(t)) return '0x...';
+    if (t === 'string') return 'Hello World';
+    if (t === 'bool') return 'true';
+    else return '';
   }
 
   private transformValue(value: string): ContractDataType {
