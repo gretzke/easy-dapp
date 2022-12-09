@@ -3,7 +3,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
 import { IAbiResponse, IApiError, IMessageResponse, IVerificationResponse } from '../../types/api';
-import { setContract } from '../components/pages/contract-interaction/store/contract.actions';
 import { EthereumService } from '../services/ethereum.service';
 import { FirebaseService } from '../services/firebase.service';
 import { NotificationService } from '../services/notification.service';
@@ -13,7 +12,6 @@ import {
   abiResponse,
   connectWallet,
   getAbi,
-  getDapp,
   getDapps,
   login,
   logout,
@@ -24,9 +22,10 @@ import {
   setWallet,
   signMessage,
   submitSignature,
+  switchNetwork,
   userChanged,
 } from './app.actions';
-import { chainIdSelector, walletSelector } from './app.selector';
+import { chainIdSelector, userSelector, walletSelector } from './app.selector';
 
 @Injectable()
 export class AppEffects {
@@ -51,12 +50,34 @@ export class AppEffects {
   setUser$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(userChanged),
-      mergeMap((action) =>
-        this.ui
-          .generateProfilePicture(action.address)
-          .pipe(map((img) => setWallet({ src: AppEffects.name, wallet: { address: action.address, img } })))
+      withLatestFrom(this.store.select(userSelector)),
+      mergeMap(([action, user]) =>
+        this.ui.generateProfilePicture(action.address).pipe(
+          tap(() => {
+            if (sessionStorage.getItem('jwt') === null || (user && user.address !== action.address))
+              this.store.dispatch(logout({ src: AppEffects.name }));
+          }),
+          map((img) => setWallet({ src: AppEffects.name, wallet: { address: action.address, img } }))
+        )
       )
     )
+  );
+
+  logout$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(logout),
+      tap(() => sessionStorage.removeItem('jwt')),
+      map(() => resetUser({ src: AppEffects.name }))
+    )
+  );
+
+  setChainId$ = createEffect(
+    (): any =>
+      this.actions$.pipe(
+        ofType(switchNetwork),
+        tap((action) => this.ethereum.switchNetwork(action.chainId))
+      ),
+    { dispatch: false }
   );
 
   getDapps$ = createEffect((): any =>
@@ -66,18 +87,6 @@ export class AppEffects {
       mergeMap(([_, chainId]) =>
         this.firebase.getDapps(chainId).pipe(
           map((dapps) => setDapps({ src: AppEffects.name, dapps: dapps.data })),
-          catchError((error) => of(notify({ src: AppEffects.name, notificationType: 'error', message: error.message })))
-        )
-      )
-    )
-  );
-
-  getDapp$ = createEffect((): any =>
-    this.actions$.pipe(
-      ofType(getDapp),
-      mergeMap((action) =>
-        this.firebase.getDapp(action.id).pipe(
-          map((dapp) => setContract({ src: AppEffects.name, contract: dapp.data })),
           catchError((error) => of(notify({ src: AppEffects.name, notificationType: 'error', message: error.message })))
         )
       )
@@ -111,14 +120,14 @@ export class AppEffects {
       ofType(login),
       withLatestFrom(this.store.select(walletSelector)),
       mergeMap(([action, wallet]) => {
-        if (wallet === undefined) {
+        if (wallet === null) {
           this.store.dispatch(connectWallet({ src: AppEffects.name }));
           return this.actions$.pipe(
             ofType(setWallet),
             concatMap(() => of(action))
           );
         }
-        return this.firebase.requestMessage(wallet.address).pipe(
+        return this.firebase.requestMessage(wallet!.address).pipe(
           map((res: IMessageResponse) => {
             return signMessage({ src: AppEffects.name, message: res.data.message });
           }),
@@ -157,14 +166,6 @@ export class AppEffects {
           })
         )
       )
-    )
-  );
-
-  logout$ = createEffect((): any =>
-    this.actions$.pipe(
-      ofType(logout),
-      tap(() => sessionStorage.removeItem('jwt')),
-      map(() => resetUser({ src: AppEffects.name }))
     )
   );
 

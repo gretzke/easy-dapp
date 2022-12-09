@@ -9,7 +9,7 @@ export const appStateKey = 'appState';
 export interface AppState {
   appConfig: IAppConfig;
   chainData: IChainData;
-  user: IUser | undefined;
+  user: IUser | null;
   dapps: IDapps;
 }
 
@@ -19,9 +19,9 @@ export const initialState: AppState = {
   },
   chainData: {
     chainId: 1,
-    wallet: undefined,
+    wallet: undefined!,
   },
-  user: undefined,
+  user: null,
   dapps: [],
 };
 
@@ -44,7 +44,7 @@ const chainDataReducer = createReducer(
 
   on(Actions.resetWallet, (state) => ({
     ...state,
-    wallet: undefined,
+    wallet: null,
   }))
 );
 
@@ -56,7 +56,7 @@ const dappsReducer = createReducer(
 const userReducer = createReducer(
   initialState.user,
   on(Actions.setUser, (_, action) => action.user),
-  on(Actions.resetUser, () => undefined)
+  on(Actions.resetUser, () => null)
 );
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -68,7 +68,7 @@ export const reducers: ActionReducerMap<AppState> = {
 
 export function localStorageSyncReducer(actionReducer: ActionReducer<AppState>): ActionReducer<AppState> {
   return localStorageSync({
-    keys: ['appConfig'],
+    keys: ['appConfig', 'user'],
     rehydrate: true,
   })(actionReducer);
 }

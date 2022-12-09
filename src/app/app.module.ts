@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
@@ -45,6 +45,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EditTextDirective } from './directives/edit-text.directive';
 import { EditInputComponent } from './components/pages/contract-interaction/edit-input/edit-input.component';
 import { EditTextAreaComponent } from './components/pages/contract-interaction/edit-text-area/edit-text-area.component';
+import { EthereumService } from './services/ethereum.service';
+import { WalletResolver } from './resolver/WalletResolver';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -102,7 +104,14 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     }),
     FontAwesomeModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (e: EthereumService) => e.ethereumFactory(),
+      deps: [EthereumService],
+    },
+    WalletResolver,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

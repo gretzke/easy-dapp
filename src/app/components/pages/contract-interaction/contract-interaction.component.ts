@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faFloppyDisk, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
+import { Subscription } from 'rxjs';
 import { ContractBuilder } from 'src/app/services/contract/ContractBuilder';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -17,7 +18,7 @@ import { contractSelector } from './store/contract.selector';
   templateUrl: './contract-interaction.component.html',
   styleUrls: ['./contract-interaction.component.scss'],
 })
-export class ContractInteractionComponent implements OnInit {
+export class ContractInteractionComponent implements OnInit, OnDestroy {
   @Input() public firstDeployment = false;
   public faFloppyDisk = faFloppyDisk;
   public faPenToSquare = faPenToSquare;
@@ -29,6 +30,7 @@ export class ContractInteractionComponent implements OnInit {
   public contract?: IDapp;
   public urlError = '';
   public user = '';
+  private subscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +38,7 @@ export class ContractInteractionComponent implements OnInit {
     private ethereum: EthereumService,
     private firebase: FirebaseService
   ) {
-    this.store.select(contractSelector).subscribe((contract) => {
+    this.subscription = this.store.select(contractSelector).subscribe((contract) => {
       if (contract) {
         this.contract = contract;
         this.contractBuilder = this.ethereum.getContractInstance(contract.address, contract.abi);
@@ -45,11 +47,13 @@ export class ContractInteractionComponent implements OnInit {
         this.store.dispatch(getContractState({ src: ContractInteractionComponent.name }));
       }
     });
-    this.store.select(walletSelector).subscribe((wallet) => {
-      if (wallet) {
-        this.user = wallet.address;
-      }
-    });
+    this.subscription.add(
+      this.store.select(walletSelector).subscribe((wallet) => {
+        if (wallet) {
+          this.user = wallet.address;
+        }
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -102,5 +106,9 @@ export class ContractInteractionComponent implements OnInit {
 
   private id(owner: string, url: string) {
     return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(owner + url));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

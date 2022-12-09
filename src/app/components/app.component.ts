@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
-import { resetWallet, setWallet } from '../store/app.actions';
+import { walletSelector } from '../store/app.selector';
 
 @Component({
   selector: 'app-root',
@@ -11,13 +10,15 @@ import { resetWallet, setWallet } from '../store/app.actions';
 })
 export class AppComponent implements OnInit {
   loading = true;
-  constructor(private translate: TranslateService, private actions: Actions) {
+  constructor(private translate: TranslateService, private store: Store<{}>) {
     this.translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    this.actions.pipe(ofType(setWallet, resetWallet), take(1)).subscribe(() => {
-      this.loading = false;
+    this.store.select(walletSelector).subscribe((wallet) => {
+      if (wallet !== undefined) {
+        this.loading = false;
+      }
     });
   }
 }

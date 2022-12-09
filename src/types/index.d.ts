@@ -19,7 +19,7 @@ export interface IAppConfig {
 }
 export interface IChainData {
   chainId: number;
-  wallet?: IWallet;
+  wallet: IWallet | null;
 }
 
 export const enum TransactionStatus {

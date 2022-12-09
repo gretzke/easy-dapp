@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { configureChains, createClient, fetchSigner, getAccount, watchAccount, watchNetwork } from '@wagmi/core';
+import { configureChains, createClient, fetchSigner, getAccount, switchNetwork, watchAccount, watchNetwork } from '@wagmi/core';
 import { ClientCtrl, ConfigCtrl, ConfigOptions, ModalCtrl } from '@web3modal/core';
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
 import { ethers } from 'ethers';
-import { from, Observable } from 'rxjs';
+import { firstValueFrom, from, Observable, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { chains } from 'src/helpers/chainConfig';
 import { getDapps, resetWallet, setChainId, userChanged } from '../store/app.actions';
-import { chainSelector, darkmodeSelector } from '../store/app.selector';
+import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
 
 // 1. Define constants
@@ -33,48 +34,57 @@ ConfigCtrl.setConfig({ ...modalConfig, theme: 'dark' });
 export class EthereumService {
   public signer: ethers.Signer | null = null;
   public chainId = 1;
+  private uiLoaded = false;
 
-  constructor(private store: Store<{}>) {
+  constructor(private store: Store<{}>, private actions$: Actions) {
     this.store.select(darkmodeSelector).subscribe((theme) => {
       ConfigCtrl.setConfig({ ...modalConfig, theme });
     });
-    this.store.select(chainSelector).subscribe(async (chain) => {
-      if (chain.wallet) {
-        this.signer = (await fetchSigner()) as ethers.Signer;
-      }
-    });
-
-    this.loadUi();
-    this.setupWatchers();
   }
 
-  public connect(): void {
+  public async ethereumFactory() {
+    await this.loadUi();
+    const account = getAccount();
+    if (!account.isConnected) {
+      this.store.dispatch(getDapps({ src: EthereumService.name }));
+    }
+    this.setupWatchers();
+    const actionListener = this.actions$.pipe(ofType(getDapps), take(1));
+    return firstValueFrom(actionListener);
+  }
+
+  public async connect(): Promise<void> {
+    await this.loadUi();
     ModalCtrl.open();
   }
 
-  public accountConnected(): boolean {
-    return getAccount().isConnected;
+  public switchNetwork(chainId: number) {
+    switchNetwork({ chainId });
   }
 
   async loadUi() {
+    if (this.uiLoaded) return;
     await import('@web3modal/ui');
+    this.uiLoaded = true;
   }
 
   private setupWatchers() {
-    watchAccount((data) => {
-      console.log('address connected', data.address);
-      if (data.address) {
-        this.store.dispatch(userChanged({ src: EthereumService.name, address: data.address }));
-      } else {
-        this.store.dispatch(resetWallet({ src: EthereumService.name }));
+    watchNetwork(async (data) => {
+      if (data.chain) {
+        console.log('network', data.chain.id);
+        this.signer = (await fetchSigner()) as ethers.Signer;
+        this.chainId = data.chain.id;
+        this.store.dispatch(setChainId({ src: EthereumService.name, chainId: data.chain.id }));
         this.store.dispatch(getDapps({ src: EthereumService.name }));
       }
     });
-    watchNetwork((data) => {
-      if (data.chain) {
-        console.log('network', data.chain.id);
-        this.chainId = data.chain.id;
-        this.store.dispatch(setChainId({ src: EthereumService.name, chainId: data.chain.id }));
+    watchAccount(async (data) => {
+      console.log('address connected', data.address);
+      if (data.address) {
+        this.signer = (await fetchSigner()) as ethers.Signer;
+        this.store.dispatch(userChanged({ src: EthereumService.name, address: data.address }));
+      } else {
+        this.store.dispatch(resetWallet({ src: EthereumService.name }));
         this.store.dispatch(getDapps({ src: EthereumService.name }));
       }
     });

@@ -26,8 +26,8 @@ import { IUser, IWallet } from 'src/types';
 export class HeaderWalletButtonComponent implements OnInit {
   showModal = false;
   showDropdown = false;
-  wallet$: Observable<IWallet | undefined>;
-  user$: Observable<IUser | undefined>;
+  wallet$: Observable<IWallet | null>;
+  user$: Observable<IUser | null>;
   constructor(private store: Store<{}>) {
     this.wallet$ = this.store.select(walletSelector);
     this.user$ = this.store.select(userSelector);

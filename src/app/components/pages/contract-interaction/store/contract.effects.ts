@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ContractTransaction } from 'ethers';
-import { catchError, concatMap, from, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { catchError, concatMap, from, map, mergeMap, of, switchMap, take, tap, withLatestFrom } from 'rxjs';
 import { watchPendingTransaction } from 'src/app/components/header/pending-tx/store/pendingtx.actions';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
-import { login, notify, setUser } from 'src/app/store/app.actions';
+import { getDapp, login, notify, setChainId, setUser, switchNetwork } from 'src/app/store/app.actions';
 import { chainIdSelector, userSelector, walletSelector } from 'src/app/store/app.selector';
 import { ContractDataType } from 'src/types/abi';
 import {
@@ -84,7 +84,7 @@ export class ContractEffects {
       ofType(createDapp),
       withLatestFrom(this.store.select(chainIdSelector), this.store.select(userSelector)),
       mergeMap(([action, chainId, user]) => {
-        if (user === undefined) {
+        if (user === null) {
           this.store.dispatch(login({ src: ContractEffects.name }));
           return this.actions$.pipe(
             ofType(setUser),
@@ -108,6 +108,29 @@ export class ContractEffects {
             catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
           );
       })
+    )
+  );
+
+  getDapp$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(getDapp),
+      withLatestFrom(this.store.select(chainIdSelector)),
+      mergeMap(([action, chainId]) =>
+        this.firebase.getDapp(action.id).pipe(
+          mergeMap((dapp) => {
+            if (dapp.data.chainId !== chainId) {
+              this.store.dispatch(switchNetwork({ src: ContractEffects.name, chainId: dapp.data.chainId }));
+              return this.actions$.pipe(
+                ofType(setChainId),
+                take(1),
+                map(() => action)
+              );
+            }
+            return of(setContract({ src: ContractEffects.name, contract: dapp.data }));
+          }),
+          catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
+        )
+      )
     )
   );
 }

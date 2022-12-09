@@ -6,13 +6,15 @@ export const setDarkmode = createAction('[CLIENT CONFIG] toggle dark mode', prop
 
 export const setChainId = createAction('[CHAIN DATA] set chain id', props<{ src: string; chainId: number }>());
 
-export const userChanged = createAction('[CHAIN DATA] wallet changed', props<{ src: string; address: string }>());
-
 export const connectWallet = createAction('[CHAIN DATA] connect wallet', props<{ src: string }>());
+
+export const userChanged = createAction('[CHAIN DATA] wallet changed', props<{ src: string; address: string }>());
 
 export const setWallet = createAction('[CHAIN DATA] set wallet', props<{ src: string; wallet: IWallet }>());
 
 export const resetWallet = createAction('[CHAIN DATA] reset wallet', props<{ src: string }>());
+
+export const switchNetwork = createAction('[CHAIN DATA] switch network', props<{ src: string; chainId: number }>());
 
 export const getAbi = createAction('[FIREBASE] fetch abi', props<{ src: string; address: string }>());
 
