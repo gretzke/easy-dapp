@@ -1,52 +1,56 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgParticlesModule } from 'ng-particles';
+import { ToastrModule } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app.component';
 import { BackgroundComponent } from './components/etc/background/background.component';
 import { IconComponent } from './components/etc/icon/icon.component';
+import { LoaderComponent } from './components/etc/loader/loader.component';
+import { WalletModalComponent } from './components/etc/modals/wallet-modal/wallet-modal.component';
 import { DarkmodeToggleComponent } from './components/header/darkmode-toggle/darkmode-toggle.component';
 import { HeaderLinksComponent } from './components/header/header-links/header-links.component';
 import { HeaderLogoComponent } from './components/header/header-logo/header-logo.component';
-import { HeaderComponent } from './components/header/header.component';
-import { localStorageSyncReducer, reducers } from './store/app.reducer';
-import { WalletModalComponent } from './components/etc/modals/wallet-modal/wallet-modal.component';
 import { HeaderWalletButtonComponent } from './components/header/header-wallet-button/header-wallet-button.component';
-import { ClickOutsideDirective } from './directives/click-outside.directive';
-import { environment } from 'src/environments/environment';
-import { AppEffects } from './store/app.effects';
-import { HomeComponent } from './components/pages/home/home.component';
-import { AddContractComponent } from './components/pages/add-contract/add-contract.component';
-import { LoaderComponent } from './components/etc/loader/loader.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ContractInteractionComponent } from './components/pages/contract-interaction/contract-interaction.component';
-import { ReadFieldComponent } from './components/pages/contract-interaction/read-field/read-field.component';
-import { WriteFieldComponent } from './components/pages/contract-interaction/write-field/write-field.component';
-import { ContractInputFieldComponent } from './components/pages/contract-interaction/contract-input-field/contract-input-field.component';
-import { ToastrModule } from 'ngx-toastr';
-import { EnsureInputDirective } from './directives/ensure-input.directive';
+import { HeaderComponent } from './components/header/header.component';
 import { PendingTxComponent } from './components/header/pending-tx/pending-tx.component';
-import { contractStateReducer, contractStateKey } from './components/pages/contract-interaction/store/contract.reducer';
+import { PendingTxEffects } from './components/header/pending-tx/store/pendingtx.effects';
 import {
   pendingTxLocalStorageSyncReducer,
   pendingTxReducer,
   pendingTxStateKey,
 } from './components/header/pending-tx/store/pendingtx.reducer';
-import { PendingTxEffects } from './components/header/pending-tx/store/pendingtx.effects';
+import { AddContractComponent } from './components/pages/add-contract/add-contract.component';
+import { ContractInteractionComponent } from './components/pages/contract-interaction/contract-interaction.component';
+import { FunctionComponent } from './components/pages/contract-interaction/function/function.component';
+import { ReadFieldComponent } from './components/pages/contract-interaction/function/read-field/read-field.component';
+import { WriteFieldComponent } from './components/pages/contract-interaction/function/write-field/write-field.component';
+import { ContractInputFieldComponent } from './components/pages/contract-interaction/reusable/contract-input-field/contract-input-field.component';
+import { EditInputComponent } from './components/pages/contract-interaction/reusable/edit-input/edit-input.component';
+import { EditTextAreaComponent } from './components/pages/contract-interaction/reusable/edit-text-area/edit-text-area.component';
 import { ContractEffects } from './components/pages/contract-interaction/store/contract.effects';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { contractStateKey, contractStateReducer } from './components/pages/contract-interaction/store/contract.reducer';
+import { HomeComponent } from './components/pages/home/home.component';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { EditTextDirective } from './directives/edit-text.directive';
-import { EditInputComponent } from './components/pages/contract-interaction/edit-input/edit-input.component';
-import { EditTextAreaComponent } from './components/pages/contract-interaction/edit-text-area/edit-text-area.component';
-import { EthereumService } from './services/ethereum.service';
+import { EnsureInputDirective } from './directives/ensure-input.directive';
 import { WalletResolver } from './resolver/WalletResolver';
+import { EthereumService } from './services/ethereum.service';
+import { AppEffects } from './store/app.effects';
+import { localStorageSyncReducer, reducers } from './store/app.reducer';
+import { ContractHeaderComponent } from './components/pages/contract-interaction/contract-header/contract-header.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -74,6 +78,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     EditTextDirective,
     EditInputComponent,
     EditTextAreaComponent,
+    FunctionComponent,
+    ContractHeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -103,6 +109,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
       progressBar: true,
     }),
     FontAwesomeModule,
+    CommonModule,
+    DragDropModule,
   ],
   providers: [
     {

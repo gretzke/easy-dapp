@@ -122,6 +122,14 @@ export class AddContractComponent implements OnInit, OnDestroy {
               config: {
                 name: '',
                 description: '',
+                read: {
+                  fields: {},
+                  order: [],
+                },
+                write: {
+                  fields: {},
+                  order: [],
+                },
               },
               owner: data.user,
               url: '',

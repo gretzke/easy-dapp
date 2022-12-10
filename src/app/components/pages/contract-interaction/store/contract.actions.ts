@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { ContractDataType, IDapp, IContractState, IDappConfig } from 'src/types/abi';
+import { ContractDataType, IDapp, IContractState, IDappConfig, FunctionType } from 'src/types/abi';
 import { IContract } from 'src/types/api';
 
 export const setContract = createAction('[Contract] set contract', props<{ src: string; contract?: IDapp }>());
@@ -23,3 +23,5 @@ export const readContract = createAction('[CONTRACT] read contract', props<{ src
 export const createDapp = createAction('[CONTRACT] create dapp', props<{ src: string; contract: IContract }>());
 
 export const saveDapp = createAction('[CONTRACT] save dapp', props<{ src: string; id: string; config: IDappConfig }>());
+
+export const saveOrder = createAction('[CONTRACT] save order', props<{ src: string; functionType: FunctionType; order: string[] }>());

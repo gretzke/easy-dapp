@@ -1,17 +1,15 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faFloppyDisk, faPenToSquare, faCodeFork } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
 import { Subscription } from 'rxjs';
 import { ContractBuilder } from 'src/app/services/contract/ContractBuilder';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { FirebaseService } from 'src/app/services/firebase.service';
 import { getDapp } from 'src/app/store/app.actions';
-import { walletSelector } from 'src/app/store/app.selector';
-import { ABIItem, IDapp } from 'src/types/abi';
-import { createDapp, getContractState, saveDapp } from './store/contract.actions';
-import { contractSelector } from './store/contract.selector';
+import { AbiFunctions, FunctionType, IDapp, IDappConfig } from 'src/types/abi';
+import { getContractState, saveOrder } from './store/contract.actions';
+import { configSelector, contractSelector } from './store/contract.selector';
 
 @Component({
   selector: 'app-contract-interaction',
@@ -20,27 +18,19 @@ import { contractSelector } from './store/contract.selector';
 })
 export class ContractInteractionComponent implements OnInit, OnDestroy {
   @Input() public firstDeployment = false;
-  public faFloppyDisk = faFloppyDisk;
-  public faPenToSquare = faPenToSquare;
-  public faCodeFork = faCodeFork;
   public read = true;
   public edit = true;
   public contractBuilder?: ContractBuilder;
-  public readFunctions?: ABIItem[];
-  public writeFunctions?: ABIItem[];
+  public readFunctions: AbiFunctions = {};
+  public writeFunctions: AbiFunctions = {};
   public contract?: IDapp;
-  public urlError = '';
-  public user = '';
+  public config?: IDappConfig;
+  public moveable = false;
   private subscription: Subscription;
 
-  constructor(
-    private route: ActivatedRoute,
-    private store: Store<{}>,
-    private ethereum: EthereumService,
-    private firebase: FirebaseService
-  ) {
+  constructor(private route: ActivatedRoute, private store: Store<{}>, private ethereum: EthereumService) {
     this.subscription = this.store.select(contractSelector).subscribe((contract) => {
-      if (contract) {
+      if (contract !== undefined) {
         this.contract = contract;
         this.contractBuilder = this.ethereum.getContractInstance(contract.address, contract.abi);
         this.readFunctions = this.contractBuilder.readFunctions;
@@ -49,9 +39,27 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
       }
     });
     this.subscription.add(
-      this.store.select(walletSelector).subscribe((wallet) => {
-        if (wallet) {
-          this.user = wallet.address;
+      this.store.select(configSelector).subscribe((config) => {
+        if (config) {
+          const readOrder = [...config.read.order];
+          for (const signature of Object.keys(this.readFunctions)) {
+            if (readOrder.includes(signature)) continue;
+            readOrder.push(signature);
+          }
+          if (readOrder.length !== config.read.order.length) {
+            this.store.dispatch(saveOrder({ src: ContractInteractionComponent.name, functionType: 'read', order: readOrder }));
+            return;
+          }
+
+          const writeOrder = [...config.write.order];
+          for (const signature of Object.keys(this.writeFunctions)) {
+            if (writeOrder.includes(signature)) continue;
+            writeOrder.push(signature);
+          }
+          if (writeOrder.length !== config.write.order.length) {
+            this.store.dispatch(saveOrder({ src: ContractInteractionComponent.name, functionType: 'write', order: writeOrder }));
+          }
+          this.config = config;
         }
       })
     );
@@ -64,59 +72,12 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
     }
   }
 
-  setName(name: string) {
-    if (!this.contract) return;
-    name = name.replace(/\s+/g, ' ');
-    if (this.firstDeployment) this.setUrl(name);
-    this.contract = {
-      ...this.contract,
-      config: {
-        ...this.contract.config,
-        name,
-      },
-    };
-  }
-
-  setDescription(description: string) {
-    if (!this.contract) return;
-    this.contract = {
-      ...this.contract,
-      config: {
-        ...this.contract.config,
-        description,
-      },
-    };
-  }
-
-  async setUrl(url: string) {
-    if (!this.contract) return;
-    this.contract = { ...this.contract, url: url.replace(/\s+$/, '').replace(/ /g, '-').toLowerCase() };
-    if ((await this.firebase.dappExists(this.id(this.user, this.contract.url))).data) {
-      this.urlError = 'This URL already exists';
-    } else {
-      this.urlError = '';
-    }
-  }
-
-  saveDapp() {
-    if (!this.contract) return;
-    if (this.firstDeployment) {
-      if (this.urlError !== '') return;
-      this.store.dispatch(createDapp({ src: ContractInteractionComponent.name, contract: this.contract }));
-    } else {
-      if (this.user === this.contract.owner) {
-        this.store.dispatch(
-          saveDapp({
-            src: ContractInteractionComponent.name,
-            id: this.id(this.contract.owner, this.contract.url),
-            config: this.contract.config,
-          })
-        );
-      } else {
-        this.store.dispatch(createDapp({ src: ContractInteractionComponent.name, contract: this.contract }));
-      }
-    }
-    this.edit = false;
+  drop(event: CdkDragDrop<string[]>, type: FunctionType) {
+    if (!this.config) return;
+    const newOrder = [...this.config[type].order];
+    moveItemInArray(newOrder, event.previousIndex, event.currentIndex);
+    this.store.dispatch(saveOrder({ src: ContractInteractionComponent.name, functionType: type, order: newOrder }));
+    this.moveable = false;
   }
 
   private id(owner: string, url: string) {

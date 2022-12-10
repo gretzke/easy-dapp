@@ -22,6 +22,12 @@
     @apply px-4;
     @apply py-4;
 }
+.cdk-drag-preview {
+    @apply dark:text-white    
+}
+.cdk-drag-placeholder {
+    opacity: 0;
+}
 
 .button-group {
     @apply flex; @apply justify-center; @apply isolate inline-flex; @apply -space-x-px; @apply rounded-md; @apply shadow-sm;

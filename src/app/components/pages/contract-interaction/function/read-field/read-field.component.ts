@@ -1,40 +1,20 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { faChevronUp, faEye, faEyeSlash, faUpDown } from '@fortawesome/free-solid-svg-icons';
+import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
-import { readContract } from '../store/contract.actions';
-import { contractStateSelector } from '../store/contract.selector';
+import { readContract } from '../../store/contract.actions';
+import { contractStateSelector } from '../../store/contract.selector';
 
 @Component({
-  selector: '[app-read-field]',
+  selector: 'app-read-field',
   templateUrl: './read-field.component.html',
   styleUrls: ['./read-field.component.scss'],
-  animations: [
-    trigger('collapse', [
-      transition(':enter', [style({ height: '0', opacity: 0 }), animate('200ms ease-in', style({ height: '*', opacity: 1 }))]),
-      transition(':leave', [animate('200ms ease-in', style({ height: '0', opacity: 0 }))]),
-    ]),
-    trigger('iconRotation', [
-      state('open', style({ transform: 'rotate(0)' })),
-      state('closed', style({ transform: 'rotate(180deg)' })),
-      transition('open => closed', [animate('200ms ease-in')]),
-      transition('closed => open', [animate('200ms ease-in')]),
-    ]),
-  ],
 })
 export class ReadFieldComponent implements OnInit {
-  faChevronUp = faChevronUp;
-  faEye = faEye;
-  faEyeSlash = faEyeSlash;
-  faUpDown = faUpDown;
+  @Input() signature: string = '';
   @Input() field?: ABIItem;
-  @Input() index = 0;
-  @Input() collapsed = false;
   @Input() edit = false;
-  @Input() hidden = false;
-  @Output() hide = new EventEmitter<boolean>();
+
   public args: ContractDataType[] = [];
   public contractState$: Observable<IContractState | undefined>;
 
@@ -71,10 +51,5 @@ export class ReadFieldComponent implements OnInit {
       }
     }
     return true;
-  }
-
-  toggleHidden() {
-    this.hidden = !this.hidden;
-    this.hide.emit(this.hidden);
   }
 }

@@ -24,17 +24,20 @@ interface ABIItem {
   stateMutability: StateMutabilityRead | StateMutabilityWrite;
   inputs: VariableType[];
   outputs: VariableType[];
-  signature: string;
 }
 
 export type ABI = ABIItem[];
+
+export interface AbiFunctions {
+  [signature: string]: ABIItem;
+}
 
 export type ValidDataType = BigNumber | BigNumberish | string | boolean | number;
 
 export type ContractDataType = ValidDataType | ValidDataType[];
 
 export interface IContractState {
-  [x: string]: ContractDataType;
+  [signature: string]: ContractDataType;
 }
 
 export interface IAbiData {
@@ -42,9 +45,33 @@ export interface IAbiData {
   abi: string;
 }
 
+export interface IBaseFieldConfig {
+  name: string;
+  description: string;
+  hidden: boolean;
+}
+
+export interface IReadFieldConfig extends IBaseFieldConfig {}
+
+export interface IWriteFieldConfig extends IBaseFieldConfig {}
+
+export type FunctionType = 'read' | 'write';
+
 export interface IDappConfig {
   name: string;
   description: string;
+  read: {
+    fields: {
+      [signature: string]: IReadFieldConfig;
+    };
+    order: string[];
+  };
+  write: {
+    fields: {
+      [signature: string]: IWriteFieldConfig;
+    };
+    order: string[];
+  };
 }
 
 export interface IDapp {
