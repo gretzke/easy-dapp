@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { catchError, concatMap, EMPTY, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
 import { IAbiResponse, IApiError, IMessageResponse, IVerificationResponse } from '../../types/api';
 import { EthereumService } from '../services/ethereum.service';
 import { FirebaseService } from '../services/firebase.service';
@@ -17,6 +17,7 @@ import {
   logout,
   notify,
   resetUser,
+  resetWallet,
   setDapps,
   setUser,
   setWallet,
@@ -61,6 +62,17 @@ export class AppEffects {
         )
       )
     )
+  );
+
+  resetWallet$ = createEffect(
+    (): any =>
+      this.actions$.pipe(
+        ofType(resetWallet),
+        tap(() => {
+          if (sessionStorage.getItem('jwt') !== null) this.store.dispatch(logout({ src: AppEffects.name }));
+        })
+      ),
+    { dispatch: false }
   );
 
   logout$ = createEffect((): any =>

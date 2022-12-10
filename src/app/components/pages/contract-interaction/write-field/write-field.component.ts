@@ -49,4 +49,8 @@ export class WriteFieldComponent implements OnInit {
     }
     return true;
   }
+
+  setArg(index: number, val: ContractDataType) {
+    this.args[index] = val;
+  }
 }

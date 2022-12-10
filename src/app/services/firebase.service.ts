@@ -5,6 +5,7 @@ import { Firestore, getFirestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, Functions, getFunctions, httpsCallable } from 'firebase/functions';
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { IDappConfig } from 'src/types/abi';
 import { IContract, ICreateDappResponse } from 'src/types/api';
 import { IAbiResponse, IDappResponse, IDappsResponse, IMessageResponse, IVerificationResponse } from 'src/types/api';
 
@@ -56,6 +57,10 @@ export class FirebaseService {
         url: contract.url,
       }) as Promise<ICreateDappResponse>
     );
+  }
+
+  public saveDapp(id: string, config: IDappConfig): Observable<{}> {
+    return from(this.post('saveDapp', { id, config }) as Promise<{}>);
   }
 
   public getDapps(chainId: number): Observable<IDappsResponse> {

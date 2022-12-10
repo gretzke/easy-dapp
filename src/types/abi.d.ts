@@ -24,6 +24,7 @@ interface ABIItem {
   stateMutability: StateMutabilityRead | StateMutabilityWrite;
   inputs: VariableType[];
   outputs: VariableType[];
+  signature: string;
 }
 
 export type ABI = ABIItem[];

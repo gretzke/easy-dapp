@@ -18,6 +18,7 @@ import {
   setContract,
   readContract,
   setContractStateVariable,
+  saveDapp,
 } from './contract.actions';
 import { contractSelector } from './contract.selector';
 
@@ -107,6 +108,26 @@ export class ContractEffects {
             map(() => notify({ src: ContractEffects.name, notificationType: 'success', message: 'Dapp saved' })),
             catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
           );
+      })
+    )
+  );
+
+  saveDapp$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(saveDapp),
+      withLatestFrom(this.store.select(userSelector)),
+      mergeMap(([action, user]) => {
+        if (user === null) {
+          this.store.dispatch(login({ src: ContractEffects.name }));
+          return this.actions$.pipe(
+            ofType(setUser),
+            concatMap(() => of(action))
+          );
+        }
+        return this.firebase.saveDapp(action.id, action.config).pipe(
+          map(() => notify({ src: ContractEffects.name, notificationType: 'success', message: 'Dapp saved' })),
+          catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
+        );
       })
     )
   );

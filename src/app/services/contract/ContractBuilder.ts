@@ -1,6 +1,6 @@
 import { ContractTransaction, ethers } from 'ethers';
 import { from, Observable } from 'rxjs';
-import { ABI, ContractDataType, IContractState } from 'src/types/abi';
+import { ABI, ABIItem, ContractDataType, IContractState } from 'src/types/abi';
 import { EthereumService } from '../ethereum.service';
 
 export class ContractBuilder {
@@ -40,7 +40,10 @@ export class ContractBuilder {
 export class ContractABI {
   public abi: ABI;
   constructor(abi: string) {
-    this.abi = JSON.parse(abi);
+    this.abi = JSON.parse(abi).map((f: ABIItem) => {
+      const signature = f.name + '(' + f.inputs.map((i) => i.type).join(',') + ')';
+      return { ...f, signature };
+    });
   }
 
   public readFunctions(): ABI {

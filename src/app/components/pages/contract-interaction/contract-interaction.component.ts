@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faFloppyDisk, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faPenToSquare, faCodeFork } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
 import { Subscription } from 'rxjs';
@@ -10,7 +10,7 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { getDapp } from 'src/app/store/app.actions';
 import { walletSelector } from 'src/app/store/app.selector';
 import { ABIItem, IDapp } from 'src/types/abi';
-import { createDapp, getContractState } from './store/contract.actions';
+import { createDapp, getContractState, saveDapp } from './store/contract.actions';
 import { contractSelector } from './store/contract.selector';
 
 @Component({
@@ -22,6 +22,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   @Input() public firstDeployment = false;
   public faFloppyDisk = faFloppyDisk;
   public faPenToSquare = faPenToSquare;
+  public faCodeFork = faCodeFork;
   public read = true;
   public edit = false;
   public contractBuilder?: ContractBuilder;
@@ -98,10 +99,24 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   }
 
   saveDapp() {
+    if (!this.contract) return;
     if (this.firstDeployment) {
       if (this.urlError !== '') return;
-      this.store.dispatch(createDapp({ src: ContractInteractionComponent.name, contract: this.contract! }));
+      this.store.dispatch(createDapp({ src: ContractInteractionComponent.name, contract: this.contract }));
+    } else {
+      if (this.user === this.contract.owner) {
+        this.store.dispatch(
+          saveDapp({
+            src: ContractInteractionComponent.name,
+            id: this.id(this.contract.owner, this.contract.url),
+            config: this.contract.config,
+          })
+        );
+      } else {
+        this.store.dispatch(createDapp({ src: ContractInteractionComponent.name, contract: this.contract }));
+      }
     }
+    this.edit = false;
   }
 
   private id(owner: string, url: string) {

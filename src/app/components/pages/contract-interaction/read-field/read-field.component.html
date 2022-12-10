@@ -1,4 +1,4 @@
-<div class="p-6 text-xl" *ngIf="field !== undefined && (contractState$ | async) as contractState">
+<div class="pt-6 text-xl" *ngIf="field !== undefined && (contractState$ | async) as contractState">
   <div class="flex justify-between items-center">
     <span class="text-xl mr-2">{{ field.name }}</span>
     <div class="border-b w-full flex-grow"></div>
@@ -25,3 +25,4 @@
     </div>
   </div>
 </div>
+<!-- {{ field | json }} -->

@@ -29,7 +29,12 @@
       </div>
     </div>
     <button class="button-primary" *ngIf="!edit" (click)="edit = true"><fa-icon [icon]="faPenToSquare" class="mr-2"></fa-icon> Edit</button>
-    <button class="button-primary" *ngIf="edit" (click)="saveDapp()"><fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save</button>
+    <button class="button-primary" *ngIf="edit && user === contract.owner" (click)="saveDapp()">
+      <fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save
+    </button>
+    <button class="button-primary" *ngIf="edit && user !== contract.owner" (click)="saveDapp()">
+      <fa-icon [icon]="faCodeFork" class="mr-2"></fa-icon> Fork
+    </button>
   </div>
   <div>
     <div class="block">

@@ -1,4 +1,4 @@
-<div class="p-6 text-xl" *ngIf="field !== undefined">
+<div class="pt-6 text-xl" *ngIf="field !== undefined">
   <div class="flex justify-between items-center">
     <span class="text-xl mr-2">{{ field.name }}</span>
     <div class="border-b w-full flex-grow"></div>
@@ -8,13 +8,13 @@
   </div>
   <div *ngIf="!collapsed" @collapse>
     <app-contract-input-field
-      class="block my-5"
+      class="block mt-5"
       *ngFor="let input of field.inputs; let i = index"
       [type]="input"
-      (valueUpdated)="args[i] = $event"
+      (valueUpdated)="setArg(i, $event)"
     ></app-contract-input-field>
     <app-contract-input-field *ngIf="field.stateMutability === 'payable'"></app-contract-input-field>
     <p *ngIf="field.stateMutability === 'payable'">TODO: implement sending value</p>
-    <button class="button-primary" (click)="sendTx()" [disabled]="!allArgsValid">Send Transaction</button>
+    <button class="button-primary mt-5" (click)="sendTx()" [disabled]="!allArgsValid">Send Transaction</button>
   </div>
 </div>
