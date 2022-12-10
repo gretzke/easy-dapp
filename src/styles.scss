@@ -4,14 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.rounded-l-config {
-    @apply rounded-l-2xl;
-}
-
-.rounded-r-config {
-    @apply rounded-r-2xl;
-}
-
 .bg {
     @apply bg-white;
     @apply text-gray-900;
@@ -29,6 +21,22 @@
     @apply md:rounded;
     @apply px-4;
     @apply py-4;
+}
+
+.button-group {
+    @apply flex; @apply justify-center; @apply isolate inline-flex; @apply -space-x-px; @apply rounded-md; @apply shadow-sm;
+
+    > .button {
+        @apply h-10; @apply aspect-square; @apply border; @apply text-sm; @apply text-muted; @apply focus:z-10; @apply bg-white; @apply hover:bg-gray-50; @apply border-gray-300; @apply focus:border-custom-light-500; @apply dark:bg-gray-700; @apply dark:hover:bg-gray-800; @apply dark:border-white; @apply dark:focus:border-custom-dark-500; @apply dark:text-white;
+    }
+
+    > .button-l {
+        @apply rounded-l;
+    }
+
+    > .button-r {
+        @apply rounded-r;
+    }
 }
 
 .tab {

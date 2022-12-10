@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Input, OnInit } from '@angular/core';
-import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { faChevronUp, faEye, faEyeSlash, faUpDown } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
@@ -26,9 +26,15 @@ import { contractStateSelector } from '../store/contract.selector';
 })
 export class ReadFieldComponent implements OnInit {
   faChevronUp = faChevronUp;
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
+  faUpDown = faUpDown;
   @Input() field?: ABIItem;
   @Input() index = 0;
   @Input() collapsed = false;
+  @Input() edit = false;
+  @Input() hidden = false;
+  @Output() hide = new EventEmitter<boolean>();
   public args: ContractDataType[] = [];
   public contractState$: Observable<IContractState | undefined>;
 
@@ -65,5 +71,10 @@ export class ReadFieldComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  toggleHidden() {
+    this.hidden = !this.hidden;
+    this.hide.emit(this.hidden);
   }
 }

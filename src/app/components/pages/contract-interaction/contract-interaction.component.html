@@ -47,7 +47,7 @@
     </div>
   </div>
   <div *ngIf="read">
-    <div *ngFor="let field of readFunctions; let i = index" app-read-field [field]="field" [index]="i"></div>
+    <div *ngFor="let field of readFunctions; let i = index" app-read-field [field]="field" [index]="i" [edit]="edit"></div>
   </div>
   <div *ngIf="!read">
     <div *ngFor="let field of writeFunctions; let i = index" app-write-field [field]="field" [index]="i"></div>

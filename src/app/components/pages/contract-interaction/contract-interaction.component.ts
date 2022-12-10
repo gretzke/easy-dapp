@@ -24,7 +24,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   public faPenToSquare = faPenToSquare;
   public faCodeFork = faCodeFork;
   public read = true;
-  public edit = false;
+  public edit = true;
   public contractBuilder?: ContractBuilder;
   public readFunctions?: ABIItem[];
   public writeFunctions?: ABIItem[];
