@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
+import { ContractDataType, IContractState, IFieldWithConfig, VariableType } from 'src/types/abi';
 import { readContract } from '../../store/contract.actions';
 import { contractStateSelector } from '../../store/contract.selector';
 
@@ -12,8 +12,7 @@ import { contractStateSelector } from '../../store/contract.selector';
 })
 export class ReadFieldComponent implements OnInit {
   @Input() signature: string = '';
-  @Input() field?: ABIItem;
-  @Input() edit = false;
+  @Input() state!: IFieldWithConfig;
 
   public args: ContractDataType[] = [];
   public contractState$: Observable<IContractState | undefined>;
@@ -23,12 +22,12 @@ export class ReadFieldComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.args = new Array(this.field?.inputs.length);
+    this.args = new Array(this.state.field.inputs.length);
   }
 
   public sendTx() {
     if (this.allArgsValid) {
-      this.store.dispatch(readContract({ src: ReadFieldComponent.name, method: this.field!.name, args: [...this.args] }));
+      this.store.dispatch(readContract({ src: ReadFieldComponent.name, method: this.state.field.name, args: [...this.args] }));
     }
   }
 

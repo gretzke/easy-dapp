@@ -1,5 +1,5 @@
 <div class="card" *ngIf="contract">
-  <app-contract-header [contract]="contract" [edit]="edit" [firstDeployment]="firstDeployment"></app-contract-header>
+  <app-contract-header></app-contract-header>
   <div>
     <div class="block">
       <div class="border-b border-gray-200">
@@ -10,30 +10,28 @@
       </div>
     </div>
   </div>
-  <div *ngIf="read && config" cdkDropList (cdkDropListDropped)="drop($event, 'read')">
-    <div
-      app-function
-      *ngFor="let signature of config.read.order"
-      type="read"
-      [signature]="signature"
-      [field]="readFunctions[signature]"
-      [edit]="edit"
-      cdkDrag
-      [cdkDragDisabled]="!moveable"
-      (moveable)="moveable = $event"
-    ></div>
-  </div>
-  <div *ngIf="!read && config" cdkDropList (cdkDropListDropped)="drop($event, 'write')">
-    <div
-      app-function
-      *ngFor="let signature of config.write.order"
-      type="write"
-      [signature]="signature"
-      [field]="writeFunctions[signature]"
-      [edit]="edit"
-      cdkDrag
-      [cdkDragDisabled]="!moveable"
-      (moveable)="moveable = $event"
-    ></div>
+  <div *ngIf="config">
+    <div *ngIf="read" cdkDropList (cdkDropListDropped)="saveOrder($event, 'read')">
+      <div
+        app-function
+        *ngFor="let signature of config.read.order"
+        type="read"
+        [signature]="signature"
+        cdkDrag
+        [cdkDragDisabled]="!moveable"
+        (moveable)="moveable = $event"
+      ></div>
+    </div>
+    <div *ngIf="!read" cdkDropList (cdkDropListDropped)="saveOrder($event, 'write')">
+      <div
+        app-function
+        *ngFor="let signature of config.write.order"
+        type="write"
+        [signature]="signature"
+        cdkDrag
+        [cdkDragDisabled]="!moveable"
+        (moveable)="moveable = $event"
+      ></div>
+    </div>
   </div>
 </div>

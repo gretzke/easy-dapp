@@ -1,99 +1,44 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { faCodeFork, faFloppyDisk, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { ethers } from 'ethers';
-import { Subscription } from 'rxjs';
-import { FirebaseService } from 'src/app/services/firebase.service';
-import { walletSelector } from 'src/app/store/app.selector';
-import { IDapp } from 'src/types/abi';
-import { createDapp, saveDapp } from '../store/contract.actions';
+import { saveDapp, setDescription, setEdit, setName, setUrl } from '../store/contract.actions';
+import { configSelector, deploymentTypeSelector, editSelector, urlSelector } from '../store/contract.selector';
 
 @Component({
   selector: 'app-contract-header',
   templateUrl: './contract-header.component.html',
   styleUrls: ['./contract-header.component.scss'],
 })
-export class ContractHeaderComponent implements OnInit, OnDestroy {
+export class ContractHeaderComponent implements OnInit {
   public faFloppyDisk = faFloppyDisk;
   public faPenToSquare = faPenToSquare;
   public faCodeFork = faCodeFork;
-  @Input() public firstDeployment = false;
-  @Input() edit = false;
-  @Input() contract?: IDapp;
-  public urlError = '';
-  public user = '';
-  private subscription: Subscription;
+  public edit$ = this.store.select(editSelector);
+  public deploymentType$ = this.store.select(deploymentTypeSelector);
+  public config$ = this.store.select(configSelector);
+  public url$ = this.store.select(urlSelector);
 
-  constructor(private store: Store<{}>, private firebase: FirebaseService) {
-    this.subscription = this.store.select(walletSelector).subscribe((wallet) => {
-      if (wallet) {
-        this.user = wallet.address;
-      }
-    });
-  }
+  constructor(private store: Store<{}>) {}
 
   ngOnInit(): void {}
 
   setName(name: string) {
-    if (!this.contract) return;
-    name = name.replace(/\s+/g, ' ');
-    if (this.firstDeployment) this.setUrl(name);
-    this.contract = {
-      ...this.contract,
-      config: {
-        ...this.contract.config,
-        name,
-      },
-    };
+    this.store.dispatch(setName({ src: ContractHeaderComponent.name, name }));
   }
 
   setDescription(description: string) {
-    if (!this.contract) return;
-    this.contract = {
-      ...this.contract,
-      config: {
-        ...this.contract.config,
-        description,
-      },
-    };
+    this.store.dispatch(setDescription({ src: ContractHeaderComponent.name, description }));
   }
 
   async setUrl(url: string) {
-    if (!this.contract) return;
-    this.contract = { ...this.contract, url: url.replace(/\s+$/, '').replace(/ /g, '-').toLowerCase() };
-    if ((await this.firebase.dappExists(this.id(this.user, this.contract.url))).data) {
-      this.urlError = 'This URL already exists';
-    } else {
-      this.urlError = '';
-    }
+    this.store.dispatch(setUrl({ src: ContractHeaderComponent.name, url }));
   }
 
-  saveDapp() {
-    if (!this.contract) return;
-    if (this.firstDeployment) {
-      if (this.urlError !== '') return;
-      this.store.dispatch(createDapp({ src: ContractHeaderComponent.name, contract: this.contract }));
-    } else {
-      if (this.user === this.contract.owner) {
-        this.store.dispatch(
-          saveDapp({
-            src: ContractHeaderComponent.name,
-            id: this.id(this.contract.owner, this.contract.url),
-            config: this.contract.config,
-          })
-        );
-      } else {
-        this.store.dispatch(createDapp({ src: ContractHeaderComponent.name, contract: this.contract }));
-      }
-    }
-    this.edit = false;
+  async saveDapp() {
+    this.store.dispatch(saveDapp({ src: ContractHeaderComponent.name }));
   }
 
-  private id(owner: string, url: string) {
-    return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(owner + url));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  public setEdit() {
+    this.store.dispatch(setEdit({ src: ContractHeaderComponent.name, edit: true }));
   }
 }

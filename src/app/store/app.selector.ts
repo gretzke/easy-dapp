@@ -13,7 +13,7 @@ export const chainIdSelector = createSelector(selectChainDataState, (state) => s
 
 export const userChainIdSelector = createSelector(selectAppState, (state) => ({
   chainId: state.chainData.chainId,
-  user: state.chainData.wallet!.address,
+  user: state.chainData.wallet?.address,
 }));
 
 export const walletSelector = createSelector(selectChainDataState, (state) => state.wallet);

@@ -8,7 +8,7 @@ import { ethers } from 'ethers';
 import { firstValueFrom, from, Observable, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { chains } from 'src/helpers/chainConfig';
-import { getDapps, resetWallet, setChainId, userChanged } from '../store/app.actions';
+import { getDapps, resetWallet, setChainId, walletChanged } from '../store/app.actions';
 import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
 
@@ -82,7 +82,7 @@ export class EthereumService {
       console.log('address connected', data.address);
       if (data.address) {
         this.signer = (await fetchSigner()) as ethers.Signer;
-        this.store.dispatch(userChanged({ src: EthereumService.name, address: data.address }));
+        this.store.dispatch(walletChanged({ src: EthereumService.name, address: data.address }));
       } else {
         this.store.dispatch(resetWallet({ src: EthereumService.name }));
         this.store.dispatch(getDapps({ src: EthereumService.name }));

@@ -8,7 +8,7 @@ export const setChainId = createAction('[CHAIN DATA] set chain id', props<{ src:
 
 export const connectWallet = createAction('[CHAIN DATA] connect wallet', props<{ src: string }>());
 
-export const userChanged = createAction('[CHAIN DATA] wallet changed', props<{ src: string; address: string }>());
+export const walletChanged = createAction('[CHAIN DATA] wallet changed', props<{ src: string; address: string }>());
 
 export const setWallet = createAction('[CHAIN DATA] set wallet', props<{ src: string; wallet: IWallet }>());
 

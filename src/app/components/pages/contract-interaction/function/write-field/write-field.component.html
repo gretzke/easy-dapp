@@ -1,4 +1,4 @@
-<div *ngIf="field">
+<div *ngIf="state.field as field">
   <app-contract-input-field
     class="block mt-5"
     *ngFor="let input of field.inputs; let i = index"

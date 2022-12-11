@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, concatMap, EMPTY, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
-import { IAbiResponse, IApiError, IMessageResponse, IVerificationResponse } from '../../types/api';
+import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { getErrorMessage, handleError } from 'src/helpers/errorMessages';
+import { IAbiResponse, IMessageResponse, IVerificationResponse } from '../../types/api';
 import { EthereumService } from '../services/ethereum.service';
 import { FirebaseService } from '../services/firebase.service';
 import { NotificationService } from '../services/notification.service';
@@ -24,7 +25,7 @@ import {
   signMessage,
   submitSignature,
   switchNetwork,
-  userChanged,
+  walletChanged,
 } from './app.actions';
 import { chainIdSelector, userSelector, walletSelector } from './app.selector';
 
@@ -50,12 +51,13 @@ export class AppEffects {
 
   setUser$ = createEffect((): any =>
     this.actions$.pipe(
-      ofType(userChanged),
+      ofType(walletChanged),
       withLatestFrom(this.store.select(userSelector)),
       mergeMap(([action, user]) =>
         this.ui.generateProfilePicture(action.address).pipe(
           tap(() => {
-            if (sessionStorage.getItem('jwt') === null || (user && user.address !== action.address))
+            const token = sessionStorage.getItem('jwt');
+            if ((token === null && user !== null) || (token !== null && (user === null || user.address !== action.address)))
               this.store.dispatch(logout({ src: AppEffects.name }));
           }),
           map((img) => setWallet({ src: AppEffects.name, wallet: { address: action.address, img } }))
@@ -119,7 +121,7 @@ export class AppEffects {
             });
           }),
           catchError((e: Error) => {
-            const error = this.handleError(e.message);
+            const error = handleError(e.message);
             return of(abiError({ src: AppEffects.name, message: error.message, details: error.details }));
           })
         )
@@ -144,7 +146,7 @@ export class AppEffects {
             return signMessage({ src: AppEffects.name, message: res.data.message });
           }),
           catchError((e: Error) => {
-            const message = this.getErrorMessage(e.message);
+            const message = getErrorMessage(e.message);
             return of(notify({ src: AppEffects.name, notificationType: 'error', message }));
           })
         );
@@ -173,7 +175,7 @@ export class AppEffects {
             return setUser({ src: AppEffects.name, user: res.data });
           }),
           catchError((e: Error) => {
-            const message = this.getErrorMessage(e.message);
+            const message = getErrorMessage(e.message);
             return of(notify({ src: AppEffects.name, notificationType: 'error', message }));
           })
         )
@@ -189,23 +191,4 @@ export class AppEffects {
       ),
     { dispatch: false }
   );
-
-  private handleError(errString: string): IApiError {
-    const e = JSON.parse(errString).error;
-    const message = e.message;
-    const details = e.details;
-    return { message, details };
-  }
-
-  private getErrorMessage(errString: string): string {
-    const e = JSON.parse(errString).error;
-    let message = e.message;
-    let details = e.details;
-    if (message === 'PARSE_ERROR') {
-      if (details === 'INVALID_ADDRESS') {
-        message = 'Invalid address';
-      }
-    }
-    return message;
-  }
 }

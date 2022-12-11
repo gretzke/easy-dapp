@@ -1,7 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faChevronUp, faEye, faEyeSlash, faUpDown } from '@fortawesome/free-solid-svg-icons';
-import { ABIItem, FunctionType } from 'src/types/abi';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { FunctionType, IFieldWithConfig } from 'src/types/abi';
+import { updateFunctionConfig } from '../store/contract.actions';
+import { editSelector, fieldSelector } from '../store/contract.selector';
 
 @Component({
   selector: '[app-function]',
@@ -25,22 +29,27 @@ export class FunctionComponent implements OnInit {
   faEye = faEye;
   faEyeSlash = faEyeSlash;
   faUpDown = faUpDown;
+  public edit$: Observable<boolean>;
+  public field$!: Observable<IFieldWithConfig>;
   @Input() type: FunctionType = 'read';
   @Input() signature: string = '';
-  @Input() field?: ABIItem;
-  @Input() edit = false;
   @Input() hidden = false;
   @Input() collapsed = false;
-  @Output() hide = new EventEmitter<boolean>();
   @Output() moveable = new EventEmitter<boolean>();
 
-  constructor() {}
+  constructor(private store: Store<{}>) {
+    this.edit$ = this.store.select(editSelector);
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.field$ = this.store.select(fieldSelector(this.signature));
+  }
 
   toggleHidden() {
     this.hidden = !this.hidden;
-    this.hide.emit(this.hidden);
+    this.store.dispatch(
+      updateFunctionConfig({ src: FunctionComponent.name, signature: this.signature, key: 'hidden', value: this.hidden })
+    );
   }
 
   clickPressed() {

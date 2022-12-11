@@ -1,8 +1,7 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit } from '@angular/core';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { ABIItem, ContractDataType } from 'src/types/abi';
+import { ContractDataType, IFieldWithConfig } from 'src/types/abi';
 import { sendContractTx } from '../../store/contract.actions';
 
 @Component({
@@ -12,18 +11,19 @@ import { sendContractTx } from '../../store/contract.actions';
 })
 export class WriteFieldComponent implements OnInit {
   faChevronUp = faChevronUp;
-  @Input() field?: ABIItem;
+  @Input() signature: string = '';
+  @Input() state!: IFieldWithConfig;
   public args: ContractDataType[] = [];
 
   constructor(private store: Store<{}>) {}
 
   ngOnInit(): void {
-    this.args = new Array(this.field?.inputs.length);
+    this.args = new Array(this.state.field.inputs.length);
   }
 
   public sendTx() {
     if (this.allArgsValid) {
-      this.store.dispatch(sendContractTx({ src: WriteFieldComponent.name, method: this.field!.name, args: this.args }));
+      this.store.dispatch(sendContractTx({ src: WriteFieldComponent.name, method: this.state.field.name, args: this.args }));
     }
   }
 

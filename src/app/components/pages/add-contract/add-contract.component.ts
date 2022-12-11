@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged, Observable, Subscription, take } from 'rxjs';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { abiError, abiResponse, getAbi, login } from 'src/app/store/app.actions';
-import { chainIdSelector, userChainIdSelector } from 'src/app/store/app.selector';
+import { abiError, abiResponse, getAbi } from 'src/app/store/app.actions';
+import { userChainIdSelector } from 'src/app/store/app.selector';
 import { IDapp } from 'src/types/abi';
 import { setContract } from '../contract-interaction/store/contract.actions';
 import { contractSelector } from '../contract-interaction/store/contract.selector';
@@ -22,9 +21,8 @@ export class AddContractComponent implements OnInit, OnDestroy {
   public etherscanError = '';
   private subscription: Subscription;
   public contract$: Observable<IDapp | undefined>;
-  private abiId = '';
 
-  constructor(private ethereum: EthereumService, private store: Store<{}>, private actions: Actions, private router: Router) {
+  constructor(private ethereum: EthereumService, private store: Store<{}>, private actions: Actions) {
     this.form = new FormGroup({
       address: new FormControl('', [Validators.required], [this.addressValidator()]),
       abi: new FormControl('', [Validators.required], [this.jsonValidator()]),
@@ -36,7 +34,6 @@ export class AddContractComponent implements OnInit, OnDestroy {
       this.form.controls.abi.enable();
       if (this.ethereum.isAddress(value)) {
         this.fetchingEtherscan = true;
-        this.abiId = '';
         this.etherscanError = '';
         this.store.dispatch(getAbi({ src: AddContractComponent.name, address: value }));
       } else {
@@ -48,7 +45,6 @@ export class AddContractComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.actions.pipe(ofType(abiResponse)).subscribe((action) => {
         this.form.controls.abi.setValue(action.abi);
-        this.abiId = action.id;
         this.fetchingEtherscan = false;
         this.form.controls.abi.disable();
       })
@@ -66,26 +62,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit(): void {
-    // setTimeout(() => {
-    //   // todo remove after testing
-    //   this.store.dispatch(
-    //     setContract({
-    //       src: AddContractComponent.name,
-    //       contract: {
-    //         chainId: this.store,
-    //         address: '0xf689544b2fe7f026a3a263f4cf54e28bfe3944f5',
-    //         abi: '[{"inputs":[],"name":"num","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"newNum","type":"uint256"}],"name":"setNum","outputs":[],"stateMutability":"nonpayable","type":"function"}]',
-    //         config: {
-    //           name: '',
-    //           description: '',
-    //         },
-    //       },
-    //     })
-    //   );
-    //   // end todo
-    // }, 500);
-  }
+  ngOnInit(): void {}
 
   private addressValidator(): AsyncValidatorFn {
     return async (c: AbstractControl): Promise<ValidationErrors | null> => {
@@ -122,18 +99,18 @@ export class AddContractComponent implements OnInit, OnDestroy {
               config: {
                 name: '',
                 description: '',
+                functionConfig: {},
                 read: {
-                  fields: {},
                   order: [],
                 },
                 write: {
-                  fields: {},
                   order: [],
                 },
               },
-              owner: data.user,
+              owner: data.user!,
               url: '',
             },
+            firstDeployment: true,
           })
         );
       });

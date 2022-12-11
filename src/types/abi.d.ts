@@ -60,18 +60,20 @@ export type FunctionType = 'read' | 'write';
 export interface IDappConfig {
   name: string;
   description: string;
+  functionConfig: {
+    [signature: string]: IReadFieldConfig | IWriteFieldConfig;
+  };
   read: {
-    fields: {
-      [signature: string]: IReadFieldConfig;
-    };
     order: string[];
   };
   write: {
-    fields: {
-      [signature: string]: IWriteFieldConfig;
-    };
     order: string[];
   };
+}
+
+export interface IFieldWithConfig {
+  field: ABIItem;
+  config?: IReadFieldConfig | IWriteFieldConfig;
 }
 
 export interface IDapp {

@@ -1,27 +1,32 @@
-<div [class]="'pt-6 text-xl' + (hidden ? ' opacity-50' : '')" *ngIf="field !== undefined">
-  <div [class]="'relative flex items-center justify-center' + (edit ? ' mb-4 mt-2' : '')">
-    <span class="text-xl mr-2">{{ field.name }}</span>
-    <div class="w-full flex-grow relative">
-      <div class="absolute border-b w-full top-1/2"></div>
-    </div>
-    <button class="button-icon-round border text-sm" (click)="collapsed = !collapsed">
-      <fa-icon [icon]="faChevronUp" [@iconRotation]="collapsed ? 'open' : 'closed'"></fa-icon>
-    </button>
-    <!-- EDIT BUTTONS -->
-    <div *ngIf="edit" class="absolute mx-auto button-group">
-      <button type="button" class="button button-l" (click)="toggleHidden()">
-        <fa-icon [icon]="faEye" *ngIf="!hidden"></fa-icon>
-        <fa-icon [icon]="faEyeSlash" *ngIf="hidden"></fa-icon>
+<ng-container *ngIf="field$ | async as field">
+  <div
+    *ngIf="(edit$ | async) || (!(edit$ | async) && !(field.config !== undefined && field.config.hidden))"
+    [class]="'pt-6 text-xl' + (field.config !== undefined && field.config.hidden ? ' opacity-50' : '')"
+  >
+    <div [class]="'relative flex items-center justify-center' + ((edit$ | async) ? ' mb-4 mt-2' : '')">
+      <span class="text-xl mr-2">{{ field.field.name }}</span>
+      <div class="w-full flex-grow relative">
+        <div class="absolute border-b w-full top-1/2"></div>
+      </div>
+      <button class="button-icon-round border text-sm" (click)="collapsed = !collapsed">
+        <fa-icon [icon]="faChevronUp" [@iconRotation]="collapsed ? 'open' : 'closed'"></fa-icon>
       </button>
-      <button type="button" class="button button-r cursor-grab" (mousedown)="clickPressed()" (mouseup)="clickReleased()">
-        <fa-icon [icon]="faUpDown"></fa-icon>
-      </button>
+      <!-- EDIT BUTTONS -->
+      <div *ngIf="edit$ | async" class="absolute mx-auto button-group">
+        <button type="button" class="button button-l" (click)="toggleHidden()">
+          <fa-icon [icon]="faEye" *ngIf="!hidden"></fa-icon>
+          <fa-icon [icon]="faEyeSlash" *ngIf="hidden"></fa-icon>
+        </button>
+        <button type="button" class="button button-r cursor-grab" (mousedown)="clickPressed()" (mouseup)="clickReleased()">
+          <fa-icon [icon]="faUpDown"></fa-icon>
+        </button>
+      </div>
+      <!-- END EDIT BUTTONS -->
     </div>
-    <!-- END EDIT BUTTONS -->
-  </div>
 
-  <div *ngIf="!collapsed" @collapse>
-    <app-read-field *ngIf="type === 'read'" [signature]="signature" [field]="field" [edit]="edit"></app-read-field>
-    <app-write-field *ngIf="type === 'write'" [field]="field"></app-write-field>
+    <div *ngIf="!collapsed" @collapse>
+      <app-read-field *ngIf="type === 'read'" [signature]="signature" [state]="field"></app-read-field>
+      <app-write-field *ngIf="type === 'write'" [signature]="signature" [state]="field"></app-write-field>
+    </div>
   </div>
-</div>
+</ng-container>

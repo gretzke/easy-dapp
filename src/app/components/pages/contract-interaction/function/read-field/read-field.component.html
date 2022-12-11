@@ -1,12 +1,12 @@
-<div *ngIf="field && (contractState$ | async) as contractState">
+<div *ngIf="state.field && (contractState$ | async) as contractState">
   <app-contract-input-field
     class="block my-5"
-    *ngFor="let input of field.inputs; let i = index"
+    *ngFor="let input of state.field.inputs; let i = index"
     [type]="input"
     (valueUpdated)="setArg(i, $event)"
   ></app-contract-input-field>
-  <button class="button-primary" *ngIf="field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
-  <div *ngFor="let output of field.outputs; let i = index">
+  <button class="button-primary" *ngIf="state.field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
+  <div *ngFor="let output of state.field.outputs; let i = index">
     <div class="pt-3 text-gray-700 dark:text-gray-300" *ngIf="signature && contractState[signature] !== undefined">
       <p class="text-lg sm:text-md">
         <span class="mr-2" *ngIf="output.name !== ''">{{ output.name }}</span>

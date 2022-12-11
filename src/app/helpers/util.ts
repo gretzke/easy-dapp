@@ -1,8 +1,5 @@
-export const setObject = (obj: any, pathString: string, value: any): typeof obj => {
-  const path = pathString.split('.');
-  const last = path.pop();
-  if (last) {
-    const lastObj = path.reduce((acc, cur) => acc[cur], obj);
-    lastObj[last] = value;
-  }
+import { ethers } from 'ethers';
+
+export const dappId = (owner: string, url: string) => {
+  return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(owner + url));
 };
