@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { ContractDataType, IFieldWithConfig } from 'src/types/abi';
-import { sendContractTx } from '../../store/contract.actions';
+import { ContractDataType, IBaseFieldConfig, IFieldWithConfig, InputsConfig } from 'src/types/abi';
+import { sendContractTx, updateInputConfig } from '../../store/contract.actions';
 
 @Component({
   selector: 'app-write-field',
@@ -19,6 +19,12 @@ export class WriteFieldComponent implements OnInit {
 
   ngOnInit(): void {
     this.args = new Array(this.state.field.inputs.length);
+    let config = { ...this.state.config } as IBaseFieldConfig;
+    if (config.name === undefined) config.name = '';
+    if (config.description === undefined) config.description = '';
+    if (config.inputs === undefined) config.inputs = new Array(this.state.field.inputs.length).fill({});
+    if (config.outputs === undefined) config.outputs = new Array(this.state.field.outputs.length).fill({});
+    this.state = { ...this.state, config: config };
   }
 
   public sendTx() {
@@ -38,5 +44,22 @@ export class WriteFieldComponent implements OnInit {
 
   setArg(index: number, val: ContractDataType) {
     this.args[index] = val;
+  }
+
+  public config(index: number) {
+    if (!this.state || !this.state.config || !this.state.config.inputs) return undefined;
+    return this.state.config.inputs[index];
+  }
+
+  setConfig(index: number, config: InputsConfig) {
+    this.store.dispatch(
+      updateInputConfig({
+        src: WriteFieldComponent.name,
+        signature: this.signature,
+        length: this.state.field.inputs.length,
+        index: index,
+        config,
+      })
+    );
   }
 }

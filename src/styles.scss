@@ -45,6 +45,10 @@
     }
 }
 
+.radio {
+    @apply border-gray-300; @apply focus:ring-transparent; @apply focus:ring-offset-0; @apply text-custom-light-500; @apply dark:text-custom-dark-500;
+}
+
 .tab {
     @apply border-transparent; @apply w-1/2; @apply py-4; @apply px-1; @apply text-center; @apply border-b-2; @apply font-medium; @apply text-sm; @apply text-gray-400; @apply border-gray-400; @apply hover:text-gray-500; @apply hover:border-gray-500; @apply dark:text-gray-400; @apply dark:border-gray-400; @apply dark:hover:text-gray-300; @apply dark:hover:border-gray-300;
     &.active{
@@ -87,11 +91,11 @@
 }
 
 .edit-input {
-    @apply p-1; @apply border-b; @apply border-transparent; @apply border-b-gray-300; @apply bg-transparent; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:border-transparent; @apply focus:ring-0; @apply focus:border-b-gray-500;
+    @apply p-1; @apply border-b; @apply border-transparent; @apply border-b-gray-300; @apply bg-transparent; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:border-transparent; @apply focus:ring-0; @apply focus:border-b-gray-500; @apply dark:border-b-gray-600; @apply dark:focus:border-b-gray-400;
 }
 
 .text-input {
-    @apply border; @apply border-gray-300; @apply rounded; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:border-custom-light-500; @apply dark:focus:border-custom-dark-500; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:bg-white; @apply dark:focus:text-gray-900; @apply dark:focus:placeholder-gray-500;
+    @apply border; @apply border-gray-300; @apply rounded; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:border-custom-light-500; @apply dark:focus:border-custom-dark-500; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:placeholder-gray-500;
 }
 
 .button-header {

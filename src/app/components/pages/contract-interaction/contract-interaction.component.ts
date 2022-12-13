@@ -3,7 +3,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { dappId } from 'src/app/helpers/util';
+import { dappId } from 'src/helpers/util';
 import { getDapp } from 'src/app/store/app.actions';
 import { FunctionType, IDapp, IDappConfig } from 'src/types/abi';
 import { getContractState, saveOrder } from './store/contract.actions';

@@ -1,5 +1,7 @@
 <input
   type="text"
+  appEnsureInput
+  [dataType]="dataType"
   class="edit-input w-full"
   [(ngModel)]="value"
   (ngModelChange)="valueChanged()"

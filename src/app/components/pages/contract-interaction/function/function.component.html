@@ -1,10 +1,11 @@
-<ng-container *ngIf="field$ | async as field">
+<ng-container *ngIf="state$ | async as state">
   <div
-    *ngIf="(edit$ | async) || (!(edit$ | async) && !(field.config !== undefined && field.config.hidden))"
-    [class]="'pt-6 text-xl' + (field.config !== undefined && field.config.hidden ? ' opacity-50' : '')"
+    *ngIf="(!(edit$ | async) && !(state.config !== undefined && state.config.hidden)) || (edit$ | async)"
+    [class]="'pt-6 text-xl' + (state.config !== undefined && state.config.hidden ? ' opacity-50' : '')"
   >
     <div [class]="'relative flex items-center justify-center' + ((edit$ | async) ? ' mb-4 mt-2' : '')">
-      <span class="text-xl mr-2">{{ field.field.name }}</span>
+      <span *ngIf="!(edit$ | async)" class="text-xl mr-2">{{ name$ | async }}</span>
+      <div app-edit-input *ngIf="edit$ | async" [value]="(name$ | async) ?? ''" placeholder="Title" (valueUpdated)="setName($event)"></div>
       <div class="w-full flex-grow relative">
         <div class="absolute border-b w-full top-1/2"></div>
       </div>
@@ -25,8 +26,19 @@
     </div>
 
     <div *ngIf="!collapsed" @collapse>
-      <app-read-field *ngIf="type === 'read'" [signature]="signature" [state]="field"></app-read-field>
-      <app-write-field *ngIf="type === 'write'" [signature]="signature" [state]="field"></app-write-field>
+      <div class="text-sm">
+        <p *ngIf="!(edit$ | async)" class="mr-2">{{ description$ | async }}</p>
+        <div
+          app-edit-input
+          *ngIf="edit$ | async"
+          [value]="(description$ | async) ?? ''"
+          placeholder="Description"
+          (valueUpdated)="setDescription($event)"
+        ></div>
+      </div>
+
+      <app-read-field *ngIf="type === 'read'" [signature]="signature" [state]="state"></app-read-field>
+      <app-write-field *ngIf="type === 'write'" [signature]="signature" [state]="state"></app-write-field>
     </div>
   </div>
 </ng-container>

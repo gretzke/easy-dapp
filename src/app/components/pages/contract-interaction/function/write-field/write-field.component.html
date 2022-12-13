@@ -3,7 +3,9 @@
     class="block mt-5"
     *ngFor="let input of field.inputs; let i = index"
     [type]="input"
+    [config]="config(i)"
     (valueUpdated)="setArg(i, $event)"
+    (configUpdated)="setConfig(i, $event)"
   ></app-contract-input-field>
   <app-contract-input-field *ngIf="field.stateMutability === 'payable'"></app-contract-input-field>
   <p *ngIf="field.stateMutability === 'payable'">TODO: implement sending value</p>

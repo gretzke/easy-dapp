@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faChevronUp, faEye, faEyeSlash, faUpDown } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { FunctionType, IFieldWithConfig } from 'src/types/abi';
 import { updateFunctionConfig } from '../store/contract.actions';
 import { editSelector, fieldSelector } from '../store/contract.selector';
@@ -30,7 +30,7 @@ export class FunctionComponent implements OnInit {
   faEyeSlash = faEyeSlash;
   faUpDown = faUpDown;
   public edit$: Observable<boolean>;
-  public field$!: Observable<IFieldWithConfig>;
+  public state$?: Observable<IFieldWithConfig>;
   @Input() type: FunctionType = 'read';
   @Input() signature: string = '';
   @Input() hidden = false;
@@ -42,7 +42,7 @@ export class FunctionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.field$ = this.store.select(fieldSelector(this.signature));
+    this.state$ = this.store.select(fieldSelector(this.signature));
   }
 
   toggleHidden() {
@@ -58,5 +58,42 @@ export class FunctionComponent implements OnInit {
 
   clickReleased() {
     this.moveable.emit(false);
+  }
+
+  get name$() {
+    return this.state$?.pipe(
+      map((state) => {
+        if (!state.field) return '';
+        if (!state.config) return state.field.name;
+        if (state.config.name !== undefined) return state.config.name;
+        return state.field.name;
+      })
+    );
+  }
+
+  get description$() {
+    return this.state$?.pipe(
+      map((state) => {
+        if (!state.field) return '';
+        if (!state.config) return '';
+        if (state.config.description) return state.config.description;
+        return '';
+      })
+    );
+  }
+
+  setName(name: string) {
+    this.store.dispatch(updateFunctionConfig({ src: FunctionComponent.name, signature: this.signature, key: 'name', value: name }));
+  }
+
+  setDescription(description: string) {
+    this.store.dispatch(
+      updateFunctionConfig({
+        src: FunctionComponent.name,
+        signature: this.signature,
+        key: 'description',
+        value: description,
+      })
+    );
   }
 }

@@ -13,10 +13,10 @@ export const getErrorMessage = (errString: string): string => {
   let details = e.details;
   if (message === 'PARSE_ERROR') {
     if (details === 'INVALID_ADDRESS') {
-      message = 'Invalid address';
+      details = 'Invalid address';
     } else if (details === 'DAPP_EXISTS') {
-      message = 'You already have a Dapp under this URL';
+      details = 'You already have a Dapp under this URL';
     }
   }
-  return message;
+  return details;
 };

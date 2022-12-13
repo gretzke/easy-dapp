@@ -1,4 +1,5 @@
-import { Injectable, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import blockies from 'blockies-ts';
@@ -16,7 +17,7 @@ export class UIService implements OnInit {
   theme: ThemeMode = 'dark';
   container?: Container;
 
-  constructor(private store: Store<{}>, rendererFactory: RendererFactory2) {
+  constructor(private store: Store<{}>, rendererFactory: RendererFactory2, @Inject(DOCUMENT) private document: Document) {
     // Create new renderer from renderFactory, to make it possible to use renderer2 in a service
     this.renderer = rendererFactory.createRenderer(null, null);
     this.store.select(darkmodeSelector).subscribe((theme) => {
@@ -36,6 +37,15 @@ export class UIService implements OnInit {
     this.renderer.addClass(document.body, scheme);
     if (this.container) {
       this.container.loadTheme(scheme);
+    }
+    // set date picker theme
+    const themelink = this.document.getElementById('app-theme');
+    if (themelink) {
+      if (this.theme === 'dark') {
+        themelink.setAttribute('href', 'datepicker-dark.css');
+      } else {
+        themelink.setAttribute('href', 'datepicker-light.css');
+      }
     }
   }
 

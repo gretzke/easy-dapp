@@ -45,10 +45,22 @@ export interface IAbiData {
   abi: string;
 }
 
+export interface InputsConfig {
+  name?: string;
+  timestamp?: boolean;
+  decimals?: string;
+}
+
+export interface OutputsConfig {
+  name: string;
+}
+
 export interface IBaseFieldConfig {
   name: string;
   description: string;
   hidden: boolean;
+  inputs: InputsConfig[];
+  outputs: OutputsConfig[];
 }
 
 export interface IReadFieldConfig extends IBaseFieldConfig {}

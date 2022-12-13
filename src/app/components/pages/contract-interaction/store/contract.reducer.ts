@@ -92,6 +92,21 @@ const configReducer = createReducer(
         },
       },
     };
+  }),
+  on(Actions.updateInputConfig, (state, action) => {
+    if (!state) return state;
+    const newConfig = [...(state.functionConfig[action.signature]?.inputs ?? new Array(action.length).fill({}))];
+    newConfig[action.index] = action.config;
+    return {
+      ...state,
+      functionConfig: {
+        ...state.functionConfig,
+        [action.signature]: {
+          ...state.functionConfig[action.signature],
+          inputs: newConfig,
+        },
+      },
+    };
   })
 );
 
@@ -99,7 +114,7 @@ const stateReducer = createReducer(
   initialState.state,
   on(Actions.getContractState, (_) => ({})),
   on(Actions.setContractState, (_, action) => action.state),
-  on(Actions.setContractStateVariable, (state, action) => ({ ...state, [action.key]: action.val }))
+  on(Actions.setContractStateVariable, (state, action) => ({ ...state, [action.signature]: action.val }))
 );
 
 const tempConfigReducer = createReducer(

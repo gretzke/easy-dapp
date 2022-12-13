@@ -3,7 +3,9 @@
     class="block my-5"
     *ngFor="let input of state.field.inputs; let i = index"
     [type]="input"
+    [config]="config(i)"
     (valueUpdated)="setArg(i, $event)"
+    (configUpdated)="setConfig(i, $event)"
   ></app-contract-input-field>
   <button class="button-primary" *ngIf="state.field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
   <div *ngFor="let output of state.field.outputs; let i = index">

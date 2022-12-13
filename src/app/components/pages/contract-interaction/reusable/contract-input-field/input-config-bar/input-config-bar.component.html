@@ -1,0 +1,22 @@
+<fieldset *ngIf="edit$ | async" class="text-sm flex dark:text-gray-300">
+  <div class="flex items-center">
+    <input name="input-options" type="radio" class="radio" [checked]="config?.timestamp === false" (click)="toggleDecimals()" />
+    <label class="ml-1 mr-1 block">Decimals</label>
+  </div>
+  <div
+    *ngIf="config?.timestamp === false"
+    app-edit-input
+    [dataType]="'uint256'"
+    class="block w-7 mr-3"
+    [value]="config?.decimals ?? '18'"
+    placeholder="18"
+    (valueUpdated)="setDecimals($event)"
+  ></div>
+  <div class="flex items-center ml-3">
+    <input name="input-options" type="radio" class="radio" [checked]="config?.timestamp" (click)="toggleTimestamp()" />
+    <label class="ml-1 mr-3 block">Timestamp</label>
+  </div>
+</fieldset>
+<div class="text-muted" *ngIf="!(edit$ | async) && this.config && this.config.timestamp !== undefined">
+  ({{ this.config.timestamp ? 'Timestamp' : 'Decimals: ' + this.config.decimals }})
+</div>

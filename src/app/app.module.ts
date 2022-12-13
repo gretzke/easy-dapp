@@ -33,11 +33,13 @@ import {
   pendingTxStateKey,
 } from './components/header/pending-tx/store/pendingtx.reducer';
 import { AddContractComponent } from './components/pages/add-contract/add-contract.component';
+import { ContractHeaderComponent } from './components/pages/contract-interaction/contract-header/contract-header.component';
 import { ContractInteractionComponent } from './components/pages/contract-interaction/contract-interaction.component';
 import { FunctionComponent } from './components/pages/contract-interaction/function/function.component';
 import { ReadFieldComponent } from './components/pages/contract-interaction/function/read-field/read-field.component';
 import { WriteFieldComponent } from './components/pages/contract-interaction/function/write-field/write-field.component';
 import { ContractInputFieldComponent } from './components/pages/contract-interaction/reusable/contract-input-field/contract-input-field.component';
+import { InputConfigBarComponent } from './components/pages/contract-interaction/reusable/contract-input-field/input-config-bar/input-config-bar.component';
 import { EditInputComponent } from './components/pages/contract-interaction/reusable/edit-input/edit-input.component';
 import { EditTextAreaComponent } from './components/pages/contract-interaction/reusable/edit-text-area/edit-text-area.component';
 import { ContractEffects } from './components/pages/contract-interaction/store/contract.effects';
@@ -50,7 +52,7 @@ import { WalletResolver } from './resolver/WalletResolver';
 import { EthereumService } from './services/ethereum.service';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
-import { ContractHeaderComponent } from './components/pages/contract-interaction/contract-header/contract-header.component';
+import { CalendarModule } from 'primeng/calendar';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -80,6 +82,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     EditTextAreaComponent,
     FunctionComponent,
     ContractHeaderComponent,
+    InputConfigBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -111,6 +114,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     FontAwesomeModule,
     CommonModule,
     DragDropModule,
+    CalendarModule,
   ],
   providers: [
     {

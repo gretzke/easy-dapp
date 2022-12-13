@@ -1,6 +1,6 @@
 import { Directive, ElementRef, EventEmitter, forwardRef, HostListener, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { InternalType } from 'src/types/abi';
+import { InputsConfig, InternalType } from 'src/types/abi';
 
 @Directive({
   selector: '[appEnsureInput]',
@@ -14,6 +14,7 @@ import { InternalType } from 'src/types/abi';
 })
 export class EnsureInputDirective {
   @Input() dataType: InternalType = 'string';
+  @Input() config?: InputsConfig;
   private _onChange?: (value: any) => {};
   public onValueChange = new EventEmitter<string>();
   constructor(private _elementRef: ElementRef) {}
@@ -41,6 +42,9 @@ export class EnsureInputDirective {
       case 'address':
         return /^(0$|0x[0-9a-fA-F]{0,40})/g;
       case 'uint256':
+        if (this.config && this.config.timestamp === false) {
+          return new RegExp(`^[0-9]*(.[0-9]{0,${this.config.decimals ?? 18}})?`);
+        }
         return /^([0-9]{0,256})/g;
       case 'string':
         return /.*/g;

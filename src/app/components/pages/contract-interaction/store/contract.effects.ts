@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { ContractTransaction } from 'ethers';
 import { catchError, filter, from, map, mergeMap, of, take, tap, withLatestFrom } from 'rxjs';
 import { watchPendingTransaction } from 'src/app/components/header/pending-tx/store/pendingtx.actions';
-import { dappId } from 'src/app/helpers/util';
+import { dappId, getFunctionName } from 'src/helpers/util';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { getDapp, login, notify, setChainId, setUser, switchNetwork } from 'src/app/store/app.actions';
@@ -137,8 +137,8 @@ export class ContractEffects {
       withLatestFrom(this.store.select(contractSelector)),
       mergeMap(([action, contract]) => {
         const ci = this.ethereum.getContractInstance(contract!.address, contract!.abi);
-        return from(ci.get(action.method, action.args)).pipe(
-          map((val: ContractDataType) => setContractStateVariable({ src: ContractEffects.name, key: action.method, val })),
+        return from(ci.get(getFunctionName(action.signature), action.args)).pipe(
+          map((val: ContractDataType) => setContractStateVariable({ src: ContractEffects.name, signature: action.signature, val })),
           catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
         );
       })
