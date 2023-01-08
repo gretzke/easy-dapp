@@ -4,14 +4,24 @@
     <div class="block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex" aria-label="Tabs">
-          <button [class]="'tab' + (read ? ' active' : '')" (click)="read = true">Read Contract</button>
-          <button [class]="'tab' + (!read ? ' active' : '')" (click)="read = false">Write Contract</button>
+          <button [class]="'tab' + (tab === 'read' ? ' active' : '')" (click)="tab = 'read'">
+            <fa-icon [icon]="faGlasses" class="mr-2"></fa-icon>
+            <span>Read</span>
+          </button>
+          <button [class]="'tab' + (tab === 'write' ? ' active' : '')" (click)="tab = 'write'">
+            <fa-icon [icon]="faPen" class="mr-2"></fa-icon>
+            <span>Write</span>
+          </button>
+          <button [class]="'tab' + (tab === 'config' ? ' active' : '')" (click)="tab = 'config'" *ngIf="edit">
+            <fa-icon [icon]="faGear" class="mr-2"></fa-icon>
+            <span>Config</span>
+          </button>
         </nav>
       </div>
     </div>
   </div>
   <div *ngIf="config">
-    <div *ngIf="read" cdkDropList (cdkDropListDropped)="saveOrder($event, 'read')">
+    <div *ngIf="tab === 'read'" cdkDropList (cdkDropListDropped)="saveOrder($event, 'read')">
       <div
         app-function
         *ngFor="let signature of config.read.order"
@@ -22,7 +32,7 @@
         (moveable)="moveable = $event"
       ></div>
     </div>
-    <div *ngIf="!read" cdkDropList (cdkDropListDropped)="saveOrder($event, 'write')">
+    <div *ngIf="tab === 'write'" cdkDropList (cdkDropListDropped)="saveOrder($event, 'write')">
       <div
         app-function
         *ngFor="let signature of config.write.order"
@@ -32,6 +42,9 @@
         [cdkDragDisabled]="!moveable"
         (moveable)="moveable = $event"
       ></div>
+    </div>
+    <div *ngIf="tab === 'config'">
+      <app-contract-config></app-contract-config>
     </div>
   </div>
 </div>

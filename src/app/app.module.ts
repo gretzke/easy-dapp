@@ -13,6 +13,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgParticlesModule } from 'ng-particles';
 import { ToastrModule } from 'ngx-toastr';
+import { CalendarModule } from 'primeng/calendar';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app.component';
@@ -33,6 +34,7 @@ import {
   pendingTxStateKey,
 } from './components/header/pending-tx/store/pendingtx.reducer';
 import { AddContractComponent } from './components/pages/add-contract/add-contract.component';
+import { ContractSettingsComponent } from './components/pages/contract-interaction/contract-config/contract-config.component';
 import { ContractHeaderComponent } from './components/pages/contract-interaction/contract-header/contract-header.component';
 import { ContractInteractionComponent } from './components/pages/contract-interaction/contract-interaction.component';
 import { FunctionComponent } from './components/pages/contract-interaction/function/function.component';
@@ -52,7 +54,6 @@ import { WalletResolver } from './resolver/WalletResolver';
 import { EthereumService } from './services/ethereum.service';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
-import { CalendarModule } from 'primeng/calendar';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -83,6 +84,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     FunctionComponent,
     ContractHeaderComponent,
     InputConfigBarComponent,
+    ContractSettingsComponent,
   ],
   imports: [
     BrowserModule,
