@@ -54,6 +54,10 @@ import { WalletResolver } from './resolver/WalletResolver';
 import { EthereumService } from './services/ethereum.service';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
+import { EnumConfigComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-config.component';
+import { DynamicInputListComponent } from './components/pages/contract-interaction/reusable/dynamic-input-list/dynamic-input-list.component';
+import { EnumInputComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-input/enum-input.component';
+import { DividerComponent } from './components/etc/divider/divider.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -85,6 +89,10 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     ContractHeaderComponent,
     InputConfigBarComponent,
     ContractSettingsComponent,
+    EnumConfigComponent,
+    DynamicInputListComponent,
+    EnumInputComponent,
+    DividerComponent,
   ],
   imports: [
     BrowserModule,

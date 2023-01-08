@@ -81,6 +81,9 @@ export interface IDappConfig {
   write: {
     order: string[];
   };
+  enums?: {
+    [name: string]: string[];
+  };
 }
 
 export interface IFieldWithConfig {

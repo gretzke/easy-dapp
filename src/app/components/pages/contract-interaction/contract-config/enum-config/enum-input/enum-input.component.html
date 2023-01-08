@@ -1,0 +1,2 @@
+<p class="mb-1">{{ index + 1 }}. {{ enum }}:</p>
+<app-dynamic-input-list (listChanged)="updateEnum($event)" [items]="(values$ | async) ?? []"></app-dynamic-input-list>

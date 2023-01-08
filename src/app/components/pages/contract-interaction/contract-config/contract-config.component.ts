@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { enumComponentsSelector } from '../store/contract.selector';
 
 @Component({
   selector: 'app-contract-config',
@@ -6,7 +9,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contract-config.component.scss'],
 })
 export class ContractSettingsComponent implements OnInit {
-  constructor() {}
+  enums$: Observable<string[]>;
+
+  constructor(private store: Store<{}>) {
+    this.enums$ = this.store.select(enumComponentsSelector);
+  }
 
   ngOnInit(): void {}
 }

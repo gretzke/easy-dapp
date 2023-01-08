@@ -1,20 +1,21 @@
 import { ContractTransaction, ethers } from 'ethers';
 import { from, Observable } from 'rxjs';
-import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState } from 'src/types/abi';
+import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
 import { EthereumService } from '../ethereum.service';
 
 export class ContractBuilder {
   public readFunctions: AbiFunctions;
   public writeFunctions: AbiFunctions;
   public abi: ContractABI;
+  public enums: string[];
 
   constructor(private ethereum: EthereumService, public chainId: number, public address: string, abi: string) {
     this.abi = new ContractABI(abi);
     this.readFunctions = this.abi.readFunctions();
     this.writeFunctions = this.abi.writeFunctions();
+    this.enums = this.abi.enums();
   }
 
-  // ContractState
   public getContractState(): Observable<IContractState> {
     const functionsToCall = Object.keys(this.readFunctions)
       .filter((key) => this.readFunctions[key].inputs.length === 0)
@@ -81,7 +82,34 @@ export class ContractABI {
     }, {});
   }
 
+  public enums(): string[] {
+    const enumMap = Object.keys(this.functions).reduce((obj, key) => {
+      const inputs = this.getEnumsFromArray(this.functions[key].inputs);
+      const outputs = this.getEnumsFromArray(this.functions[key].outputs);
+      return {
+        ...obj,
+        ...inputs,
+        ...outputs,
+      };
+    }, {});
+    return Object.keys(enumMap);
+  }
+
   private getSignature(f: ABIItem): string {
+    if (f.type === 'constructor') return 'constructor()';
     return f.name + '(' + f.inputs.map((i) => i.type).join(',') + ')';
+  }
+
+  private getEnumsFromArray(arr: VariableType[]): { [key: string]: true } {
+    if (arr === undefined) return {};
+    return arr.reduce((obj, item) => {
+      if (item.type === 'uint8' && item.internalType.substring(0, 5) === 'enum ') {
+        return {
+          ...obj,
+          [item.internalType.substring(5)]: true,
+        };
+      }
+      return obj;
+    }, {});
   }
 }

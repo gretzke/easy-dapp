@@ -1,9 +1,9 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faGlasses, faPen, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faGlasses, faPen } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { getDapp } from 'src/app/store/app.actions';
 import { dappId } from 'src/helpers/util';
 import { FunctionType, IDapp, IDappConfig } from 'src/types/abi';
