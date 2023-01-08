@@ -10,7 +10,6 @@
 - transaction tracking and more links in transactions dropdown
 - landing page
 - more items to user dropdown (address identifier, balance)
-- remove search bar (for now)
 - footer - link to github
 
 Optional:
