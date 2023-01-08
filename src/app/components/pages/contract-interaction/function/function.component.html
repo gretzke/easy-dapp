@@ -4,7 +4,7 @@
     [class]="'pt-6 text-xl' + (state.config !== undefined && state.config.hidden ? ' opacity-50' : '')"
   >
     <div [class]="'relative flex items-center justify-center' + ((edit$ | async) ? ' mb-4 mt-2' : '')">
-      <span *ngIf="!(edit$ | async)" class="text-xl mr-2">{{ name$ | async }}</span>
+      <span *ngIf="!(edit$ | async)" class="text-xl mr-2 whitespace-nowrap">{{ name$ | async }}</span>
       <div app-edit-input *ngIf="edit$ | async" [value]="(name$ | async) ?? ''" placeholder="Title" (valueUpdated)="setName($event)"></div>
       <div class="w-full flex-grow relative">
         <div class="absolute border-b w-full top-1/2"></div>

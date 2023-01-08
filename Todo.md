@@ -8,7 +8,6 @@
 - optimize indexing on db
 - add networks and restrict uploading for unknown networks
 - transaction tracking and more links in transactions dropdown
-- fix line break in function titles
 - landing page
 - more items to user dropdown (address identifier, balance)
 - remove search bar (for now)
