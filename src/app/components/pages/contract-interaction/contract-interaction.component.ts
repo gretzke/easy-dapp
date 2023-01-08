@@ -1,13 +1,16 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { faGlasses, faPen, faGear } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { dappId } from 'src/helpers/util';
+import { Observable, Subscription } from 'rxjs';
 import { getDapp } from 'src/app/store/app.actions';
+import { dappId } from 'src/helpers/util';
 import { FunctionType, IDapp, IDappConfig } from 'src/types/abi';
 import { getContractState, saveOrder } from './store/contract.actions';
-import { configSelector, contractSelector } from './store/contract.selector';
+import { configSelector, contractSelector, editSelector } from './store/contract.selector';
+
+type tab = 'read' | 'write' | 'config';
 
 @Component({
   selector: 'app-contract-interaction',
@@ -16,7 +19,11 @@ import { configSelector, contractSelector } from './store/contract.selector';
 })
 export class ContractInteractionComponent implements OnInit, OnDestroy {
   @Input() public firstDeployment = false;
-  public read = true;
+  faGlasses = faGlasses;
+  faPen = faPen;
+  faGear = faGear;
+  edit = false;
+  public tab: tab = 'read';
   public moveable = false;
   public config?: IDappConfig;
   public contract?: IDapp;
@@ -29,6 +36,13 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
         this.store.dispatch(getContractState({ src: ContractInteractionComponent.name }));
       }
     });
+
+    this.subscription.add(
+      this.store.select(editSelector).subscribe((edit) => {
+        if (!edit && this.tab === 'config') this.tab = 'read';
+        this.edit = edit;
+      })
+    );
 
     this.subscription.add(
       this.store.select(configSelector).subscribe((config) => {
