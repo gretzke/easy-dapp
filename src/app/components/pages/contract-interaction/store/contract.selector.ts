@@ -26,7 +26,11 @@ export const fieldSelector = (signature: string) =>
   createSelector(selectContractState, (state) => {
     const config = state.config === undefined ? undefined : state.config.functionConfig[signature];
     return {
-      field: state.functions[signature],
+      field: state.components.functions[signature],
       config: config,
     };
   });
+
+export const enumComponentsSelector = createSelector(selectContractState, (state) => state.components.enums);
+
+export const enumSelector = (name: string) => createSelector(selectContractState, (state) => state.config?.enums?.[name] ?? []);

@@ -3,7 +3,7 @@ import { AbiFunctions, ContractDataType, FunctionType, IContractState, IDapp, In
 
 export const setContract = createAction('[CONTRACT] set contract', props<{ src: string; contract?: IDapp; firstDeployment?: true }>());
 
-export const setFunctions = createAction('[CONTRACT] set functions', props<{ src: string; functions: AbiFunctions }>());
+export const setFunctions = createAction('[CONTRACT] set functions', props<{ src: string; functions: AbiFunctions; enums: string[] }>());
 
 export const getContractState = createAction('[CONTRACT STATE] get contract state', props<{ src: string }>());
 
@@ -35,6 +35,8 @@ export const setName = createAction('[CONFIG] set name', props<{ src: string; na
 export const setDescription = createAction('[CONFIG] set description', props<{ src: string; description: string }>());
 
 export const setUrl = createAction('[CONFIG] set url', props<{ src: string; url: string }>());
+
+export const setEnumConfig = createAction('[CONFIG] set enum config', props<{ src: string; name: string; items: string[] }>());
 
 export const updateFunctionConfig = createAction(
   '[CONFIG] set function config',

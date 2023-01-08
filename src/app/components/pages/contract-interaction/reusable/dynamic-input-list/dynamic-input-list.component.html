@@ -1,0 +1,7 @@
+<form [formGroup]="form">
+  <div class="flex my-1" *ngFor="let item of formItems(); let i = index">
+    <input #inputRef [formControl]="item" type="text" class="block w-full text-input" />
+    <button class="ml-2 button-icon-round h-9" (click)="removeAt(i)"><fa-icon [icon]="faTrash"></fa-icon></button>
+  </div>
+  <input formControlName="appendItem" type="text" name="value" class="block w-full text-input" placeholder="Add item" />
+</form>

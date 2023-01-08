@@ -42,7 +42,7 @@ export class ContractEffects {
       ofType(setContract),
       mergeMap((action) => {
         if (action.contract === undefined) {
-          return of(setFunctions({ src: ContractEffects.name, functions: {} }));
+          return of(setFunctions({ src: ContractEffects.name, functions: {}, enums: [] }));
         }
 
         const ci = this.ethereum.getContractInstance(action.contract.address, action.contract.abi);
@@ -50,7 +50,9 @@ export class ContractEffects {
         const readFunctions = ci.readFunctions;
         const writeFunctions = ci.writeFunctions;
 
-        const result = [setFunctions({ src: ContractEffects.name, functions: { ...readFunctions, ...writeFunctions } })] as any[];
+        const result = [
+          setFunctions({ src: ContractEffects.name, functions: { ...readFunctions, ...writeFunctions }, enums: ci.enums }),
+        ] as any[];
 
         // set order if any items are missing
         const readOrder = [...action.contract.config.read.order];

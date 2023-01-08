@@ -7,7 +7,10 @@ export const contractStateKey = 'contractState';
 
 export interface ContractState {
   contract?: IDapp;
-  functions: AbiFunctions;
+  components: {
+    functions: AbiFunctions;
+    enums: string[];
+  };
   config?: IDappConfig;
   state: IContractState;
   tmpConfig: {
@@ -19,7 +22,10 @@ export interface ContractState {
 
 export const initialState: ContractState = {
   contract: undefined,
-  functions: {},
+  components: {
+    functions: {},
+    enums: [],
+  },
   config: undefined,
   state: {},
   tmpConfig: {
@@ -35,9 +41,9 @@ const contractReducer = createReducer(
   on(Actions.setContract, (_, action) => action.contract)
 );
 
-const functionsReducer = createReducer(
-  initialState.functions,
-  on(Actions.setFunctions, (_, action) => action.functions)
+const componentsReducer = createReducer(
+  initialState.components,
+  on(Actions.setFunctions, (_, action) => ({ functions: action.functions, enums: action.enums }))
 );
 
 const configReducer = createReducer(
@@ -107,6 +113,18 @@ const configReducer = createReducer(
         },
       },
     };
+  }),
+  on(Actions.setEnumConfig, (state, action) => {
+    if (!state) return state;
+    const newState = { ...state };
+    if (!newState.enums) newState.enums = {};
+    return {
+      ...newState,
+      enums: {
+        ...newState.enums,
+        [action.name]: action.items,
+      },
+    };
   })
 );
 
@@ -136,7 +154,7 @@ const tempConfigReducer = createReducer(
 
 export const contractStateReducer: ActionReducerMap<ContractState> = {
   contract: contractReducer,
-  functions: functionsReducer,
+  components: componentsReducer,
   config: configReducer,
   state: stateReducer,
   tmpConfig: tempConfigReducer,

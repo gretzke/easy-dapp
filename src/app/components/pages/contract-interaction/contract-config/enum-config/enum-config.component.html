@@ -1,0 +1,5 @@
+<p class="text-xl mb-1">Enums</p>
+<p>Define Enums in your Smart Contract here for easy inputs</p>
+<div *ngFor="let enum of enums; let i = index" class="py-2">
+  <app-enum-input [enum]="enum" [index]="i"></app-enum-input>
+</div>
