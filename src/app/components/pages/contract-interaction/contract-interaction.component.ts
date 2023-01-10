@@ -23,7 +23,8 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   faPen = faPen;
   faGear = faGear;
   edit = false;
-  public tab: tab = 'read';
+  // TODO: read
+  public tab: tab = 'write';
   public moveable = false;
   public config?: IDappConfig;
   public contract?: IDapp;

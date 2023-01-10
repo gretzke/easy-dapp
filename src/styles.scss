@@ -21,8 +21,8 @@
 
 .bg {
     @apply bg-white;
-    @apply text-gray-900;
     @apply dark:bg-gray-800;
+    @apply text-gray-900;
     @apply dark:text-gray-100;
 }
 
@@ -107,6 +107,24 @@
 
 .edit-input {
     @apply p-1; @apply border-b; @apply border-transparent; @apply border-b-gray-300; @apply bg-transparent; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:border-transparent; @apply focus:ring-0; @apply focus:border-b-gray-500; @apply dark:border-b-gray-600; @apply dark:focus:border-b-gray-400;
+}
+
+.select-menu {
+    @apply relative;
+    .select-menu-button {
+        @apply relative; @apply w-full; @apply rounded; @apply py-2; @apply pl-3; @apply pr-10; @apply text-left; @apply sm:text-sm; @apply text-base; @apply shadow-sm; @apply border; @apply focus:outline-none; @apply focus:ring-1;
+        @apply bg-white; @apply dark:bg-gray-700;
+        @apply text-gray-900; @apply dark:text-gray-100;
+        @apply border-gray-300; @apply focus:border-custom-light-500;
+        @apply dark:border-transparent; @apply dark:focus:border-custom-dark-500;
+        @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500;
+    }
+
+    .select-menu-list {
+        @apply absolute; @apply z-10; @apply mt-1; @apply max-h-60; @apply w-full; @apply overflow-auto; @apply rounded; @apply text-base; @apply sm:text-sm; @apply shadow-lg; @apply focus:outline-none;
+        @apply bg-white; @apply dark:bg-gray-700;
+        //ring-1 ring-black ring-opacity-5  
+    }
 }
 
 .text-input {

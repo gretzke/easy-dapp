@@ -1,13 +1,14 @@
 <form [formGroup]="form" *ngIf="type !== undefined" autocomplete="off">
+  <!-- NAME AND CONFIG BAR -->
   <label for="value" class="block ml-3 text-base">
     <span class="mr-3" *ngIf="!(edit$ | async)">
-      {{ name }} <span class="text-muted">{{ type.type }}</span>
+      {{ name }} <span class="text-muted">{{ type.internalType }}</span>
     </span>
     <div
       app-edit-input
       *ngIf="edit$ | async"
       [value]="name ?? ''"
-      [placeholder]="type.type"
+      [placeholder]="type.internalType"
       (valueUpdated)="setName($event)"
       class="inline-block mr-3"
     ></div>
@@ -15,12 +16,17 @@
       app-input-config-bar
       [config]="config"
       (configUpdated)="setConfig($event)"
-      *ngIf="isNumber(type.type)"
+      *ngIf="isNumber(type.internalType)"
       class="block sm:inline-block my-3 sm:my-0"
     ></div>
   </label>
-  <div class="mt-1">
-    <div class="relative">
+  <div class="mt-1" [ngSwitch]="inputType">
+    <!-- ENUM INPUT -->
+    <div *ngSwitchCase="'enum'">
+      <app-select-menu [list]="enum" (onSelect)="valueUpdated.emit($event)"></app-select-menu>
+    </div>
+    <!-- DEFAULT INPUT -->
+    <div class="relative" *ngSwitchDefault>
       <input
         appEnsureInput
         [dataType]="type.internalType"
@@ -39,6 +45,10 @@
         <fa-icon [icon]="faCalendar"></fa-icon>
       </div>
     </div>
+    <p *ngIf="form.controls.value.dirty && form.controls.value.invalid" class="ml-3 mt-1 text-sm text-red-600">
+      <span *ngIf="form.controls.value.errors?.required">Required</span>
+    </p>
+    <!-- DATETIME PICKER -->
     <div class="relative z-10 cursor-pointer h-0" *ngIf="showDatePicker">
       <p-calendar
         [inline]="true"
@@ -53,8 +63,5 @@
       >
       </p-calendar>
     </div>
-    <p *ngIf="form.controls.value.dirty && form.controls.value.invalid" class="ml-3 mt-1 text-sm text-red-600">
-      <span *ngIf="form.controls.value.errors?.required">Required</span>
-    </p>
   </div>
 </form>
