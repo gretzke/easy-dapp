@@ -58,6 +58,7 @@ import { EnumConfigComponent } from './components/pages/contract-interaction/con
 import { DynamicInputListComponent } from './components/pages/contract-interaction/reusable/dynamic-input-list/dynamic-input-list.component';
 import { EnumInputComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-input/enum-input.component';
 import { DividerComponent } from './components/etc/divider/divider.component';
+import { OutputFormatterComponent } from './components/pages/contract-interaction/function/read-field/output-formatter/output-formatter.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -93,6 +94,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     DynamicInputListComponent,
     EnumInputComponent,
     DividerComponent,
+    OutputFormatterComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,20 +1,23 @@
 <div *ngIf="state.field && (contractState$ | async) as contractState">
+  <!-- ARGUMENTS -->
   <app-contract-input-field
     class="block my-5"
     *ngFor="let input of state.field.inputs; let i = index"
     [type]="input"
-    [config]="config(i)"
+    [config]="inputConfig(i)"
     (valueUpdated)="setArg(i, $event)"
     (configUpdated)="setConfig(i, $event)"
   ></app-contract-input-field>
   <button class="button-primary" *ngIf="state.field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
+
+  <!-- RESULT -->
   <div *ngFor="let output of state.field.outputs; let i = index">
     <div class="pt-3 text-gray-700 dark:text-gray-300" *ngIf="signature && contractState[signature] !== undefined">
-      <p class="text-lg sm:text-md">
-        <span class="mr-2" *ngIf="output.name !== ''">{{ output.name }}</span>
-        <span class="text-muted">{{ output.internalType }}:</span>
-        {{ getValue(contractState[signature], output, i) }}
-      </p>
+      <app-output-formatter
+        [type]="output"
+        [config]="outputConfig(i)"
+        [value]="getValue(contractState[signature], output, i)"
+      ></app-output-formatter>
     </div>
   </div>
 </div>
