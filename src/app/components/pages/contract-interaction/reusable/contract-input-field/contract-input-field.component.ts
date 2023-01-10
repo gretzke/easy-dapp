@@ -4,8 +4,10 @@ import { Store } from '@ngrx/store';
 import { BigNumber, ethers } from 'ethers';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { ContractDataType, InputsConfig, VariableType } from 'src/types/abi';
-import { editSelector } from '../../store/contract.selector';
+import { editSelector, enumSelector } from '../../store/contract.selector';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
+
+type InputType = 'default' | 'enum';
 
 @Component({
   selector: 'app-contract-input-field',
@@ -20,6 +22,8 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
   faCalendar = faCalendar;
   public form: FormGroup;
   public edit$ = this.store.select(editSelector);
+  public inputType: InputType = 'default';
+  public enum: string[] = [];
   private subscription: Subscription;
   private uintRegex = /^uint\d*$/;
   private intRegex = /^int\d*$/;
@@ -48,7 +52,20 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.type?.internalType.substring(0, 5) === 'enum ') {
+      this.subscription.add(
+        this.store.select(enumSelector(this.type.internalType.slice(5))).subscribe((enumConfig) => {
+          if (enumConfig.length > 0) {
+            this.inputType = 'enum';
+          } else {
+            this.inputType = 'default';
+          }
+          this.enum = enumConfig;
+        })
+      );
+    }
+  }
 
   get name() {
     if (this.config === undefined) return this.type?.name;

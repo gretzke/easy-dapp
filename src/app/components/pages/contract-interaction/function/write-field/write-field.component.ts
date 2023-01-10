@@ -43,7 +43,9 @@ export class WriteFieldComponent implements OnInit {
   }
 
   setArg(index: number, val: ContractDataType) {
-    this.args[index] = val;
+    const argsCopy = [...this.args];
+    argsCopy[index] = val;
+    this.args = argsCopy;
   }
 
   public config(index: number) {

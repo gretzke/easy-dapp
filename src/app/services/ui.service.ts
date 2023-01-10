@@ -14,7 +14,7 @@ import { darkmodeSelector } from '../store/app.selector';
 })
 export class UIService implements OnInit {
   private renderer: Renderer2;
-  theme: ThemeMode = 'dark';
+  public theme: ThemeMode = 'dark';
   container?: Container;
 
   constructor(private store: Store<{}>, rendererFactory: RendererFactory2, @Inject(DOCUMENT) private document: Document) {
