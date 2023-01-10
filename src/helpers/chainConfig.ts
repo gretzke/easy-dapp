@@ -1,7 +1,7 @@
-import { chain } from '@wagmi/core';
+import { goerli, mainnet } from '@wagmi/core';
 import { Explorers, NativeCurrency } from 'src/types';
 
-export const chains = [chain.goerli, chain.sepolia, chain.mainnet, chain.polygon];
+export const chains = [goerli, mainnet]; // , sepolia, polygon];
 
 export const explorers: Explorers = chains.reduce(
   (explorers, chain) => ({

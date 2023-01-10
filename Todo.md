@@ -2,7 +2,6 @@
 - payable function
 - fix struct output
 - array / struct input
-- enum definition
 - approval hooks
 - factory contracts
 - optimize indexing on db

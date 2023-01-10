@@ -35,6 +35,6 @@ export class WalletModalComponent {
 
   connect(_: Web3Provider) {
     this.ethereum.connect();
-    this.toggleModal();
+    // this.toggleModal();
   }
 }
