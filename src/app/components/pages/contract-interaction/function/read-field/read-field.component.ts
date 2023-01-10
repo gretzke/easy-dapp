@@ -1,7 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { ContractDataType, IContractState, IFieldWithConfig, VariableType, IBaseFieldConfig, InputsConfig } from 'src/types/abi';
+import {
+  ContractDataType,
+  IBaseFieldConfig,
+  IContractState,
+  IFieldWithConfig,
+  InputsConfig,
+  ValidDataType,
+  VariableType,
+} from 'src/types/abi';
 import { readContract, updateInputConfig } from '../../store/contract.actions';
 import { contractStateSelector } from '../../store/contract.selector';
 
@@ -53,9 +61,9 @@ export class ReadFieldComponent implements OnInit {
     );
   }
 
-  getValue(val: ContractDataType, type: VariableType, index: number) {
+  getValue(val: ContractDataType, type: VariableType, index: number): ValidDataType {
     if (/[\[\]]/.test(type.internalType)) {
-      return val;
+      return val as ValidDataType;
     }
     if (Array.isArray(val)) return val[index];
     return val;
@@ -70,8 +78,13 @@ export class ReadFieldComponent implements OnInit {
     return true;
   }
 
-  public config(index: number) {
+  public inputConfig(index: number) {
     if (!this.state || !this.state.config || !this.state.config.inputs) return undefined;
     return this.state.config.inputs[index];
+  }
+
+  public outputConfig(index: number) {
+    if (!this.state || !this.state.config || !this.state.config.outputs) return undefined;
+    return this.state.config.outputs[index];
   }
 }

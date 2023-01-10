@@ -1,0 +1,11 @@
+<div [ngSwitch]="outputType">
+  <p class="text-lg sm:text-md" *ngSwitchCase="'enum'">
+    <span class="text-muted mr-2" *ngIf="name !== ''">{{ name }}:</span>
+    <span>{{ formattedValue }}</span>
+  </p>
+  <p class="text-lg sm:text-md" *ngSwitchDefault>
+    <span class="mr-2" *ngIf="name !== ''">{{ name }}</span>
+    <span class="text-muted">{{ type.internalType }}:</span>
+    {{ formattedValue }}
+  </p>
+</div>

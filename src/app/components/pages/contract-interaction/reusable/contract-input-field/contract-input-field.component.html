@@ -7,7 +7,7 @@
       app-edit-input
       *ngIf="edit$ | async"
       [value]="name ?? ''"
-      placeholder="Name"
+      [placeholder]="type.type"
       (valueUpdated)="setName($event)"
       class="inline-block mr-3"
     ></div>
