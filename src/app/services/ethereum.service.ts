@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { configureChains, createClient, fetchSigner, getAccount, switchNetwork, watchAccount, watchNetwork } from '@wagmi/core';
-import { ClientCtrl, ConfigCtrl, ConfigOptions, ModalCtrl } from '@web3modal/core';
+import { ClientCtrl, ConfigCtrl, ModalCtrl } from '@web3modal/core';
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
 import { ethers } from 'ethers';
 import { firstValueFrom, from, Observable, take } from 'rxjs';
@@ -11,6 +11,7 @@ import { chains } from 'src/helpers/chainConfig';
 import { getDapps, resetWallet, setChainId, walletChanged } from '../store/app.actions';
 import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
+import { Web3Modal } from '@web3modal/html';
 
 // 1. Define constants
 const projectId = environment.walletConnectId;
@@ -22,11 +23,8 @@ const wagmiClient = createClient({
 });
 const ethereumClient = new EthereumClient(wagmiClient, chains);
 ClientCtrl.setEthereumClient(ethereumClient);
-const modalConfig: ConfigOptions = {
-  projectId,
-  accentColor: 'blackWhite',
-};
-ConfigCtrl.setConfig({ ...modalConfig, theme: 'dark' });
+
+new Web3Modal({ projectId }, ethereumClient);
 
 @Injectable({
   providedIn: 'root',
@@ -34,16 +32,14 @@ ConfigCtrl.setConfig({ ...modalConfig, theme: 'dark' });
 export class EthereumService {
   public signer: ethers.Signer | null = null;
   public chainId = 1;
-  private uiLoaded = false;
 
   constructor(private store: Store<{}>, private actions$: Actions) {
     this.store.select(darkmodeSelector).subscribe((theme) => {
-      ConfigCtrl.setConfig({ ...modalConfig, theme });
+      ConfigCtrl.setThemeConfig({ themeMode: theme, themeColor: 'blackWhite' });
     });
   }
 
   public async ethereumFactory() {
-    await this.loadUi();
     const account = getAccount();
     if (!account.isConnected) {
       this.store.dispatch(getDapps({ src: EthereumService.name }));
@@ -54,18 +50,11 @@ export class EthereumService {
   }
 
   public async connect(): Promise<void> {
-    await this.loadUi();
     ModalCtrl.open();
   }
 
   public switchNetwork(chainId: number) {
     switchNetwork({ chainId });
-  }
-
-  async loadUi() {
-    if (this.uiLoaded) return;
-    await import('@web3modal/ui');
-    this.uiLoaded = true;
   }
 
   private setupWatchers() {
