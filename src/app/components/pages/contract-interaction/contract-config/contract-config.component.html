@@ -1,5 +1,3 @@
 <h1 class="text-2xl mt-4">Contract Config</h1>
-<div class="mt-6" *ngIf="(enums$ | async) && (enums$ | async)!.length > 0">
-  <div app-divider class="mb-2"></div>
-  <app-enum-config [enums]="(enums$ | async)!"></app-enum-config>
-</div>
+<app-approval-hooks></app-approval-hooks>
+<app-enum-config></app-enum-config>

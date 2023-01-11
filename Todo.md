@@ -2,7 +2,6 @@
 - payable function
 - fix struct output
 - array / struct input
-- approval hooks
 - factory contracts
 - optimize indexing on db
 - add networks and restrict uploading for unknown networks

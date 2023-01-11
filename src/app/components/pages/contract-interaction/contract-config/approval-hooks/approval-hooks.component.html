@@ -1,0 +1,42 @@
+<div class="mt-6" *ngIf="writeFunctions.length > 0">
+  <div app-divider class="mb-2"></div>
+  <p class="text-xl mb-1">Approval Hooks</p>
+  <p class="mb-3">
+    The approval hooks allow you to make sure a specific ERC20 token or ERC721/ERC1155 NFT is approved, before calling a function.
+  </p>
+  <div class="max-h-80 overflow-auto">
+    <form [formGroup]="form">
+      <fieldset class="space-y-5">
+        <div class="pl-5" *ngFor="let signature of writeFunctions; let i = index">
+          <div class="relative flex items-center">
+            <div class="flex h-5 items-center mr-3">
+              <input type="checkbox" class="h-4 w-4 checkbox" [checked]="checked[signature]" (change)="toggleChecked(i)" />
+            </div>
+            <div class="items-center">{{ signature }}</div>
+          </div>
+          <div class="sm:flex items-start mt-2" *ngIf="checked[signature]">
+            <div class="w-full sm:w-36 mr-2">
+              <app-select-menu
+                [list]="tokenTypes"
+                placeholder="Token Type"
+                [initialValue]="config[signature].token"
+                (onSelect)="editTokenType(signature, tokenTypes[$event])"
+              ></app-select-menu>
+            </div>
+            <div class="w-full">
+              <input
+                appEnsureInput
+                [dataType]="'address'"
+                [formControlName]="signature"
+                type="text"
+                class="block w-full text-input"
+                placeholder="Address"
+              />
+              <span class="ml-2 text-red-600" *ngIf="form.controls[signature].errors?.invalid">Invalid address</span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>

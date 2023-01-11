@@ -65,7 +65,16 @@ export interface IBaseFieldConfig {
 
 export interface IReadFieldConfig extends IBaseFieldConfig {}
 
-export interface IWriteFieldConfig extends IBaseFieldConfig {}
+export type TokenType = 'ERC20' | 'ERC721' | 'ERC1155';
+
+export interface ApprovalConfig {
+  address: string;
+  token: TokenType;
+}
+
+export interface IWriteFieldConfig extends IBaseFieldConfig {
+  approvalHook?: ApprovalConfig;
+}
 
 export type FunctionType = 'read' | 'write';
 

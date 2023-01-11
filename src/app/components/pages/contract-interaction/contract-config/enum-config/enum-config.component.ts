@@ -1,4 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { enumComponentsSelector } from '../../store/contract.selector';
 
 @Component({
   selector: 'app-enum-config',
@@ -7,8 +10,11 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class EnumConfigComponent implements OnInit {
   @Input() enums: string[] = [];
+  enums$: Observable<string[]>;
 
-  constructor() {}
+  constructor(private store: Store<{}>) {
+    this.enums$ = this.store.select(enumComponentsSelector);
+  }
 
   ngOnInit(): void {}
 }

@@ -11,6 +11,8 @@ import { UIService } from 'src/app/services/ui.service';
 })
 export class SelectMenuComponent implements OnInit {
   @Input() list: string[] = [];
+  @Input() initialValue?: number | string;
+  @Input() placeholder = 'Select';
   @Output() onSelect = new EventEmitter<number>();
   faCaretDown = faCaretDown;
   faCheck = faCheck;
@@ -21,7 +23,16 @@ export class SelectMenuComponent implements OnInit {
 
   constructor(public ui: UIService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.initialValue === undefined) return;
+    if (typeof this.initialValue === 'number') {
+      this.current = this.initialValue;
+      return;
+    } else {
+      this.current = this.list.findIndex((item) => item === this.initialValue);
+      return;
+    }
+  }
 
   toggleSelect() {
     this.isSelect = !this.isSelect;

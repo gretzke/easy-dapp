@@ -8,10 +8,13 @@ import { ethers } from 'ethers';
 import { firstValueFrom, from, Observable, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { chains } from 'src/helpers/chainConfig';
-import { getDapps, resetWallet, setChainId, walletChanged } from '../store/app.actions';
+import { getDapps, notify, resetWallet, setChainId, walletChanged } from '../store/app.actions';
 import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
 import { Web3Modal } from '@web3modal/html';
+import { TokenType } from 'src/types/abi';
+import { ERC1155__factory, ERC20__factory, ERC721__factory } from 'src/types/typechain';
+import { watchPendingTransaction } from '../components/header/pending-tx/store/pendingtx.actions';
 
 // 1. Define constants
 const projectId = environment.walletConnectId;
@@ -89,5 +92,52 @@ export class EthereumService {
 
   public getContractInstance(address: string, abi: string): ContractBuilder {
     return new ContractBuilder(this, this.chainId, address, abi);
+  }
+
+  public async approve(address: string, type: TokenType): Promise<void> {
+    const user = await this.signer!.getAddress();
+    if (type === 'ERC20') {
+      const contract = ERC20__factory.connect(address, this.signer!);
+      try {
+        const allowance = await contract.allowance(user, address);
+        if (allowance.gt(0)) return;
+      } catch (e) {
+        this.store.dispatch(notify({ src: EthereumService.name, message: 'Approval failed', notificationType: 'error' }));
+        throw new Error('Approval error, the address or token type was probably misconfigured');
+      }
+      const tx = await contract.approve(address, ethers.constants.MaxUint256);
+      this.store.dispatch(
+        watchPendingTransaction({ src: EthereumService.name, name: 'Approve ERC20', txHash: tx.hash, chainId: this.chainId })
+      );
+      await tx.wait(1);
+    } else if (type === 'ERC721') {
+      const contract = ERC721__factory.connect(address, this.signer!);
+      try {
+        const approved = await contract.isApprovedForAll(user, address);
+        if (approved) return;
+      } catch (e) {
+        this.store.dispatch(notify({ src: EthereumService.name, message: 'Approval failed', notificationType: 'error' }));
+        throw new Error('Approval error, the address or token type was probably misconfigured');
+      }
+      const tx = await contract.setApprovalForAll(address, true);
+      this.store.dispatch(
+        watchPendingTransaction({ src: EthereumService.name, name: 'Approve ERC721', txHash: tx.hash, chainId: this.chainId })
+      );
+      await tx.wait(1);
+    } else if (type === 'ERC1155') {
+      const contract = ERC1155__factory.connect(address, this.signer!);
+      try {
+        const approved = await contract.isApprovedForAll(user, address);
+        if (approved) return;
+      } catch (e) {
+        this.store.dispatch(notify({ src: EthereumService.name, message: 'Approval failed', notificationType: 'error' }));
+        throw new Error('Approval error, the address or token type was probably misconfigured');
+      }
+      const tx = await contract.setApprovalForAll(address, true);
+      this.store.dispatch(
+        watchPendingTransaction({ src: EthereumService.name, name: 'Approve ERC1155', txHash: tx.hash, chainId: this.chainId })
+      );
+      await tx.wait(1);
+    }
   }
 }
