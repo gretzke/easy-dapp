@@ -60,6 +60,7 @@ import { EnumInputComponent } from './components/pages/contract-interaction/cont
 import { DividerComponent } from './components/etc/divider/divider.component';
 import { OutputFormatterComponent } from './components/pages/contract-interaction/function/read-field/output-formatter/output-formatter.component';
 import { SelectMenuComponent } from './components/etc/select-menu/select-menu.component';
+import { ApprovalHooksComponent } from './components/pages/contract-interaction/contract-config/approval-hooks/approval-hooks.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -97,6 +98,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     DividerComponent,
     OutputFormatterComponent,
     SelectMenuComponent,
+    ApprovalHooksComponent,
   ],
   imports: [
     BrowserModule,

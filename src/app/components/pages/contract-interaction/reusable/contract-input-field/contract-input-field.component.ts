@@ -139,10 +139,6 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
     return new Date(unix * 1000);
   }
 
-  test() {
-    console.log('click outside', this.timestamp);
-  }
-
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

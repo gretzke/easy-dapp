@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { ContractDataType, IBaseFieldConfig, IFieldWithConfig, InputsConfig } from 'src/types/abi';
+import { EthereumService } from 'src/app/services/ethereum.service';
+import { ApprovalConfig, ContractDataType, IFieldWithConfig, InputsConfig, IWriteFieldConfig } from 'src/types/abi';
 import { sendContractTx, updateInputConfig } from '../../store/contract.actions';
 
 @Component({
@@ -14,12 +15,14 @@ export class WriteFieldComponent implements OnInit {
   @Input() signature: string = '';
   @Input() state!: IFieldWithConfig;
   public args: ContractDataType[] = [];
+  private approvalHook: ApprovalConfig | undefined;
 
-  constructor(private store: Store<{}>) {}
+  constructor(private store: Store<{}>, private ethereum: EthereumService) {}
 
   ngOnInit(): void {
     this.args = new Array(this.state.field.inputs.length);
-    let config = { ...this.state.config } as IBaseFieldConfig;
+    let config = { ...this.state.config } as IWriteFieldConfig;
+    this.approvalHook = config.approvalHook;
     if (config.name === undefined) config.name = '';
     if (config.description === undefined) config.description = '';
     if (config.inputs === undefined) config.inputs = new Array(this.state.field.inputs.length).fill({});
@@ -27,8 +30,11 @@ export class WriteFieldComponent implements OnInit {
     this.state = { ...this.state, config: config };
   }
 
-  public sendTx() {
+  public async sendTx() {
     if (this.allArgsValid) {
+      if (this.approvalHook) {
+        await this.ethereum.approve(this.approvalHook.address, this.approvalHook.token);
+      }
       this.store.dispatch(sendContractTx({ src: WriteFieldComponent.name, method: this.state.field.name, args: this.args }));
     }
   }

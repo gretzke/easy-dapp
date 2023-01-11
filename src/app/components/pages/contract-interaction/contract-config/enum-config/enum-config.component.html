@@ -1,5 +1,10 @@
-<p class="text-xl mb-1">Enums</p>
-<p>Define Enums in your Smart Contract here for easy inputs</p>
-<div *ngFor="let enum of enums; let i = index" class="py-2">
-  <app-enum-input [enum]="enum" [index]="i"></app-enum-input>
+<div *ngIf="enums$ | async as enums">
+  <div class="mt-6" *ngIf="enums.length > 0">
+    <div app-divider class="mb-2"></div>
+    <p class="text-xl mb-1">Enums</p>
+    <p>Define Enums in your Smart Contract here for easy inputs</p>
+    <div *ngFor="let enum of enums; let i = index" class="py-2">
+      <app-enum-input [enum]="enum" [index]="i"></app-enum-input>
+    </div>
+  </div>
 </div>

@@ -33,17 +33,17 @@ export class DynamicInputListComponent implements OnInit, OnDestroy {
         });
       }
     });
-    this.subscription.add(
-      this.form.controls.items.valueChanges.pipe(debounceTime(200), distinctUntilChanged()).subscribe(() => {
-        this.update();
-      })
-    );
   }
 
   ngOnInit(): void {
     for (const item of this.items) {
       (this.form.controls.items as FormArray).push(new FormControl(item));
     }
+    this.subscription.add(
+      this.form.controls.items.valueChanges.pipe(debounceTime(200), distinctUntilChanged()).subscribe(() => {
+        this.update();
+      })
+    );
   }
 
   formItems(): FormControl<any>[] {
