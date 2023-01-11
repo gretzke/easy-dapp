@@ -55,7 +55,7 @@ export class UIService implements OnInit {
   }
 
   public generateProfilePicture(address: string): Observable<SafeResourceUrl> {
-    const url = blockies.create({ seed: address, size: 10, scale: 4 }).toDataURL();
+    const url = blockies.create({ seed: address.toLowerCase(), size: 10, scale: 4 }).toDataURL();
     return of(url);
   }
 
