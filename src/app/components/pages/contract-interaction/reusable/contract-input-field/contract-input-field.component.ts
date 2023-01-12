@@ -42,7 +42,7 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
     this.subscription = this.form.controls.value.valueChanges.pipe(debounceTime(200), distinctUntilChanged()).subscribe((newValue) => {
       if (this.form.valid) {
         this.valueUpdated.emit(this.transformValue(newValue));
-        if (this.config?.timestamp === true) {
+        if (this.config?.formatter === 'timestamp') {
           this.tmpDate = this.toDate(newValue);
           this.timestamp = this.tmpDate;
         }
@@ -85,9 +85,9 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
     if (!t) return '';
     if (t === 'address') return '0xA1337b...';
     if (this.uintRegex.test(t)) {
-      if (!this.config || this.config.timestamp === undefined) return '1337';
-      if (this.config.timestamp === true) return this.currentTimestamp;
-      if (this.config.timestamp === false) return '12.34';
+      if (!this.config || this.config.formatter === undefined) return '1337';
+      if (this.config.formatter === 'timestamp') return this.currentTimestamp;
+      if (this.config.formatter === 'decimals') return '12.34';
     }
     if (this.intRegex.test(t)) return '-1337';
     if (this.bytesRegex.test(t)) return '0x...';
@@ -105,7 +105,7 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
       case 'address':
         return value;
       case 'uint256':
-        if (this.config && this.config.timestamp === false) {
+        if (this.config && this.config.formatter === 'decimals') {
           return ethers.utils.parseUnits(value, this.config.decimals ?? 18);
         }
         return BigNumber.from(value);

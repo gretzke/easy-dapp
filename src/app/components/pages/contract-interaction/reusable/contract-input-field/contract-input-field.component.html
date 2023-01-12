@@ -39,7 +39,7 @@
       />
       <div
         class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3"
-        *ngIf="config?.timestamp"
+        *ngIf="config?.formatter === 'timestamp'"
         (click)="showDatePicker = true"
       >
         <fa-icon [icon]="faCalendar"></fa-icon>

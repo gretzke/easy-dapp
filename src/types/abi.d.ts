@@ -45,9 +45,11 @@ export interface IAbiData {
   abi: string;
 }
 
+export type InputFormatterType = 'decimals' | 'timestamp';
+
 export interface InputsConfig {
   name?: string;
-  timestamp?: boolean;
+  formatter?: InputFormatterType;
   decimals?: string;
 }
 

@@ -42,7 +42,7 @@ export class EnsureInputDirective {
       case 'address':
         return /^(0$|0x[0-9a-fA-F]{0,40})/g;
       case 'uint256':
-        if (this.config && this.config.timestamp === false) {
+        if (this.config && this.config.formatter === 'decimals') {
           return new RegExp(`^[0-9]*(.[0-9]{0,${this.config.decimals ?? 18}})?`);
         }
         return /^([0-9]{0,256})/g;

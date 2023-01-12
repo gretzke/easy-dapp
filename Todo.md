@@ -5,7 +5,8 @@
 - factory contracts
 - optimize indexing on db
 - add networks and restrict uploading for unknown networks
-- transaction tracking and more links in transactions dropdown
+- transaction tracking and more links in transactions dropdown (after network restriction)
+- Etherscan link next to edit button (after network restriction)
 - landing page
 - more items to user dropdown (address identifier, balance)
 - footer - link to github

@@ -19,12 +19,12 @@ export class InputConfigBarComponent implements OnInit {
 
   toggleTimestamp() {
     if (this.config === undefined) this.config = {};
-    this.update({ ...this.config, timestamp: this.config.timestamp === true ? undefined : !this.config.timestamp });
+    this.update({ ...this.config, formatter: this.config.formatter === 'timestamp' ? undefined : 'timestamp' });
   }
 
   toggleDecimals() {
     if (this.config === undefined) this.config = {};
-    this.update({ ...this.config, timestamp: this.config.timestamp === false ? undefined : false });
+    this.update({ ...this.config, formatter: this.config.formatter === 'decimals' ? undefined : 'decimals' });
   }
 
   setDecimals(decimals: string) {
