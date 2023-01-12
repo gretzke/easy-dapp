@@ -54,7 +54,9 @@ export interface InputsConfig {
 }
 
 export interface OutputsConfig {
-  name: string;
+  name?: string;
+  formatter?: InputFormatterType;
+  decimals?: string;
 }
 
 export interface IBaseFieldConfig {

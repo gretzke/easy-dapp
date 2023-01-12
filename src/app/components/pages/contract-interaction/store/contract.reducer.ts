@@ -114,6 +114,21 @@ const configReducer = createReducer(
       },
     };
   }),
+  on(Actions.updateOutputConfig, (state, action) => {
+    if (!state) return state;
+    const newConfig = [...(state.functionConfig[action.signature]?.outputs ?? new Array(action.length).fill({}))];
+    newConfig[action.index] = action.config;
+    return {
+      ...state,
+      functionConfig: {
+        ...state.functionConfig,
+        [action.signature]: {
+          ...state.functionConfig[action.signature],
+          outputs: newConfig,
+        },
+      },
+    };
+  }),
   on(Actions.setEnumConfig, (state, action) => {
     if (!state) return state;
     const newState = { ...state };

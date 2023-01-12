@@ -48,3 +48,6 @@ export interface NativeCurrency {
     symbol: string;
   };
 }
+
+export type InputType = 'default' | 'enum';
+export type OutputType = 'default' | 'enum' | 'timestamp' | 'decimals';

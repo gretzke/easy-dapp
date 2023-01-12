@@ -29,6 +29,7 @@ export class InputConfigBarComponent implements OnInit {
 
   setDecimals(decimals: string) {
     if (this.config === undefined) this.config = {};
+    if (decimals === '') decimals = '0';
     this.update({ ...this.config, decimals });
   }
 

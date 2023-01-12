@@ -1,4 +1,3 @@
-- Output formatting name, date / decimals
 - payable function
 - fix struct output
 - array / struct input

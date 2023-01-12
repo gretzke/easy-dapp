@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { AbiFunctions, ContractDataType, FunctionType, IContractState, IDapp, InputsConfig } from 'src/types/abi';
+import { AbiFunctions, ContractDataType, FunctionType, IContractState, IDapp, InputsConfig, OutputsConfig } from 'src/types/abi';
 
 export const setContract = createAction('[CONTRACT] set contract', props<{ src: string; contract?: IDapp; firstDeployment?: true }>());
 
@@ -46,4 +46,9 @@ export const updateFunctionConfig = createAction(
 export const updateInputConfig = createAction(
   '[CONFIG] set input config',
   props<{ src: string; signature: string; index: number; length: number; config: InputsConfig }>()
+);
+
+export const updateOutputConfig = createAction(
+  '[CONFIG] set output config',
+  props<{ src: string; signature: string; index: number; length: number; config: OutputsConfig }>()
 );

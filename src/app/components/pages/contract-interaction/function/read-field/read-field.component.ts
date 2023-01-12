@@ -1,16 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { OutputType } from 'src/types';
 import {
   ContractDataType,
   IBaseFieldConfig,
   IContractState,
   IFieldWithConfig,
   InputsConfig,
+  OutputsConfig,
   ValidDataType,
   VariableType,
 } from 'src/types/abi';
-import { readContract, updateInputConfig } from '../../store/contract.actions';
+import { readContract, updateInputConfig, updateOutputConfig } from '../../store/contract.actions';
 import { contractStateSelector } from '../../store/contract.selector';
 
 @Component({
@@ -21,7 +23,6 @@ import { contractStateSelector } from '../../store/contract.selector';
 export class ReadFieldComponent implements OnInit {
   @Input() signature: string = '';
   @Input() state!: IFieldWithConfig;
-
   public args: ContractDataType[] = [];
   public contractState$: Observable<IContractState | undefined>;
 
@@ -49,12 +50,31 @@ export class ReadFieldComponent implements OnInit {
     this.args[index] = val;
   }
 
-  setConfig(index: number, config: InputsConfig) {
+  setInputConfig(index: number, config: InputsConfig) {
     this.store.dispatch(
       updateInputConfig({
         src: ReadFieldComponent.name,
         signature: this.signature,
         length: this.state.field.inputs.length,
+        index: index,
+        config,
+      })
+    );
+  }
+
+  getOutputType(config?: OutputsConfig): OutputType {
+    if (config && config.formatter) {
+      return config.formatter;
+    }
+    return 'default';
+  }
+
+  setOutputConfig(index: number, config: OutputsConfig) {
+    this.store.dispatch(
+      updateOutputConfig({
+        src: ReadFieldComponent.name,
+        signature: this.signature,
+        length: this.state.field.outputs.length,
         index: index,
         config,
       })

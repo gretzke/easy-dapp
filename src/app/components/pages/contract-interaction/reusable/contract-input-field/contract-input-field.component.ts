@@ -6,8 +6,7 @@ import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { ContractDataType, InputsConfig, VariableType } from 'src/types/abi';
 import { editSelector, enumSelector } from '../../store/contract.selector';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-
-type InputType = 'default' | 'enum';
+import { InputType } from 'src/types';
 
 @Component({
   selector: 'app-contract-input-field',

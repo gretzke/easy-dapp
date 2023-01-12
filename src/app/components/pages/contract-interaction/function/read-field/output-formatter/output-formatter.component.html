@@ -1,11 +1,22 @@
-<div [ngSwitch]="outputType">
-  <p class="text-lg sm:text-md" *ngSwitchCase="'enum'">
-    <span class="text-muted mr-2" *ngIf="name !== ''">{{ name }}:</span>
+<div
+  app-input-config-bar
+  [config]="config"
+  class="block sm:inline-block sm:my-0"
+  (configUpdated)="setConfig($event)"
+  *ngIf="(edit$ | async) && isNumber()"
+></div>
+<div>
+  <div class="text-base sm:text-lg">
+    <div
+      app-edit-input
+      *ngIf="edit$ | async"
+      [value]="name"
+      [placeholder]="type.name !== '' ? type.name : 'Name'"
+      class="inline-block mr-3 w-1/6"
+      (valueUpdated)="setName($event)"
+    ></div>
+    <span class="mr-2" *ngIf="!(edit$ | async) && name !== ''">{{ name }}</span>
+    <span class="text-muted mr-2">{{ datatype }}:</span>
     <span>{{ formattedValue }}</span>
-  </p>
-  <p class="text-lg sm:text-md" *ngSwitchDefault>
-    <span class="mr-2" *ngIf="name !== ''">{{ name }}</span>
-    <span class="text-muted">{{ type.internalType }}:</span>
-    {{ formattedValue }}
-  </p>
+  </div>
 </div>

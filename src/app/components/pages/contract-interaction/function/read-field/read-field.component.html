@@ -6,7 +6,7 @@
     [type]="input"
     [config]="inputConfig(i)"
     (valueUpdated)="setArg(i, $event)"
-    (configUpdated)="setConfig(i, $event)"
+    (configUpdated)="setInputConfig(i, $event)"
   ></app-contract-input-field>
   <button class="button-primary" *ngIf="state.field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
 
@@ -17,6 +17,7 @@
         [type]="output"
         [config]="outputConfig(i)"
         [value]="getValue(contractState[signature], output, i)"
+        (configUpdated)="setOutputConfig(i, $event)"
       ></app-output-formatter>
     </div>
   </div>
