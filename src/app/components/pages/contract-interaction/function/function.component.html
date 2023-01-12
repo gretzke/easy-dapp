@@ -18,7 +18,14 @@
           <fa-icon [icon]="faEye" *ngIf="!hidden"></fa-icon>
           <fa-icon [icon]="faEyeSlash" *ngIf="hidden"></fa-icon>
         </button>
-        <button type="button" class="button button-r cursor-grab" (mousedown)="clickPressed()" (mouseup)="clickReleased()">
+        <button
+          type="button"
+          class="button button-r cursor-grab"
+          (mousedown)="clickPressed()"
+          (mouseup)="clickReleased()"
+          (touchstart)="clickPressed()"
+          (touchend)="clickReleased()"
+        >
           <fa-icon [icon]="faUpDown"></fa-icon>
         </button>
       </div>
