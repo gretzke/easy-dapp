@@ -1,4 +1,4 @@
-import { ContractTransaction, ethers } from 'ethers';
+import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { from, Observable } from 'rxjs';
 import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
 import { EthereumService } from '../ethereum.service';
@@ -28,8 +28,8 @@ export class ContractBuilder {
     return this.contract()[functionName](...args) as Promise<ContractDataType>;
   }
 
-  public set(functionName: string, args: any[]): Observable<ContractTransaction> {
-    return from(this.contract()[functionName](...args) as Promise<ContractTransaction>);
+  public set(functionName: string, args: any[], opt?: { value: BigNumber }): Observable<ContractTransaction> {
+    return from(this.contract()[functionName](...args, opt ?? {}) as Promise<ContractTransaction>);
   }
 
   private contract(): ethers.Contract {

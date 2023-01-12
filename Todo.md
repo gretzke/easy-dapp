@@ -1,4 +1,3 @@
-- payable function
 - fix struct output
 - array / struct input
 - factory contracts

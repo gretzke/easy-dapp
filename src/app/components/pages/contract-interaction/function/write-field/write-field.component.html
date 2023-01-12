@@ -7,7 +7,25 @@
     (valueUpdated)="setArg(i, $event)"
     (configUpdated)="setConfig(i, $event)"
   ></app-contract-input-field>
-  <app-contract-input-field *ngIf="field.stateMutability === 'payable'"></app-contract-input-field>
-  <p *ngIf="field.stateMutability === 'payable'">TODO: implement sending value</p>
+  <div class="mt-6" *ngIf="field.stateMutability === 'payable'">
+    <label for="value" class="block ml-3 mb-1 text-base">Value</label>
+    <div class="relative">
+      <input
+        appEnsureInput
+        [dataType]="'uint256'"
+        [config]="{ formatter: 'decimals', decimals: '18' }"
+        [formControl]="payableForm"
+        type="text"
+        name="value"
+        id="value"
+        class="relative w-full text-input pr-12"
+        placeholder="1.234"
+        aria-describedby="symbol"
+      />
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+        <span appSymbol class="text-sm" id="symbol"></span>
+      </div>
+    </div>
+  </div>
   <button class="button-primary mt-5" (click)="sendTx()" [disabled]="!allArgsValid">Send Transaction</button>
 </div>

@@ -18,9 +18,11 @@ import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app.component';
 import { BackgroundComponent } from './components/etc/background/background.component';
+import { DividerComponent } from './components/etc/divider/divider.component';
 import { IconComponent } from './components/etc/icon/icon.component';
 import { LoaderComponent } from './components/etc/loader/loader.component';
 import { WalletModalComponent } from './components/etc/modals/wallet-modal/wallet-modal.component';
+import { SelectMenuComponent } from './components/etc/select-menu/select-menu.component';
 import { DarkmodeToggleComponent } from './components/header/darkmode-toggle/darkmode-toggle.component';
 import { HeaderLinksComponent } from './components/header/header-links/header-links.component';
 import { HeaderLogoComponent } from './components/header/header-logo/header-logo.component';
@@ -34,14 +36,19 @@ import {
   pendingTxStateKey,
 } from './components/header/pending-tx/store/pendingtx.reducer';
 import { AddContractComponent } from './components/pages/add-contract/add-contract.component';
+import { ApprovalHooksComponent } from './components/pages/contract-interaction/contract-config/approval-hooks/approval-hooks.component';
 import { ContractSettingsComponent } from './components/pages/contract-interaction/contract-config/contract-config.component';
+import { EnumConfigComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-config.component';
+import { EnumInputComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-input/enum-input.component';
 import { ContractHeaderComponent } from './components/pages/contract-interaction/contract-header/contract-header.component';
 import { ContractInteractionComponent } from './components/pages/contract-interaction/contract-interaction.component';
 import { FunctionComponent } from './components/pages/contract-interaction/function/function.component';
+import { OutputFormatterComponent } from './components/pages/contract-interaction/function/read-field/output-formatter/output-formatter.component';
 import { ReadFieldComponent } from './components/pages/contract-interaction/function/read-field/read-field.component';
 import { WriteFieldComponent } from './components/pages/contract-interaction/function/write-field/write-field.component';
 import { ContractInputFieldComponent } from './components/pages/contract-interaction/reusable/contract-input-field/contract-input-field.component';
 import { InputConfigBarComponent } from './components/pages/contract-interaction/reusable/contract-input-field/input-config-bar/input-config-bar.component';
+import { DynamicInputListComponent } from './components/pages/contract-interaction/reusable/dynamic-input-list/dynamic-input-list.component';
 import { EditInputComponent } from './components/pages/contract-interaction/reusable/edit-input/edit-input.component';
 import { EditTextAreaComponent } from './components/pages/contract-interaction/reusable/edit-text-area/edit-text-area.component';
 import { ContractEffects } from './components/pages/contract-interaction/store/contract.effects';
@@ -50,17 +57,11 @@ import { HomeComponent } from './components/pages/home/home.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { EditTextDirective } from './directives/edit-text.directive';
 import { EnsureInputDirective } from './directives/ensure-input.directive';
+import { SymbolDirective } from './directives/symbol.directive';
 import { WalletResolver } from './resolver/WalletResolver';
 import { EthereumService } from './services/ethereum.service';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
-import { EnumConfigComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-config.component';
-import { DynamicInputListComponent } from './components/pages/contract-interaction/reusable/dynamic-input-list/dynamic-input-list.component';
-import { EnumInputComponent } from './components/pages/contract-interaction/contract-config/enum-config/enum-input/enum-input.component';
-import { DividerComponent } from './components/etc/divider/divider.component';
-import { OutputFormatterComponent } from './components/pages/contract-interaction/function/read-field/output-formatter/output-formatter.component';
-import { SelectMenuComponent } from './components/etc/select-menu/select-menu.component';
-import { ApprovalHooksComponent } from './components/pages/contract-interaction/contract-config/approval-hooks/approval-hooks.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -99,6 +100,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     OutputFormatterComponent,
     SelectMenuComponent,
     ApprovalHooksComponent,
+    SymbolDirective,
   ],
   imports: [
     BrowserModule,

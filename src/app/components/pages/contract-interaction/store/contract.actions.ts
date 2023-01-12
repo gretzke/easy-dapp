@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { BigNumber } from 'ethers';
 import { AbiFunctions, ContractDataType, FunctionType, IContractState, IDapp, InputsConfig, OutputsConfig } from 'src/types/abi';
 
 export const setContract = createAction('[CONTRACT] set contract', props<{ src: string; contract?: IDapp; firstDeployment?: true }>());
@@ -21,7 +22,7 @@ export const setContractStateVariable = createAction(
 
 export const sendContractTx = createAction(
   '[CONTRACT TX] send contract tx',
-  props<{ src: string; method: string; args: ContractDataType[] }>()
+  props<{ src: string; method: string; args: ContractDataType[]; opt?: { value: BigNumber } }>()
 );
 
 export const saveDapp = createAction('[CONFIG] save dapp', props<{ src: string }>());

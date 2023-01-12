@@ -118,7 +118,7 @@ export class ContractEffects {
       withLatestFrom(this.store.select(contractSelector)),
       mergeMap(([action, contract]) => {
         const ci = this.ethereum.getContractInstance(contract!.address, contract!.abi);
-        return ci.set(action.method, action.args).pipe(
+        return ci.set(action.method, action.args, action.opt).pipe(
           map((tx: ContractTransaction) =>
             watchPendingTransaction({
               src: ContractEffects.name,

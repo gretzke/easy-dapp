@@ -1,6 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
+import { ethers } from 'ethers';
+import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { ApprovalConfig, ContractDataType, IFieldWithConfig, InputsConfig, IWriteFieldConfig } from 'src/types/abi';
 import { sendContractTx, updateInputConfig } from '../../store/contract.actions';
@@ -10,11 +13,13 @@ import { sendContractTx, updateInputConfig } from '../../store/contract.actions'
   templateUrl: './write-field.component.html',
   styleUrls: ['./write-field.component.scss'],
 })
-export class WriteFieldComponent implements OnInit {
+export class WriteFieldComponent implements OnInit, OnDestroy {
   faChevronUp = faChevronUp;
   @Input() signature: string = '';
   @Input() state!: IFieldWithConfig;
   public args: ContractDataType[] = [];
+  public payableForm = new FormControl('');
+  private subscription = new Subscription();
   private approvalHook: ApprovalConfig | undefined;
 
   constructor(private store: Store<{}>, private ethereum: EthereumService) {}
@@ -35,7 +40,11 @@ export class WriteFieldComponent implements OnInit {
       if (this.approvalHook) {
         await this.ethereum.approve(this.approvalHook.address, this.approvalHook.token);
       }
-      this.store.dispatch(sendContractTx({ src: WriteFieldComponent.name, method: this.state.field.name, args: this.args }));
+      let value = undefined;
+      if (this.state.field.stateMutability === 'payable' && this.payableForm.value && this.payableForm.value !== '') {
+        value = { value: ethers.utils.parseEther(this.payableForm.value) };
+      }
+      this.store.dispatch(sendContractTx({ src: WriteFieldComponent.name, method: this.state.field.name, args: this.args, opt: value }));
     }
   }
 
@@ -69,5 +78,9 @@ export class WriteFieldComponent implements OnInit {
         config,
       })
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
