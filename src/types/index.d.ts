@@ -50,4 +50,4 @@ export interface NativeCurrency {
 }
 
 export type InputType = 'default' | 'enum';
-export type OutputType = 'default' | 'enum' | 'timestamp' | 'decimals';
+export type OutputType = 'default' | 'enum' | 'timestamp' | 'decimals' | 'contract';

@@ -24,7 +24,7 @@
     <div>
       <label for="abi" class="block ml-3">ABI</label>
       <div class="mt-1">
-        <textarea formControlName="abi" rows="4" name="abi" class="block w-full text-input" placeholder="..."></textarea>
+        <textarea formControlName="abi" rows="4" name="abi" class="block w-full textarea-input" placeholder="..."></textarea>
         <p *ngIf="form.controls.abi.dirty && form.controls.abi.invalid" class="ml-3 mt-1 text-sm text-red-600">
           <span *ngIf="form.controls.abi.errors?.required">Required</span>
           <span *ngIf="form.controls.abi.errors?.json">Invalid JSON</span>

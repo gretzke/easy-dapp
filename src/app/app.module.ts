@@ -46,8 +46,9 @@ import { FunctionComponent } from './components/pages/contract-interaction/funct
 import { OutputFormatterComponent } from './components/pages/contract-interaction/function/read-field/output-formatter/output-formatter.component';
 import { ReadFieldComponent } from './components/pages/contract-interaction/function/read-field/read-field.component';
 import { WriteFieldComponent } from './components/pages/contract-interaction/function/write-field/write-field.component';
+import { AddressOutputConfigBarComponent } from './components/pages/contract-interaction/reusable/contract-input-field/address-output-config-bar/address-output-config-bar.component';
 import { ContractInputFieldComponent } from './components/pages/contract-interaction/reusable/contract-input-field/contract-input-field.component';
-import { InputConfigBarComponent } from './components/pages/contract-interaction/reusable/contract-input-field/input-config-bar/input-config-bar.component';
+import { UintInputConfigBarComponent } from './components/pages/contract-interaction/reusable/contract-input-field/uint-input-config-bar/uint-input-config-bar.component';
 import { DynamicInputListComponent } from './components/pages/contract-interaction/reusable/dynamic-input-list/dynamic-input-list.component';
 import { EditInputComponent } from './components/pages/contract-interaction/reusable/edit-input/edit-input.component';
 import { EditTextAreaComponent } from './components/pages/contract-interaction/reusable/edit-text-area/edit-text-area.component';
@@ -91,7 +92,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     EditTextAreaComponent,
     FunctionComponent,
     ContractHeaderComponent,
-    InputConfigBarComponent,
+    UintInputConfigBarComponent,
     ContractSettingsComponent,
     EnumConfigComponent,
     DynamicInputListComponent,
@@ -101,6 +102,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     SelectMenuComponent,
     ApprovalHooksComponent,
     SymbolDirective,
+    AddressOutputConfigBarComponent,
   ],
   imports: [
     BrowserModule,

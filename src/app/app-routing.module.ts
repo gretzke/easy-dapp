@@ -7,7 +7,9 @@ import { WalletResolver } from './resolver/WalletResolver';
 
 const routes: Routes = [
   { path: 'new-dapp', component: AddContractComponent },
+  { path: 'new-dapp/:address', component: AddContractComponent },
   { path: 'app/:owner/:url', component: ContractInteractionComponent, resolve: { walletConnected: WalletResolver } },
+  { path: 'app/:owner/:url/:address', component: ContractInteractionComponent, resolve: { walletConnected: WalletResolver } },
   {
     path: '',
     pathMatch: 'full',

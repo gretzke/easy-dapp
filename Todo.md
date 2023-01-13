@@ -1,6 +1,5 @@
 - fix struct output
 - array / struct input
-- factory contracts
 - optimize indexing on db
 - add networks and restrict uploading for unknown networks
 - transaction tracking and more links in transactions dropdown (after network restriction)

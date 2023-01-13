@@ -5,6 +5,7 @@ export interface IAbiResponse {
   data: {
     id: string;
     abi: string;
+    verified: boolean;
   };
 }
 

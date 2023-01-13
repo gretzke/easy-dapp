@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { ContractTransaction } from 'ethers';
+import { ContractTransaction, ethers } from 'ethers';
 import { catchError, filter, from, map, mergeMap, of, take, tap, withLatestFrom } from 'rxjs';
 import { watchPendingTransaction } from 'src/app/components/header/pending-tx/store/pendingtx.actions';
 import { dappId, getFunctionName } from 'src/helpers/util';
@@ -213,7 +213,11 @@ export class ContractEffects {
                 map(() => action)
               );
             }
-            return of(setContract({ src: ContractEffects.name, contract: dapp.data }));
+            const data = { ...dapp.data };
+            if (action.address && ethers.utils.isAddress(action.address)) {
+              data.address = action.address;
+            }
+            return of(setContract({ src: ContractEffects.name, contract: data }));
           }),
           catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
         )

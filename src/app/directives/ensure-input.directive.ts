@@ -27,7 +27,7 @@ export class EnsureInputDirective {
     }
   }
   private setInputValue(value: string): string {
-    if (value === null) {
+    if (!value) {
       return '';
     }
     const matchedValue = value.match(this.regex());
@@ -48,6 +48,8 @@ export class EnsureInputDirective {
         return /^([0-9]{0,256})/g;
       case 'string':
         return /.*/g;
+      case 'url':
+        return /^0x[0-9a-fA-F]{40}\/\S+|^0x[0-9a-fA-F]{40}\/$|^(0$|0x[0-9a-fA-F]{0,40})/g;
       default:
         return /.*/g;
     }

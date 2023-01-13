@@ -3,6 +3,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faGear, faGlasses, faPen } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
+import { ethers } from 'ethers';
 import { Subscription } from 'rxjs';
 import { getDapp } from 'src/app/store/app.actions';
 import { dappId } from 'src/helpers/util';
@@ -54,7 +55,11 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!this.firstDeployment) {
       const id = dappId(this.route.snapshot.params.owner, this.route.snapshot.params.url);
-      this.store.dispatch(getDapp({ src: ContractInteractionComponent.name, id }));
+      let address;
+      if (this.route.snapshot.params.address && ethers.utils.isAddress(this.route.snapshot.params.address)) {
+        address = this.route.snapshot.params.address;
+      }
+      this.store.dispatch(getDapp({ src: ContractInteractionComponent.name, id, address }));
     }
   }
 

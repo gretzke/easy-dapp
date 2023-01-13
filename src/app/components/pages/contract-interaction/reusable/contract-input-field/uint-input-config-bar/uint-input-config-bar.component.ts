@@ -4,11 +4,11 @@ import { InputsConfig } from 'src/types/abi';
 import { editSelector } from '../../../store/contract.selector';
 
 @Component({
-  selector: '[app-input-config-bar]',
-  templateUrl: './input-config-bar.component.html',
-  styleUrls: ['./input-config-bar.component.scss'],
+  selector: '[app-uint-input-config-bar]',
+  templateUrl: './uint-input-config-bar.component.html',
+  styleUrls: ['./uint-input-config-bar.component.scss'],
 })
-export class InputConfigBarComponent implements OnInit {
+export class UintInputConfigBarComponent implements OnInit {
   @Input() config?: InputsConfig;
   @Output() configUpdated = new EventEmitter<InputsConfig>();
   public edit$ = this.store.select(editSelector);

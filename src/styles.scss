@@ -130,8 +130,18 @@
     }
 }
 
+.text-input-base {
+    @apply border; @apply border-gray-300; @apply rounded; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:border-custom-light-500; @apply dark:focus:border-custom-dark-500; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:placeholder-gray-500;
+}
+
 .text-input {
-    @apply h-10; @apply border; @apply border-gray-300; @apply rounded; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:border-custom-light-500; @apply dark:focus:border-custom-dark-500; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:placeholder-gray-500;
+    @extend .text-input-base;
+    @apply h-10;
+}
+
+.textarea-input {
+    @extend .text-input-base;
+    @apply h-60;
 }
 
 .button-header {

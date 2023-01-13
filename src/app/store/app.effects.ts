@@ -118,6 +118,7 @@ export class AppEffects {
               src: AppEffects.name,
               abi: res.data.abi,
               id: res.data.id,
+              verified: res.data.verified,
             });
           }),
           catchError((e: Error) => {

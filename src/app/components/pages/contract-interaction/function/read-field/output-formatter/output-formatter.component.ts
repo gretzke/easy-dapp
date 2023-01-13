@@ -52,22 +52,24 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
         return `Date (${this.type.internalType})`;
       case 'decimals':
         return `${this.config?.decimals ?? 18} decimals (${this.type.internalType})`;
+      case 'contract':
+        return this.type.type === 'address' ? 'Contract' : this.type.internalType;
       default:
         return this.type.internalType;
     }
   }
 
-  get formattedValue() {
+  get formattedValue(): string {
     switch (this.outputType) {
       case 'enum':
         const index = this.value as number;
-        return index >= this.enumConfig.length ? index : this.enumConfig[index];
+        return index >= this.enumConfig.length ? index.toString() : this.enumConfig[index];
       case 'timestamp':
         return new Date((this.value as number) * 1000).toLocaleString();
       case 'decimals':
         return ethers.utils.formatUnits(this.value.toString(), this.config?.decimals ?? '18');
       default:
-        return this.value;
+        return this.value.toString();
     }
   }
 
@@ -83,6 +85,21 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
   isNumber() {
     if (this.enumName) return false;
     return this.uintRegex.test(this.type.type);
+  }
+
+  isAddress() {
+    return this.type.type === 'address';
+  }
+
+  getUrl(): string[] {
+    let url = ['/', 'new-dapp', this.formattedValue];
+    if (this.outputType === 'contract' && this.config?.url) {
+      if (/^(0$|0x[0-9a-fA-F]{0,40})\/\S+/g.test(this.config.url)) {
+        const config = this.config.url.split('/');
+        url = ['/', 'app', config[0], config[1], this.formattedValue];
+      }
+    }
+    return url;
   }
 
   ngOnDestroy(): void {

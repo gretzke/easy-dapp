@@ -1,9 +1,16 @@
 <div
-  app-input-config-bar
+  *ngIf="(edit$ | async) && isNumber()"
+  app-uint-input-config-bar
   [config]="config"
   class="block sm:inline-block sm:my-0"
   (configUpdated)="setConfig($event)"
-  *ngIf="(edit$ | async) && isNumber()"
+></div>
+<div
+  *ngIf="(edit$ | async) && isAddress()"
+  app-address-output-config-bar
+  [config]="config"
+  class="block sm:inline-block sm:my-0 xl:w-1/2 lg:w-2/3 w-full"
+  (configUpdated)="setConfig($event)"
 ></div>
 <div>
   <div class="text-base sm:text-lg">
@@ -17,6 +24,12 @@
     ></div>
     <span class="mr-2" *ngIf="!(edit$ | async) && name !== ''">{{ name }}</span>
     <span class="text-muted mr-2">{{ datatype }}:</span>
-    <span>{{ formattedValue }}</span>
+    <ng-container *ngIf="outputType === 'contract'">
+      <span *ngIf="formattedValue === '0x0000000000000000000000000000000000000000'">{{ formattedValue }}</span>
+      <ng-container *ngIf="formattedValue !== '0x0000000000000000000000000000000000000000'">
+        <a [routerLink]="getUrl()" class="underline">{{ formattedValue }}</a>
+      </ng-container>
+    </ng-container>
+    <span *ngIf="outputType !== 'contract'">{{ formattedValue }}</span>
   </div>
 </div>

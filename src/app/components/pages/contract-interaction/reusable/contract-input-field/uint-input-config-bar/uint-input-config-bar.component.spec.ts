@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InputConfigBarComponent } from './input-config-bar.component';
+import { UintInputConfigBarComponent } from './uint-input-config-bar.component';
 
 describe('InputConfigBarComponent', () => {
-  let component: InputConfigBarComponent;
-  let fixture: ComponentFixture<InputConfigBarComponent>;
+  let component: UintInputConfigBarComponent;
+  let fixture: ComponentFixture<UintInputConfigBarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InputConfigBarComponent ]
-    })
-    .compileComponents();
+      declarations: [UintInputConfigBarComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(InputConfigBarComponent);
+    fixture = TestBed.createComponent(UintInputConfigBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

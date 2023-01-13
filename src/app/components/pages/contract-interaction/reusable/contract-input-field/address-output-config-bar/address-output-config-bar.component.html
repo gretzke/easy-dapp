@@ -1,0 +1,18 @@
+<div class="flex items-center text-sm" *ngIf="config">
+  <div *ngIf="edit$ | async" class="flex dark:text-gray-300">
+    <div class="flex items-center ml-3">
+      <input type="radio" class="radio" [checked]="config.formatter === 'contract'" (click)="toggleContract()" />
+      <label class="ml-1 mr-3 block">Contract</label>
+    </div>
+  </div>
+  <div
+    *ngIf="config.formatter === 'contract' && (edit$ | async)"
+    app-edit-input
+    appEnsureInput
+    [dataType]="'url'"
+    class="block w-full"
+    [value]="config.url ?? ''"
+    placeholder="0x123.../dapp-url"
+    (valueUpdated)="setUrl($event)"
+  ></div>
+</div>

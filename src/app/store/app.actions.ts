@@ -18,7 +18,7 @@ export const switchNetwork = createAction('[CHAIN DATA] switch network', props<{
 
 export const getAbi = createAction('[FIREBASE] fetch abi', props<{ src: string; address: string }>());
 
-export const abiResponse = createAction('[FIREBASE] abi response', props<{ src: string; abi: string; id: string }>());
+export const abiResponse = createAction('[FIREBASE] abi response', props<{ src: string; abi: string; id: string; verified: boolean }>());
 
 export const abiError = createAction('[FIREBASE] abi error', props<{ src: string; message: string; details: string }>());
 
@@ -45,4 +45,4 @@ export const logout = createAction('[AUTH] logout', props<{ src: string }>());
 
 export const resetUser = createAction('[AUTH] reset user', props<{ src: string }>());
 
-export const getDapp = createAction('[FIREBASE] fetch dapp', props<{ src: string; id: string }>());
+export const getDapp = createAction('[FIREBASE] fetch dapp', props<{ src: string; id: string; address?: string }>());
