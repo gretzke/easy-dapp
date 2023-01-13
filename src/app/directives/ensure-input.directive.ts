@@ -1,6 +1,7 @@
 import { Directive, ElementRef, EventEmitter, forwardRef, HostListener, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { InputsConfig, InternalType } from 'src/types/abi';
+import { MatchingType } from 'src/types';
+import { InputsConfig } from 'src/types/abi';
 
 @Directive({
   selector: '[appEnsureInput]',
@@ -13,7 +14,7 @@ import { InputsConfig, InternalType } from 'src/types/abi';
   ],
 })
 export class EnsureInputDirective {
-  @Input() dataType: InternalType = 'string';
+  @Input() dataType: MatchingType = 'string';
   @Input() config?: InputsConfig;
   private _onChange?: (value: any) => {};
   public onValueChange = new EventEmitter<string>();

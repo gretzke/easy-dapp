@@ -11,12 +11,16 @@ type Int = 'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'i
 // prettier-ignore
 type Bytes = 'bytes' | 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8' | 'bytes9' | 'bytes10' | 'bytes11' | 'bytes12' | 'bytes13' | 'bytes14' | 'bytes15' | 'bytes16' | 'bytes17' | 'bytes18' | 'bytes19' | 'bytes20' | 'bytes21' | 'bytes22' | 'bytes23' | 'bytes24' | 'bytes25' | 'bytes26' | 'bytes27' | 'bytes28' | 'bytes29' | 'bytes30' | 'bytes31' | 'bytes32';
 
-type InternalType = 'address' | 'string' | Uint | Int | 'bool' | 'url';
+type InternalType = 'address' | 'string' | Uint | Int | 'bool' | 'tuple';
 
-interface VariableType {
+interface VariableTypeBase {
   name: string;
   type: string;
   internalType: InternalType;
+}
+
+interface VariableType extends VariableTypeBase {
+  components?: VariableTypeBase[];
 }
 
 interface ABIItem {
@@ -33,7 +37,7 @@ export interface AbiFunctions {
   [signature: string]: ABIItem;
 }
 
-export type ValidDataType = BigNumber | BigNumberish | string | boolean | number;
+export type ValidDataType = BigNumber | BigNumberish | string | boolean | number | object;
 
 export type ContractDataType = ValidDataType | ValidDataType[];
 

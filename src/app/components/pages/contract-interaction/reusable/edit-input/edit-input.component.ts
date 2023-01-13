@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { InternalType } from 'src/types/abi';
+import { MatchingType } from 'src/types';
 
 @Component({
   selector: '[app-edit-input]',
@@ -7,7 +7,7 @@ import { InternalType } from 'src/types/abi';
   styleUrls: ['./edit-input.component.scss'],
 })
 export class EditInputComponent implements OnInit {
-  @Input() dataType: InternalType = 'string';
+  @Input() dataType: MatchingType = 'string';
   @Input() public value = '';
   @Input() public placeholder = '';
   @Input() public hint = '';

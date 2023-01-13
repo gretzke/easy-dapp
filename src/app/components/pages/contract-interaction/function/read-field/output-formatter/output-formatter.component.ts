@@ -37,6 +37,9 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
 
   get outputType(): OutputType {
     if (this.enumName) return 'enum';
+    if (this.type.type === 'tuple') return 'tuple';
+    if (/^tuple\[\d*\]$/.test(this.type.type)) return 'tuple[]';
+    if (/[\[\]]/.test(this.type.type)) return 'array';
     return this.config?.formatter ?? 'default';
   }
 
@@ -68,6 +71,21 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
         return new Date((this.value as number) * 1000).toLocaleString();
       case 'decimals':
         return ethers.utils.formatUnits(this.value.toString(), this.config?.decimals ?? '18');
+      case 'tuple[]':
+        let res: string[] = [];
+        const abiComponent = this.type.components!;
+        for (const struct of this.value as ValidDataType[]) {
+          const items: string[] = [];
+          for (const i of (struct as ValidDataType[]).keys()) {
+            items.push(`${abiComponent[i].name}: ${(struct as ValidDataType[])[i].toString()}`);
+          }
+          res.push('{' + items.join(', ') + '}');
+        }
+        return '[' + res.join(',') + ']';
+      case 'array':
+        const arr = this.value as ValidDataType[];
+        if (arr.length === 0) return '[]';
+        return `${arr.map((v) => v.toString()).join(', ')}`;
       default:
         return this.value.toString();
     }

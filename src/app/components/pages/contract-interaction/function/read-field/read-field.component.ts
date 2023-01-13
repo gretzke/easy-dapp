@@ -82,7 +82,7 @@ export class ReadFieldComponent implements OnInit {
   }
 
   getValue(val: ContractDataType, type: VariableType, index: number): ValidDataType {
-    if (/[\[\]]/.test(type.internalType)) {
+    if (/[\[\]]/.test(type.type)) {
       return val as ValidDataType;
     }
     if (Array.isArray(val)) return val[index];

@@ -1,4 +1,5 @@
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { InternalType } from './abi';
 
 export type ThemeMode = 'light' | 'dark';
 export type Web3Provider = 'metamask' | 'walletconnect';
@@ -50,4 +51,6 @@ export interface NativeCurrency {
 }
 
 export type InputType = 'default' | 'enum';
-export type OutputType = 'default' | 'enum' | 'timestamp' | 'decimals' | 'contract';
+export type OutputType = 'default' | 'enum' | 'timestamp' | 'decimals' | 'contract' | 'array' | 'tuple' | 'tuple[]';
+
+export type MatchingType = InternalType | 'url';
