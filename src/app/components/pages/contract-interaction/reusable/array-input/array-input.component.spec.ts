@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WalletModalComponent } from './wallet-modal.component';
+import { ArrayInputComponent } from './array-input.component';
 
-describe('WalletModalComponent', () => {
-  let component: WalletModalComponent;
-  let fixture: ComponentFixture<WalletModalComponent>;
+describe('ArrayInputComponent', () => {
+  let component: ArrayInputComponent;
+  let fixture: ComponentFixture<ArrayInputComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WalletModalComponent ]
+      declarations: [ ArrayInputComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(WalletModalComponent);
+    fixture = TestBed.createComponent(ArrayInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

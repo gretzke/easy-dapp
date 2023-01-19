@@ -1,4 +1,4 @@
-- array / struct input
+- proxy contracts
 - optimize indexing on db
 - add networks and restrict uploading for unknown networks / local storage for unknown networks
 - transaction tracking and more links in transactions dropdown (after network restriction)
@@ -11,6 +11,7 @@
 
 Optional:
 
-- cheat codes local networks
+- cheat codes for local networks
 - auto parsing of function, input and output names from camelCase / snake_case?
 - ENS integration?
+- bool true / false dropdown

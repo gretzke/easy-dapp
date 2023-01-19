@@ -1,0 +1,15 @@
+<div *ngIf="length === 0">
+  <div class="flex my-1" *ngFor="let i of arrayLength; let last = last">
+    <div class="w-full">
+      <app-value-input [type]="type" [placeholder]="placeholder" (valueUpdated)="updateValue(i, $event)"></app-value-input>
+    </div>
+    <button *ngIf="!last" class="ml-2 button-icon-round h-10" (click)="removeAt(i)"><fa-icon [icon]="faTrash"></fa-icon></button>
+  </div>
+</div>
+<div *ngIf="length > 0">
+  <div *ngFor="let i of arrayLength">
+    <div class="mt-2">
+      <app-value-input [type]="type" [placeholder]="placeholder" (valueUpdated)="updateValue(i, $event)"></app-value-input>
+    </div>
+  </div>
+</div>

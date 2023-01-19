@@ -1,0 +1,17 @@
+<form [formGroup]="form">
+  <!-- 
+    [value]="form.controls.value.value" is a workaround
+    if removed, clearing the form does not update the UI
+  -->
+  <input
+    appEnsureInput
+    [dataType]="type"
+    [config]="config"
+    formControlName="value"
+    [value]="form.controls.value.value"
+    type="text"
+    name="value"
+    class="block w-full text-input"
+    [placeholder]="placeholder"
+  />
+</form>

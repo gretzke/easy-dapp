@@ -21,7 +21,6 @@ import { BackgroundComponent } from './components/etc/background/background.comp
 import { DividerComponent } from './components/etc/divider/divider.component';
 import { IconComponent } from './components/etc/icon/icon.component';
 import { LoaderComponent } from './components/etc/loader/loader.component';
-import { WalletModalComponent } from './components/etc/modals/wallet-modal/wallet-modal.component';
 import { SelectMenuComponent } from './components/etc/select-menu/select-menu.component';
 import { DarkmodeToggleComponent } from './components/header/darkmode-toggle/darkmode-toggle.component';
 import { HeaderLinksComponent } from './components/header/header-links/header-links.component';
@@ -52,6 +51,8 @@ import { UintInputConfigBarComponent } from './components/pages/contract-interac
 import { DynamicInputListComponent } from './components/pages/contract-interaction/reusable/dynamic-input-list/dynamic-input-list.component';
 import { EditInputComponent } from './components/pages/contract-interaction/reusable/edit-input/edit-input.component';
 import { EditTextAreaComponent } from './components/pages/contract-interaction/reusable/edit-text-area/edit-text-area.component';
+import { StructArrayInputComponent } from './components/pages/contract-interaction/reusable/struct-array-input/struct-array-input.component';
+import { StructInputComponent } from './components/pages/contract-interaction/reusable/struct-array-input/struct-input/struct-input.component';
 import { ContractEffects } from './components/pages/contract-interaction/store/contract.effects';
 import { contractStateKey, contractStateReducer } from './components/pages/contract-interaction/store/contract.reducer';
 import { HomeComponent } from './components/pages/home/home.component';
@@ -63,6 +64,8 @@ import { WalletResolver } from './resolver/WalletResolver';
 import { EthereumService } from './services/ethereum.service';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
+import { ArrayInputComponent } from './components/pages/contract-interaction/reusable/array-input/array-input.component';
+import { ValueInputComponent } from './components/pages/contract-interaction/reusable/value-input/value-input.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -75,7 +78,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     HeaderLogoComponent,
     DarkmodeToggleComponent,
     IconComponent,
-    WalletModalComponent,
     HeaderWalletButtonComponent,
     ClickOutsideDirective,
     HomeComponent,
@@ -103,6 +105,10 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     ApprovalHooksComponent,
     SymbolDirective,
     AddressOutputConfigBarComponent,
+    StructInputComponent,
+    StructArrayInputComponent,
+    ArrayInputComponent,
+    ValueInputComponent,
   ],
   imports: [
     BrowserModule,

@@ -50,7 +50,7 @@ export interface NativeCurrency {
   };
 }
 
-export type InputType = 'default' | 'enum';
+export type InputType = 'default' | 'enum' | 'array' | 'tuple' | 'tuple[]';
 export type OutputType = 'default' | 'enum' | 'timestamp' | 'decimals' | 'contract' | 'array' | 'tuple' | 'tuple[]';
 
 export type MatchingType = InternalType | 'url';

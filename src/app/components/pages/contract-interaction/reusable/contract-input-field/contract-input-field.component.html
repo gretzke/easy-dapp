@@ -25,18 +25,28 @@
     <div *ngSwitchCase="'enum'">
       <app-select-menu [list]="enum" (onSelect)="valueUpdated.emit($event)"></app-select-menu>
     </div>
+    <div *ngSwitchCase="'tuple'">
+      <app-struct-input [name]="name" [type]="type" (valueUpdated)="valueUpdated.emit($event)"></app-struct-input>
+    </div>
+    <div *ngSwitchCase="'tuple[]'">
+      <app-struct-array-input
+        [name]="name"
+        [type]="type"
+        [length]="arrayLength"
+        (valueUpdated)="valueUpdated.emit($event)"
+      ></app-struct-array-input>
+    </div>
+    <div *ngSwitchCase="'array'">
+      <app-array-input [type]="arrayDataType" [length]="arrayLength" (valueUpdated)="valueUpdated.emit($event)"></app-array-input>
+    </div>
     <!-- DEFAULT INPUT -->
     <div class="relative" *ngSwitchDefault>
-      <input
-        appEnsureInput
-        [dataType]="type.internalType"
-        [config]="config"
-        formControlName="value"
-        type="text"
-        name="value"
-        class="block w-full text-input"
+      <app-value-input
+        [type]="type.internalType"
         [placeholder]="placeholder"
-      />
+        [config]="config"
+        (valueUpdated)="updateValue($event)"
+      ></app-value-input>
       <div
         class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3"
         *ngIf="config?.formatter === 'timestamp'"

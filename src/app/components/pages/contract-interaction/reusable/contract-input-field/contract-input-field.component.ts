@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { BigNumber, ethers } from 'ethers';
-import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
-import { ContractDataType, InputsConfig, VariableType } from 'src/types/abi';
-import { editSelector, enumSelector } from '../../store/contract.selector';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
+import { Store } from '@ngrx/store';
+import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
+import { placeholder, transformValue, uintRegex } from 'src/helpers/util';
 import { InputType } from 'src/types';
+import { ContractDataType, InputsConfig, InternalType, VariableType } from 'src/types/abi';
+import { editSelector, enumSelector } from '../../store/contract.selector';
 
 @Component({
   selector: 'app-contract-input-field',
@@ -23,11 +23,9 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
   public edit$ = this.store.select(editSelector);
   public inputType: InputType = 'default';
   public enum: string[] = [];
+  public arrayDataType: InternalType = 'string';
+  public arrayLength = 0;
   private subscription: Subscription;
-  private uintRegex = /^uint\d*$/;
-  private intRegex = /^int\d*$/;
-  private bytesRegex = /^bytes\d*$/;
-  private currentTimestamp = (Date.now() / 1000).toFixed(0);
   public timestamp = new Date();
   public minDate = this.toDate(0);
   public tmpDate = new Date();
@@ -39,20 +37,24 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
       value: new FormControl('', [Validators.required]),
     });
     this.subscription = this.form.controls.value.valueChanges.pipe(debounceTime(200), distinctUntilChanged()).subscribe((newValue) => {
-      if (this.form.valid) {
-        this.valueUpdated.emit(this.transformValue(newValue));
-        if (this.config?.formatter === 'timestamp') {
-          this.tmpDate = this.toDate(newValue);
-          this.timestamp = this.tmpDate;
-        }
-      } else {
-        this.valueUpdated.emit(undefined);
-      }
+      this.updateValue(newValue);
     });
   }
 
   ngOnInit(): void {
-    if (this.type?.internalType.substring(0, 5) === 'enum ') {
+    if (this.type?.type === 'tuple') {
+      this.inputType = 'tuple';
+    } else if (/[\[\]]/.test(this.type?.type ?? '')) {
+      const match = /^(\w+)\[(\d*)\]$/.exec(this.type!.type);
+      if (match === null || match[1] === '') return;
+      if (match[1] === 'tuple') this.inputType = 'tuple[]';
+      else {
+        this.inputType = 'array';
+        this.arrayDataType = match[1] as InternalType;
+      }
+      if (match[2] === '') return;
+      this.arrayLength = parseInt(match[2]);
+    } else if (this.type?.internalType.substring(0, 5) === 'enum ') {
       this.subscription.add(
         this.store.select(enumSelector(this.type.internalType.slice(5))).subscribe((enumConfig) => {
           if (enumConfig.length > 0) {
@@ -63,6 +65,18 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
           this.enum = enumConfig;
         })
       );
+    }
+  }
+
+  updateValue(value?: string) {
+    if (this.type && value !== undefined) {
+      this.valueUpdated.emit(transformValue(this.type.internalType, value, this.config));
+      if (this.config?.formatter === 'timestamp') {
+        this.tmpDate = this.toDate(parseInt(value));
+        this.timestamp = this.tmpDate;
+      }
+    } else {
+      this.valueUpdated.emit(undefined);
     }
   }
 
@@ -80,39 +94,11 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
   }
 
   get placeholder() {
-    const t = this.type?.type;
-    if (!t) return '';
-    if (t === 'address') return '0xA1337b...';
-    if (this.uintRegex.test(t)) {
-      if (!this.config || this.config.formatter === undefined) return '1337';
-      if (this.config.formatter === 'timestamp') return this.currentTimestamp;
-      if (this.config.formatter === 'decimals') return '12.34';
-    }
-    if (this.intRegex.test(t)) return '-1337';
-    if (this.bytesRegex.test(t)) return '0x...';
-    if (t === 'string') return 'Hello World';
-    if (t === 'bool') return 'true';
-    else return '';
+    return placeholder(this.type?.type, this.config?.formatter);
   }
 
   isNumber(type: string) {
-    return this.uintRegex.test(type);
-  }
-
-  private transformValue(value: string): ContractDataType {
-    switch (this.type?.internalType) {
-      case 'address':
-        return value;
-      case 'uint256':
-        if (this.config && this.config.formatter === 'decimals') {
-          return ethers.utils.parseUnits(value, this.config.decimals ?? 18);
-        }
-        return BigNumber.from(value);
-      case 'string':
-        return value;
-      default:
-        return value;
-    }
+    return uintRegex.test(type);
   }
 
   setTimestamp(timestamp: Date) {

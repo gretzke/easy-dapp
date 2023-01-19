@@ -37,7 +37,7 @@ export interface AbiFunctions {
   [signature: string]: ABIItem;
 }
 
-export type ValidDataType = BigNumber | BigNumberish | string | boolean | number | object;
+export type ValidDataType = BigNumber | BigNumberish | string | boolean | number | { [key: string]: ContractDataType };
 
 export type ContractDataType = ValidDataType | ValidDataType[];
 
