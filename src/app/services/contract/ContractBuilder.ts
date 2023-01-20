@@ -1,11 +1,11 @@
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
 import { EthereumService } from '../ethereum.service';
 
 export class ContractBuilder {
-  public readFunctions: AbiFunctions;
-  public writeFunctions: AbiFunctions;
+  public readFunctions?: AbiFunctions;
+  public writeFunctions?: AbiFunctions;
   public abi: ContractABI;
   public enums: string[];
 
@@ -17,9 +17,10 @@ export class ContractBuilder {
   }
 
   public getContractState(): Observable<IContractState> {
+    if (this.readFunctions === undefined) return of({} as IContractState);
     const functionsToCall = Object.keys(this.readFunctions)
-      .filter((key) => this.readFunctions[key].inputs.length === 0)
-      .map(async (key) => ({ key, value: await this.get(this.readFunctions[key].name, []) }));
+      .filter((key) => this.readFunctions![key].inputs.length === 0)
+      .map(async (key) => ({ key, value: await this.get(this.readFunctions![key].name, []) }));
 
     return from(Promise.all(functionsToCall).then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
   }
@@ -97,7 +98,7 @@ export class ContractABI {
 
   private getSignature(f: ABIItem): string {
     if (f.type === 'constructor') return 'constructor()';
-    return f.name + '(' + f.inputs.map((i) => i.type).join(',') + ')';
+    return f.name + '(' + (f.inputs ?? []).map((i) => i.type).join(',') + ')';
   }
 
   private getEnumsFromArray(arr: VariableType[]): { [key: string]: true } {

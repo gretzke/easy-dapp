@@ -112,7 +112,7 @@ export class AppEffects {
       ofType(getAbi),
       withLatestFrom(this.store.select(chainIdSelector)),
       mergeMap(([action, chainId]) =>
-        this.firebase.getAbi(chainId, action.address).pipe(
+        this.firebase.getAbi(chainId, action.address, action.proxy).pipe(
           map((res: IAbiResponse) => {
             return abiResponse({
               src: AppEffects.name,

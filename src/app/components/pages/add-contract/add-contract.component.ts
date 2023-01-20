@@ -22,6 +22,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
   public etherscanError = '';
   private subscription = new Subscription();
   public contract$: Observable<IDapp | undefined>;
+  public proxy = false;
 
   constructor(private ethereum: EthereumService, private store: Store<{}>, private actions: Actions, private route: ActivatedRoute) {
     this.form = new FormGroup({
@@ -54,10 +55,12 @@ export class AddContractComponent implements OnInit, OnDestroy {
       this.actions.pipe(ofType(abiError)).subscribe((action) => {
         this.fetchingEtherscan = false;
         if (action.message === 'ETHERSCAN_VERIFICATION_ERROR' && action.details === 'CONTRACT_NOT_VERIFIED') {
-          this.etherscanError = 'Contract not verified on Etherscan, please enter below';
+          this.etherscanError = 'Contract not verified on Etherscan, please enter ABI below';
+        } else if (action.message === 'ETHERSCAN_VERIFICATION_ERROR' && action.details === 'PROXY_NOT_VERIFIED') {
+          this.etherscanError = 'Proxy not verified on Etherscan, please enter ABI below';
         } else {
           console.error(action.message, action.details);
-          this.etherscanError = 'Could not fetch ABI from Etherscan, please enter below';
+          this.etherscanError = 'Could not fetch ABI from Etherscan, please enter ABI below';
         }
       })
     );
@@ -80,7 +83,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
     if (this.ethereum.isAddress(value)) {
       this.fetchingEtherscan = true;
       this.etherscanError = '';
-      this.store.dispatch(getAbi({ src: AddContractComponent.name, address: value }));
+      this.store.dispatch(getAbi({ src: AddContractComponent.name, address: value, proxy: this.proxy }));
     } else {
       this.fetchingEtherscan = undefined;
       this.etherscanError = '';

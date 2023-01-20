@@ -16,7 +16,7 @@ export const resetWallet = createAction('[CHAIN DATA] reset wallet', props<{ src
 
 export const switchNetwork = createAction('[CHAIN DATA] switch network', props<{ src: string; chainId: number }>());
 
-export const getAbi = createAction('[FIREBASE] fetch abi', props<{ src: string; address: string }>());
+export const getAbi = createAction('[FIREBASE] fetch abi', props<{ src: string; address: string; proxy: boolean }>());
 
 export const abiResponse = createAction('[FIREBASE] abi response', props<{ src: string; abi: string; id: string; verified: boolean }>());
 

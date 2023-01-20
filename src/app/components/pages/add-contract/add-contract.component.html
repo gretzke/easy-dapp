@@ -1,7 +1,13 @@
 <div class="card" *ngIf="(contract$ | async) === undefined">
   <h1 class="text-2xl pb-4">Add contract</h1>
   <form [formGroup]="form" (ngSubmit)="addContract()">
-    <label for="contractAddress" class="block ml-3">Contract Address</label>
+    <label for="contractAddress" class="flex items-center justify-between ml-3">
+      <span> Contract Address </span>
+      <div class="flex items-center">
+        <span class="text-muted mr-2">Is this a proxy?</span>
+        <input type="checkbox" class="h-4 w-4 checkbox" [checked]="proxy" (change)="proxy = !proxy" />
+      </div>
+    </label>
     <div class="mt-1 mb-5">
       <input
         appEnsureInput

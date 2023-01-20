@@ -35,8 +35,8 @@ export class FirebaseService {
     }
   }
 
-  public getAbi(chainId: number, address: string): Observable<IAbiResponse> {
-    return from(this.post('getAbi', { chainId, address }) as Promise<IAbiResponse>);
+  public getAbi(chainId: number, address: string, proxy: boolean): Observable<IAbiResponse> {
+    return from(this.post('getAbi', { chainId, address, proxy }) as Promise<IAbiResponse>);
   }
 
   public requestMessage(address: string): Observable<IMessageResponse> {

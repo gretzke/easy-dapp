@@ -56,7 +56,7 @@ export class ContractEffects {
 
         // set order if any items are missing
         const readOrder = [...action.contract.config.read.order];
-        if (Object.keys(readFunctions).length > readOrder.length) {
+        if (readFunctions && Object.keys(readFunctions).length > readOrder.length) {
           for (const signature of Object.keys(readFunctions)) {
             if (readOrder.includes(signature)) continue;
             readOrder.push(signature);
@@ -71,7 +71,7 @@ export class ContractEffects {
         }
 
         const writeOrder = [...action.contract.config.write.order];
-        if (Object.keys(writeFunctions).length > writeOrder.length) {
+        if (writeFunctions && Object.keys(writeFunctions).length > writeOrder.length) {
           for (const signature of Object.keys(writeFunctions)) {
             if (writeOrder.includes(signature)) continue;
             writeOrder.push(signature);
