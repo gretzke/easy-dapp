@@ -1,4 +1,4 @@
-<div class="flex items-center text-sm" *ngIf="config">
+<div class="flex items-center text-sm" *ngIf="config !== undefined">
   <div *ngIf="edit$ | async" class="flex dark:text-gray-300">
     <div class="flex items-center ml-3">
       <input type="radio" class="radio" [checked]="config.formatter === 'contract'" (click)="toggleContract()" />

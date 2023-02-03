@@ -1,0 +1,42 @@
+<p *ngIf="title" class="text-xl">{{ title }}</p>
+<div *ngIf="dapps === undefined">
+  <app-spinner></app-spinner>
+</div>
+<div *ngIf="dapps !== undefined">
+  <div *ngIf="dapps.total === 0">
+    <div class="card mt-2 text-center">
+      <p class="text-xl">No Dapps found</p>
+    </div>
+  </div>
+
+  <div *ngIf="dapps.total !== 0">
+    <div *ngFor="let dapp of dapps?.list">
+      <app-dapp-list-item [dapp]="dapp"></app-dapp-list-item>
+    </div>
+  </div>
+
+  <div *ngIf="dapps.total > dapps.limit">
+    <nav class="grid grid-flow-col border-t border-gray-200 sm:px-0">
+      <div *ngIf="dapps.offset === 0"></div>
+      <button class="pagination-button pr-1" *ngIf="dapps.offset !== 0" (click)="prev()">
+        <fa-icon [icon]="faLeft" class="mr-3 h-5 w-5 text-gray-400"></fa-icon>
+        Previous
+      </button>
+      <div class="-mt-px flex justify-center items-end">
+        <span class="pt-4 text-sm font-medium text-gray-500">
+          <span> Result {{ dapps.offset + 1 }} </span>
+          <span *ngIf="dapps.list.length > 1">
+            - {{ dapps.offset + dapps.limit > dapps.total ? dapps.total : dapps.offset + dapps.limit }}
+          </span>
+          <span> out of {{ dapps.total }} </span>
+        </span>
+      </div>
+      <div class="flex justify-end">
+        <button class="pagination-button" *ngIf="dapps.offset + dapps.limit <= dapps.total" (click)="next()">
+          Next
+          <fa-icon [icon]="faRight" class="ml-3 h-5 w-5 text-gray-400"></fa-icon>
+        </button>
+      </div>
+    </nav>
+  </div>
+</div>

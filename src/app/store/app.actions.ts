@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { IDapps } from 'src/types/api';
 import { IUser, IWallet, NotificationType, ThemeMode } from '../../types';
+import { DappListType, Pagination } from './app.reducer';
 
 export const setDarkmode = createAction('[CLIENT CONFIG] toggle dark mode', props<{ src: string; theme: ThemeMode }>());
 
@@ -13,8 +14,6 @@ export const walletChanged = createAction('[CHAIN DATA] wallet changed', props<{
 export const setWallet = createAction('[CHAIN DATA] set wallet', props<{ src: string; wallet: IWallet }>());
 
 export const resetWallet = createAction('[CHAIN DATA] reset wallet', props<{ src: string }>());
-
-export const switchNetwork = createAction('[CHAIN DATA] switch network', props<{ src: string; chainId: number }>());
 
 export const getAbi = createAction('[FIREBASE] fetch abi', props<{ src: string; address: string; proxy: boolean }>());
 
@@ -29,9 +28,15 @@ export const notify = createAction(
   props<{ src: string; notificationType: NotificationType; message: string }>()
 );
 
-export const getDapps = createAction('[FIREBASE] fetch dapps', props<{ src: string }>());
+export const getDapps = createAction(
+  '[FIREBASE] fetch dapps',
+  props<{ src: string; listType: DappListType; persist: boolean; pagination: Pagination; address?: string }>()
+);
 
-export const setDapps = createAction('[FIREBASE] set dapps', props<{ src: string; dapps: IDapps }>());
+export const setDapps = createAction(
+  '[FIREBASE] set dapps',
+  props<{ src: string; dapps: IDapps; listType: DappListType; total: number; limit: number; pagination: Pagination }>()
+);
 
 export const login = createAction('[AUTH] login', props<{ src: string }>());
 

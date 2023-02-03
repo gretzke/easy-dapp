@@ -21,6 +21,7 @@ const pendingTransactionsReducer = createReducer(
       txHash: action.txHash,
       name: action.name,
       status: TransactionStatus.PENDING,
+      url: action.url,
     };
     let newArray = [pendingTx];
     if (state[action.chainId] !== undefined) {

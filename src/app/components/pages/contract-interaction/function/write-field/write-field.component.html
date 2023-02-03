@@ -13,7 +13,7 @@
       <input
         appEnsureInput
         [dataType]="'uint256'"
-        [config]="{ formatter: 'decimals', decimals: '18' }"
+        [config]="{ formatter: 'decimals', decimals: nativeDecimals }"
         [formControl]="payableForm"
         type="text"
         name="value"

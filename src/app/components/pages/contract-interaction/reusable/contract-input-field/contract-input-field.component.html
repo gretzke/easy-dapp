@@ -1,4 +1,4 @@
-<form [formGroup]="form" *ngIf="type !== undefined" autocomplete="off">
+<form *ngIf="type !== undefined" autocomplete="off">
   <!-- NAME AND CONFIG BAR -->
   <label for="value" class="block ml-3 text-base">
     <span class="mr-3" *ngIf="!(edit$ | async)">
@@ -55,9 +55,6 @@
         <fa-icon [icon]="faCalendar"></fa-icon>
       </div>
     </div>
-    <p *ngIf="form.controls.value.dirty && form.controls.value.invalid" class="ml-3 mt-1 text-sm text-red-600">
-      <span *ngIf="form.controls.value.errors?.required">Required</span>
-    </p>
     <!-- DATETIME PICKER -->
     <div class="relative z-10 cursor-pointer h-0" *ngIf="showDatePicker">
       <p-calendar

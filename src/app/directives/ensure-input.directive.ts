@@ -1,6 +1,6 @@
 import { Directive, ElementRef, EventEmitter, forwardRef, HostListener, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { intRegex, uintRegex } from 'src/helpers/util';
+import { intRegex, uintRegex, bytesRegex } from 'src/helpers/util';
 import { MatchingType } from 'src/types';
 import { InputsConfig } from 'src/types/abi';
 
@@ -40,22 +40,27 @@ export class EnsureInputDirective {
   }
 
   private regex() {
-    if (this.dataType === 'address') {
-      return /^(0$|0x[0-9a-fA-F]{0,40})/g;
+    if (this.dataType === 'address' || this.dataType === 'address payable') {
+      return /^0x[0-9a-fA-F]{0,40}|^0/g;
     } else if (uintRegex.test(this.dataType)) {
       if (this.config && this.config.formatter === 'decimals') {
-        return new RegExp(`^[0-9]*(.[0-9]{0,${this.config.decimals ?? 18}})?`);
+        return new RegExp(`^[0-9]+(\.[0-9]{0,${this.config.decimals ?? 18}})?`);
       }
       return /^([0-9]{0,256})/g;
     } else if (intRegex.test(this.dataType)) {
       if (this.config && this.config.formatter === 'decimals') {
-        return new RegExp(`^(-?[0-9]*(.[0-9]{0,${this.config.decimals ?? 18}})?)?`);
+        return new RegExp(`^(-?[0-9]+(\.[0-9]{0,${this.config.decimals ?? 18}})?)?`);
       }
       return /^(-?[0-9]{0,256})/g;
     } else if (this.dataType === 'bool') {
       return /^true|^tru|^tr|^t|^false|^fals|^fal|^fa|^f/g;
     } else if (this.dataType === 'url') {
       return /^0x[0-9a-fA-F]{40}\/\S+|^0x[0-9a-fA-F]{40}\/$|^(0$|0x[0-9a-fA-F]{0,40})/g;
+    } else if (this.dataType === 'bytes') {
+      return /^0x[0-9a-fA-F]+|^0x|^0/g;
+    } else if (bytesRegex.test(this.dataType)) {
+      const length = parseInt(this.dataType.replace('bytes', ''));
+      return new RegExp(`^0x[0-9a-fA-F]{0,${length * 2}}|^0x|^0`);
     } else if (this.dataType === 'string') {
       return /.*/g;
     } else {

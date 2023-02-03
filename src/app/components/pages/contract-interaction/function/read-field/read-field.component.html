@@ -8,7 +8,7 @@
     (valueUpdated)="setArg(i, $event)"
     (configUpdated)="setInputConfig(i, $event)"
   ></app-contract-input-field>
-  <button class="button-primary" *ngIf="state.field.inputs.length > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
+  <button class="button-primary" *ngIf="state.field.inputs?.length ?? 0 > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
 
   <!-- RESULT -->
   <div *ngFor="let output of state.field.outputs; let i = index">

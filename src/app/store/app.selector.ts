@@ -1,7 +1,6 @@
 import { createSelector } from '@ngrx/store';
-import { IContractState } from 'src/types/abi';
 import { IAppConfig, IChainData } from '../../types';
-import { AppState } from './app.reducer';
+import { AppState, DappListType } from './app.reducer';
 
 export const selectAppState = (state: any): AppState => state;
 export const selectAppConfigState = (state: any): IAppConfig => state.appConfig;
@@ -20,6 +19,6 @@ export const walletSelector = createSelector(selectChainDataState, (state) => st
 
 export const chainSelector = createSelector(selectChainDataState, (state) => state);
 
-export const dappsSelector = createSelector(selectAppState, (state) => state.dapps);
+export const dappsSelector = (listType: DappListType) => createSelector(selectAppState, (state) => state.dapps[listType]);
 
 export const userSelector = createSelector(selectAppState, (state) => state.user);

@@ -7,5 +7,5 @@ export const watchPendingTransaction = createAction(
 );
 export const resolvePendingTransaction = createAction(
   '[ETHEREUM SERVICE] add result to pending transaction with chain id',
-  props<{ src: string; name: string; txHash: string; status: TransactionStatus; chainId: number }>()
+  props<{ src: string; txHash: string; status: TransactionStatus; chainId: number }>()
 );

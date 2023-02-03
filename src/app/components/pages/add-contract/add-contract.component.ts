@@ -3,7 +3,8 @@ import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationEr
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { debounceTime, distinctUntilChanged, Observable, Subscription, take } from 'rxjs';
+import { debounceTime, Observable, Subscription, take } from 'rxjs';
+import { localModeSelector } from 'src/app/services/dapps/store/dapps.selector';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { abiError, abiResponse, getAbi, notify } from 'src/app/store/app.actions';
 import { chainIdSelector, userChainIdSelector } from 'src/app/store/app.selector';
@@ -23,6 +24,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
   public contract$: Observable<IDapp | undefined>;
   public proxy = false;
+  public localMode = true;
 
   constructor(private ethereum: EthereumService, private store: Store<{}>, private actions: Actions, private route: ActivatedRoute) {
     this.form = new FormGroup({
@@ -34,7 +36,15 @@ export class AddContractComponent implements OnInit, OnDestroy {
     this.store.dispatch(setContract({ src: AddContractComponent.name, contract: undefined }));
     this.subscription.add(
       this.form.controls.address.valueChanges.pipe(debounceTime(200)).subscribe((value) => {
-        this.fetchAbi(value);
+        if (!this.localMode) {
+          this.fetchAbi(value);
+        }
+      })
+    );
+
+    this.subscription.add(
+      this.store.select(localModeSelector).subscribe((localMode) => {
+        this.localMode = localMode;
       })
     );
 
@@ -45,7 +55,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
         this.form.controls.abi.disable();
         if (action.verified) {
           this.store.dispatch(
-            notify({ src: AddContractComponent.name, message: 'Contract verified on Etherscan!', notificationType: 'success' })
+            notify({ src: AddContractComponent.name, message: 'Contract verified on block explorer!', notificationType: 'success' })
           );
           this.addContract();
         }
@@ -55,12 +65,14 @@ export class AddContractComponent implements OnInit, OnDestroy {
       this.actions.pipe(ofType(abiError)).subscribe((action) => {
         this.fetchingEtherscan = false;
         if (action.message === 'ETHERSCAN_VERIFICATION_ERROR' && action.details === 'CONTRACT_NOT_VERIFIED') {
-          this.etherscanError = 'Contract not verified on Etherscan, please enter ABI below';
+          this.etherscanError = 'Contract not verified on block explorer, please enter ABI below';
         } else if (action.message === 'ETHERSCAN_VERIFICATION_ERROR' && action.details === 'PROXY_NOT_VERIFIED') {
-          this.etherscanError = 'Proxy not verified on Etherscan, please enter ABI below';
+          this.etherscanError = 'Proxy not verified on block explorer, please enter ABI below';
+        } else if (action.message === 'ETHERSCAN_UNSUPPORTED_CHAIN') {
+          this.etherscanError = 'block explorer does not support this chain, please enter ABI below';
         } else {
           console.error(action.message, action.details);
-          this.etherscanError = 'Could not fetch ABI from Etherscan, please enter ABI below';
+          this.etherscanError = 'Could not fetch ABI from block explorer, please enter ABI below';
         }
       })
     );
@@ -122,6 +134,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
               chainId: data.chainId,
               address: this.form.controls.address.value,
               abi: this.form.controls.abi.value,
+              proxy: this.proxy,
               config: {
                 name: '',
                 description: '',
@@ -135,6 +148,9 @@ export class AddContractComponent implements OnInit, OnDestroy {
               },
               owner: data.user!,
               url: '',
+              id: '',
+              liked: false,
+              createdAt: new Date(),
             },
             firstDeployment: true,
           })

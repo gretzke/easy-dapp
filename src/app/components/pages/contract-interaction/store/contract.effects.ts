@@ -3,17 +3,22 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ContractTransaction, ethers } from 'ethers';
-import { catchError, filter, from, map, mergeMap, of, take, tap, withLatestFrom } from 'rxjs';
+import { catchError, filter, from, map, mergeMap, of, switchMap, take, tap, withLatestFrom } from 'rxjs';
 import { watchPendingTransaction } from 'src/app/components/header/pending-tx/store/pendingtx.actions';
-import { dappId, getFunctionName } from 'src/helpers/util';
+import { FirebaseService } from 'src/app/services/dapps/firebase.service';
+import { LocalDappService } from 'src/app/services/dapps/local-dapp.service';
+import { localModeSelector } from 'src/app/services/dapps/store/dapps.selector';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { FirebaseService } from 'src/app/services/firebase.service';
-import { getDapp, login, notify, setChainId, setUser, switchNetwork } from 'src/app/store/app.actions';
-import { chainIdSelector, userSelector } from 'src/app/store/app.selector';
+import { connectWallet, getDapp, login, notify, setChainId, setUser, walletChanged } from 'src/app/store/app.actions';
+import { chainIdSelector, userSelector, walletSelector } from 'src/app/store/app.selector';
 import { getErrorMessage } from 'src/helpers/errorMessages';
+import { getFunctionName } from 'src/helpers/util';
 import { ContractDataType } from 'src/types/abi';
+import { DappService } from 'src/types/api';
 import {
+  deleteDapp,
   getContractState,
+  likeDapp,
   readContract,
   saveDapp,
   saveOrder,
@@ -21,8 +26,8 @@ import {
   setContract,
   setContractState,
   setContractStateVariable,
-  setName,
   setFunctions,
+  setName,
   setUrl,
 } from './contract.actions';
 import { configSelector, contractSelector, deploymentTypeSelector, urlSelector } from './contract.selector';
@@ -34,13 +39,15 @@ export class ContractEffects {
     private store: Store<{}>,
     private ethereum: EthereumService,
     private firebase: FirebaseService,
+    private local: LocalDappService,
     private router: Router
   ) {}
 
   setContract$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(setContract),
-      mergeMap((action) => {
+      withLatestFrom(this.store.select(chainIdSelector)),
+      mergeMap(([action, chainId]) => {
         if (action.contract === undefined) {
           return of(setFunctions({ src: ContractEffects.name, functions: {}, enums: [] }));
         }
@@ -119,14 +126,22 @@ export class ContractEffects {
       mergeMap(([action, contract]) => {
         const ci = this.ethereum.getContractInstance(contract!.address, contract!.abi);
         return ci.set(action.method, action.args, action.opt).pipe(
-          map((tx: ContractTransaction) =>
-            watchPendingTransaction({
+          map((tx: ContractTransaction) => {
+            let url;
+            if (contract) {
+              url = contract.owner + '/' + contract.url;
+              if (contract.originalAddress) {
+                url += '/' + contract.address;
+              }
+            }
+            return watchPendingTransaction({
               src: ContractEffects.name,
               name: action.method,
               txHash: tx.hash,
               chainId: ci.chainId,
-            })
-          ),
+              url,
+            });
+          }),
           catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
         );
       })
@@ -156,9 +171,10 @@ export class ContractEffects {
         this.store.select(contractSelector),
         this.store.select(configSelector),
         this.store.select(deploymentTypeSelector),
-        this.store.select(urlSelector)
+        this.store.select(urlSelector),
+        this.store.select(localModeSelector)
       ),
-      mergeMap(([action, user, chainId, contract, config, deployment, url]) => {
+      switchMap(([action, user, chainId, contract, config, deployment, url, localMode]) => {
         if (user === null) {
           this.store.dispatch(login({ src: ContractEffects.name }));
           return this.actions$.pipe(
@@ -166,26 +182,28 @@ export class ContractEffects {
             mergeMap(() => of(action))
           );
         }
-
-        const id = dappId(user.address, url);
+        const dappService = this.getDappService(localMode);
+        const id = contract!.id;
         if (deployment === 'save') {
-          return this.firebase.saveDapp(id, config!).pipe(
+          return dappService.saveDapp(id, config!, chainId).pipe(
             map(() => notify({ src: ContractEffects.name, notificationType: 'success', message: 'Dapp saved' })),
-            catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
+            catchError((error) =>
+              of(notify({ src: ContractEffects.name, notificationType: 'error', message: getErrorMessage(error.message) }))
+            )
           );
         } else {
-          return this.firebase
+          return dappService
             .createDapp(
               {
                 address: contract!.address,
                 abi: contract!.abi,
+                proxy: contract!.proxy,
                 config: config!,
                 url,
               },
               chainId
             )
             .pipe(
-              tap(() => this.store.dispatch(setContract({ src: ContractEffects.name, contract: undefined }))),
               tap((res) => this.router.navigate(['/app', res.data.owner, res.data.url])),
               map(() => notify({ src: ContractEffects.name, notificationType: 'success', message: 'Dapp saved' })),
               catchError((e) => {
@@ -198,30 +216,100 @@ export class ContractEffects {
     )
   );
 
+  deleteDapp$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(deleteDapp),
+      withLatestFrom(this.store.select(userSelector), this.store.select(contractSelector), this.store.select(localModeSelector)),
+      switchMap(([action, user, contract, localMode]) => {
+        if (user === null) {
+          this.store.dispatch(login({ src: ContractEffects.name }));
+          return this.actions$.pipe(
+            ofType(setUser),
+            mergeMap(() => of(action))
+          );
+        }
+        const id = contract!.id ?? '';
+        const dappService = this.getDappService(localMode);
+        return dappService.deleteDapp(id, contract?.chainId).pipe(
+          map(() => notify({ src: ContractEffects.name, notificationType: 'success', message: 'Dapp deleted' })),
+          tap(() => this.router.navigate(['/'])),
+          catchError((error) =>
+            of(notify({ src: ContractEffects.name, notificationType: 'error', message: getErrorMessage(error.message) }))
+          )
+        );
+      })
+    )
+  );
+
   getDapp$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(getDapp),
-      withLatestFrom(this.store.select(chainIdSelector)),
-      mergeMap(([action, chainId]) =>
-        this.firebase.getDapp(action.id).pipe(
-          mergeMap((dapp) => {
-            if (dapp.data.chainId !== chainId) {
-              this.store.dispatch(switchNetwork({ src: ContractEffects.name, chainId: dapp.data.chainId }));
-              return this.actions$.pipe(
-                ofType(setChainId),
-                take(1),
-                map(() => action)
-              );
-            }
-            const data = { ...dapp.data };
-            if (action.address && ethers.utils.isAddress(action.address)) {
-              data.address = action.address;
-            }
-            return of(setContract({ src: ContractEffects.name, contract: data }));
-          }),
-          catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
-        )
-      )
+      withLatestFrom(
+        this.store.select(chainIdSelector),
+        this.store.select(localModeSelector),
+        this.store.select(walletSelector),
+        this.store.select(userSelector)
+      ),
+      mergeMap(([action, chainId, localMode, wallet, user]) => {
+        let address;
+        if (!user) {
+          address = wallet?.address;
+        }
+        return this.getDappService(localMode)
+          .getDapp(action.id, address, chainId)
+          .pipe(
+            mergeMap((dapp) => {
+              const data = { ...dapp.data };
+              if (action.address && ethers.utils.isAddress(action.address)) {
+                data.originalAddress = data.address;
+                data.address = action.address;
+              }
+              if (dapp.data.chainId !== chainId || !wallet) {
+                this.store.dispatch(setChainId({ src: ContractEffects.name, chainId: dapp.data.chainId }));
+                this.store.dispatch(connectWallet({ src: ContractEffects.name }));
+                const pipe = this.actions$.pipe(
+                  ofType(walletChanged),
+                  take(1),
+                  map(() => setContract({ src: ContractEffects.name, contract: data }))
+                );
+                return pipe;
+              }
+              return of(setContract({ src: ContractEffects.name, contract: data }));
+            }),
+            catchError((error) =>
+              of(notify({ src: ContractEffects.name, notificationType: 'error', message: getErrorMessage(error.message) }))
+            )
+          );
+      })
     )
   );
+
+  likeDapp$ = createEffect((): any =>
+    this.actions$.pipe(
+      ofType(likeDapp),
+      withLatestFrom(this.store.select(userSelector), this.store.select(contractSelector)),
+      mergeMap(([action, user, contract]) => {
+        if (user === null) {
+          this.store.dispatch(login({ src: ContractEffects.name }));
+          return this.actions$.pipe(
+            ofType(setUser),
+            mergeMap(() => of(action))
+          );
+        }
+        const id = contract!.id ?? '';
+        return this.firebase.likeDapp(id, action.liked).pipe(
+          map(() =>
+            notify({ src: ContractEffects.name, notificationType: 'success', message: action.liked ? 'Liked Dapp' : 'Unliked Dapp' })
+          ),
+          catchError((error) =>
+            of(notify({ src: ContractEffects.name, notificationType: 'error', message: getErrorMessage(error.message) }))
+          )
+        );
+      })
+    )
+  );
+
+  getDappService = (localMode: boolean): DappService => {
+    return localMode ? this.local : this.firebase;
+  };
 }

@@ -38,8 +38,8 @@ export class StructInputComponent implements OnInit, OnDestroy {
   constructor() {
     this.form = new FormGroup({});
     this.subscription.add(
-      this.form.valueChanges.pipe(debounceTime(200), distinctUntilChanged(), skip(1)).subscribe((newValue) => {
-        this.update(newValue);
+      this.form.valueChanges.pipe(debounceTime(50), distinctUntilChanged(), skip(1)).subscribe((newValue) => {
+        if (newValue) this.update(newValue);
       })
     );
   }
@@ -74,6 +74,7 @@ export class StructInputComponent implements OnInit, OnDestroy {
         const transformedValue = transformValue(component.type, newValue[component.name]);
         if (transformedValue === undefined) {
           this.valueUpdated.emit(undefined);
+          this.transformedValue = '';
           return;
         }
         parsedValue[component.name] = transformedValue;

@@ -18,10 +18,12 @@
         class="block w-full text-input"
         placeholder="0xA1337b..."
       />
-      <p *ngIf="fetchingEtherscan" class="ml-3 mt-1 text-blue-600">Fetching ABI from Etherscan...</p>
-      <p *ngIf="fetchingEtherscan === false && etherscanError !== ''" class="ml-3 mt-1 text-blue-600">
-        {{ etherscanError }}
-      </p>
+      <ng-container *ngIf="!localMode">
+        <p *ngIf="fetchingEtherscan" class="ml-3 mt-1 text-blue-600">Fetching ABI from block explorer...</p>
+        <p *ngIf="fetchingEtherscan === false && etherscanError !== ''" class="ml-3 mt-1 text-blue-600">
+          {{ etherscanError }}
+        </p>
+      </ng-container>
       <p *ngIf="form.controls.address.dirty && form.controls.address.invalid" class="ml-3 mt-1 text-sm text-red-600">
         <span *ngIf="form.controls.address.errors?.required">Required</span>
         <span *ngIf="form.controls.address.errors?.address">Invalid Address</span>

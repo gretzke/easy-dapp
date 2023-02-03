@@ -31,12 +31,12 @@ export class ReadFieldComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.args = new Array(this.state.field.inputs.length);
+    this.args = new Array(this.state.field.inputs?.length ?? 0);
     let config = { ...this.state.config } as IBaseFieldConfig;
     if (config.name === undefined) config.name = '';
     if (config.description === undefined) config.description = '';
-    if (config.inputs === undefined) config.inputs = new Array(this.state.field.inputs.length).fill({});
-    if (config.outputs === undefined) config.outputs = new Array(this.state.field.outputs.length).fill({});
+    if (config.inputs === undefined) config.inputs = new Array(this.state.field.inputs?.length ?? 0).fill({});
+    if (config.outputs === undefined) config.outputs = new Array(this.state.field.outputs?.length ?? 0).fill({});
     this.state = { ...this.state, config: config };
   }
 
@@ -57,7 +57,7 @@ export class ReadFieldComponent implements OnInit {
       updateInputConfig({
         src: ReadFieldComponent.name,
         signature: this.signature,
-        length: this.state.field.inputs.length,
+        length: this.state.field.inputs?.length ?? 0,
         index: index,
         config,
       })
@@ -76,7 +76,7 @@ export class ReadFieldComponent implements OnInit {
       updateOutputConfig({
         src: ReadFieldComponent.name,
         signature: this.signature,
-        length: this.state.field.outputs.length,
+        length: this.state.field.outputs?.length ?? 0,
         index: index,
         config,
       })

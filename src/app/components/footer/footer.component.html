@@ -1,0 +1,24 @@
+<div class="bg-white dark:bg-gray-800 flex justify-between py-3 px-5 flex-col lg:flex-row">
+  <a
+    href="https://github.com/gretzke/easy-dapp/issues"
+    target="_blank"
+    class="flex items-center justify-center lg:justify-start text-muted w-full"
+    >Found a bug?</a
+  >
+  <div class="flex items-center justify-center w-full">
+    <span class="mr-2">
+      Made with <span class="text-sm">{{ (darkmode$ | async) === 'dark' ? '❤️' : '💙' }}</span> by
+    </span>
+    <a href="https://twitter.com/gretzke" target="_blank">
+      <img class="h-6" [src]="'assets/img/innochain_' + (darkmode$ | async) + '.png'" alt="innochain" />
+    </a>
+  </div>
+  <div class="flex items-center justify-center lg:justify-end w-full">
+    <a href="https://github.com/gretzke/easy-dapp" target="_blank" class="mr-3">
+      <fa-icon [icon]="faGithub"></fa-icon>
+    </a>
+    <a href="https://twitter.com/gretzke" target="_blank">
+      <fa-icon [icon]="faTwitter"></fa-icon>
+    </a>
+  </div>
+</div>

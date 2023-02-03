@@ -1,7 +1,32 @@
-<div *ngFor="let dapp of dapps" class="card flex items-center justify-between mb-4">
-  <div>
-    <p class="text-2xl">{{ dapp.config.name }}</p>
-    <p class="text-xl text-muted">{{ dapp.address }}</p>
-  </div>
-  <fa-icon class="text-2xl mr-2 cursor-pointer" [icon]="faArrowRight" (click)="navigate(dapp)"></fa-icon>
+<div class="py-8 px-4 w-full flex justify-center">
+  <img class="block dark:hidden w-full" style="max-width: 700px" src="assets/img/logo_text_light.png" alt="Workflow" />
+  <img class="dark:block hidden w-full" style="max-width: 700px" src="assets/img/logo_text_dark.png" alt="Workflow" />
 </div>
+
+<div class="text-center lg:mx-40 mb-10">
+  <p class="text-2xl">Building smart contract UIs used to take a long time</p>
+  <br />
+  <p class="text-xl mb-4">
+    Easy Dapp allows you to easily build and modify a UI for your smart contract, whether you are on a public or local dev network. You can
+    also share your dApp with users, collaborators & customers so they can easily interact with your smart contract.
+  </p>
+  <button [routerLink]="['new-dapp']" class="button-primary">
+    <span class="text-xl"> Try it out! </span>
+  </button>
+</div>
+
+<ng-container *ngIf="!(localMode$ | async)">
+  <div class="mb-8" *ngIf="(chainId$ | async) === 1">
+    <p class="text-xl ml-3">Check out these example dApps to explore the variety of features EasyDapp has to offer!</p>
+    <app-dapp-list-item *ngFor="let dapp of exampleDapps" [dapp]="dapp"></app-dapp-list-item>
+  </div>
+
+  <p class="text-2xl ml-3">Popular dApps</p>
+  <app-dapp-list [type]="'popular'" [persist]="true"></app-dapp-list>
+  <br />
+  <p class="text-2xl ml-3">Recent dApps</p>
+  <app-dapp-list [type]="'latest'" [persist]="true"></app-dapp-list>
+</ng-container>
+<ng-container *ngIf="localMode$ | async">
+  <app-dapp-list [type]="'latest'"></app-dapp-list>
+</ng-container>

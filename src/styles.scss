@@ -1,174 +1,451 @@
-@import 'ngx-toastr/toastr';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'ngx-toastr/toastr';
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/themes/light.css';
+@import '~tippy.js/animations/scale.css';
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+body {
+  font-family: 'Nunito', sans-serif;
+  // font-family: 'Ubuntu', sans-serif;
+}
 
 .divider-wrapper {
-    @apply flex;
-    @apply justify-center;
-    @apply items-center;
-    @apply w-full;
-    & .divider {
-        @apply w-5/6;
-    }
+  @apply flex;
+  @apply justify-center;
+  @apply items-center;
+  @apply w-full;
+
+  & .divider {
+    @apply w-5/6;
+  }
 }
+
 .divider {
-    @apply border-gray-300;
-    @apply dark:border-gray-600;
-    @apply border-t;
+  @apply border-gray-300;
+  @apply dark:border-gray-600;
+  @apply border-t;
 }
 
 .bg {
-    @apply bg-white;
-    @apply dark:bg-gray-800;
-    @apply text-gray-900;
-    @apply dark:text-gray-100;
+  @apply bg-white;
+  @apply dark:bg-gray-800;
+  @apply text-gray-900;
+  @apply dark:text-gray-100;
 }
 
 .card {
-    @apply bg-white/60;
-    @apply dark:bg-gray-700/40;
-    @apply border;
-    @apply border-gray-300;
-    @apply dark:border-gray-600;
-    @apply dark:text-gray-100;
-    @apply md:rounded;
-    @apply px-4;
-    @apply py-4;
+  @apply bg-white/60;
+  @apply dark:bg-gray-700/40;
+  @apply border;
+  @apply border-gray-300;
+  @apply dark:border-gray-600;
+  @apply dark:text-gray-100;
+  @apply md:rounded;
+  @apply px-4;
+  @apply py-4;
 }
+
 .cdk-drag-preview {
-    @apply dark:text-white    
+  @apply dark:text-white;
 }
+
 .cdk-drag-placeholder {
-    opacity: 0;
+  opacity: 0;
 }
 
 .button-group {
-    @apply flex; @apply justify-center; @apply isolate inline-flex; @apply -space-x-px; @apply rounded-md; @apply shadow-sm;
+  @apply flex;
+  @apply justify-center;
+  @apply isolate inline-flex;
+  @apply -space-x-px;
+  @apply rounded-md;
+  @apply shadow-sm;
 
-    > .button {
-        @apply h-10; @apply aspect-square; @apply border; @apply text-sm; @apply text-muted; @apply focus:z-10; @apply bg-white; @apply hover:bg-gray-50; @apply border-gray-300; @apply focus:border-custom-light-500; @apply dark:bg-gray-700; @apply dark:hover:bg-gray-800; @apply dark:border-white; @apply dark:focus:border-custom-dark-500; @apply dark:text-white;
-    }
+  > .button {
+    @apply h-10;
+    @apply aspect-square;
+    @apply border;
+    @apply text-sm;
+    @apply text-muted;
+    @apply focus:z-10;
+    @apply bg-white;
+    @apply hover:bg-gray-50;
+    @apply border-gray-300;
+    @apply focus:border-custom-light-500;
+    @apply dark:bg-gray-700;
+    @apply dark:hover:bg-gray-800;
+    @apply dark:border-white;
+    @apply dark:focus:border-custom-dark-500;
+    @apply dark:text-white;
+  }
 
-    > .button-l {
-        @apply rounded-l;
-    }
+  > .button-l {
+    @apply rounded-l;
+  }
 
-    > .button-r {
-        @apply rounded-r;
-    }
+  > .button-r {
+    @apply rounded-r;
+  }
 }
 
-.radio, .checkbox {
-    @apply border-gray-300; @apply focus:ring-transparent; @apply focus:ring-offset-0; @apply text-custom-light-500; @apply dark:text-custom-dark-500;
+.radio,
+.checkbox {
+  @apply border-gray-300;
+  @apply focus:ring-transparent;
+  @apply focus:ring-offset-0;
+  @apply text-custom-light-500;
+  @apply dark:text-custom-dark-500;
 
-    &.checkbox {
-        @apply rounded-md;
-    }
+  &.checkbox {
+    @apply rounded-md;
+  }
 }
 
 .tab {
-    @apply border-transparent; @apply w-1/2; @apply py-4; @apply px-1; @apply text-center; @apply border-b-2; @apply font-medium; @apply text-sm; @apply text-gray-400; @apply border-gray-400; @apply hover:text-gray-500; @apply hover:border-gray-500; @apply dark:text-gray-400; @apply dark:border-gray-400; @apply dark:hover:text-gray-300; @apply dark:hover:border-gray-300;
-    &.active{
-        @apply dark:border-custom-dark-400; @apply dark:text-custom-dark-500; 
-        @apply border-custom-light-400; @apply text-custom-light-500;
-    }
+  @apply border-transparent;
+  @apply w-full;
+  @apply py-4;
+  @apply px-1;
+  @apply text-center;
+  @apply border-b-2;
+  @apply font-medium;
+  @apply text-sm;
+  @apply text-gray-400;
+  @apply border-gray-400;
+  @apply hover:text-gray-500;
+  @apply hover:border-gray-500;
+  @apply dark:text-gray-400;
+  @apply dark:border-gray-400;
+  @apply dark:hover:text-gray-300;
+  @apply dark:hover:border-gray-300;
+
+  &.active {
+    @apply dark:border-custom-dark-400;
+    @apply dark:text-custom-dark-500;
+    @apply border-custom-light-400;
+    @apply text-custom-light-500;
+  }
 }
 
 .text-muted {
-    @apply text-gray-400;
-    @apply dark:text-gray-500;
+  @apply text-gray-400;
+  @apply dark:text-gray-500;
 }
 
 .dropdown {
-    @apply absolute;
-    @apply right-0;
-    @apply z-10;
-    @apply mt-2;
+  min-width: 10rem;
+  @apply absolute;
+  @apply right-0;
+  @apply z-10;
+  @apply mt-2;
+  @apply py-2;
+  @apply px-4;
+  @apply origin-top-right;
+  @apply rounded;
+  @apply shadow-lg;
+  @apply ring-1;
+  @apply focus:outline-none;
+  @apply ring-black;
+  @apply ring-opacity-5;
+  @apply bg-white;
+  @apply text-gray-700;
+  @apply dark:bg-gray-800;
+  @apply dark:text-gray-300;
+
+  .dropdown-item {
+    @apply block;
     @apply py-2;
-    @apply px-4;
-    @apply origin-top-right;
-    @apply rounded;
-    @apply shadow-lg;
-    @apply ring-1;
-    @apply focus:outline-none;
-    @apply ring-black;
-    @apply ring-opacity-5;
-    @apply bg-white;
-    @apply text-gray-700;
-    @apply dark:bg-gray-800;
-    @apply dark:text-gray-300;
+    @apply border-t;
+    @apply w-full;
+    @apply dark:border-t-gray-600;
+    @apply border-t-gray-300;
+  }
 
-    .dropdown-item {
-        @apply block; @apply py-2; @apply border-t;
-    }
-
-    .dropdown-item:first-child {
-        @apply border-t-0;
-    }
+  .dropdown-item:first-child {
+    @apply border-t-0;
+  }
 }
 
 .edit-input {
-    @apply p-1; @apply border-b; @apply border-transparent; @apply border-b-gray-300; @apply bg-transparent; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:border-transparent; @apply focus:ring-0; @apply focus:border-b-gray-500; @apply dark:border-b-gray-600; @apply dark:focus:border-b-gray-400;
+  @apply p-1;
+  @apply border-b;
+  @apply border-transparent;
+  @apply border-b-gray-300;
+  @apply bg-transparent;
+  @apply placeholder-gray-500;
+  @apply focus:outline-none;
+  @apply focus:border-transparent;
+  @apply focus:ring-0;
+  @apply focus:border-b-gray-500;
+  @apply dark:border-b-gray-600;
+  @apply dark:focus:border-b-gray-400;
 }
 
 .select-menu {
-    @apply relative;
-    .select-menu-button {
-        @apply h-10; @apply relative; @apply w-full; @apply rounded; @apply py-2; @apply pl-3; @apply pr-10; @apply text-left; @apply sm:text-sm; @apply text-base; @apply shadow-sm; @apply border; @apply focus:outline-none; @apply focus:ring-1;
-        @apply bg-white; @apply dark:bg-gray-700;
-        @apply text-gray-900; @apply dark:text-gray-100;
-        @apply border-gray-300; @apply focus:border-custom-light-500;
-        @apply dark:border-transparent; @apply dark:focus:border-custom-dark-500;
-        @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500;
-    }
+  @apply relative;
 
-    .select-menu-list {
-        @apply absolute; @apply z-10; @apply mt-1; @apply max-h-60; @apply w-full; @apply overflow-auto; @apply rounded; @apply text-base; @apply sm:text-sm; @apply shadow-lg; @apply focus:outline-none;
-        @apply bg-white; @apply dark:bg-gray-700;
-    }
+  .select-menu-button {
+    @apply h-10;
+    @apply relative;
+    @apply w-full;
+    @apply rounded;
+    @apply py-2;
+    @apply pl-3;
+    @apply pr-10;
+    @apply text-left;
+    @apply sm:text-sm;
+    @apply text-base;
+    @apply shadow-sm;
+    @apply border;
+    @apply focus:outline-none;
+    @apply focus:ring-1;
+    @apply bg-white;
+    @apply dark:bg-gray-700;
+    @apply text-gray-900;
+    @apply dark:text-gray-100;
+    @apply border-gray-300;
+    @apply focus:border-custom-light-500;
+    @apply dark:border-transparent;
+    @apply dark:focus:border-custom-dark-500;
+    @apply focus:ring-custom-light-500;
+    @apply dark:focus:ring-custom-dark-500;
+  }
+
+  .select-menu-list {
+    @apply absolute;
+    @apply z-10;
+    @apply mt-1;
+    @apply max-h-60;
+    @apply w-full;
+    @apply overflow-auto;
+    @apply rounded;
+    @apply text-base;
+    @apply sm:text-sm;
+    @apply shadow-lg;
+    @apply focus:outline-none;
+    @apply bg-white;
+    @apply dark:bg-gray-700;
+  }
 }
 
 .text-input-base {
-    @apply border; @apply border-gray-300; @apply rounded; @apply leading-5; @apply bg-white; @apply placeholder-gray-500; @apply focus:outline-none; @apply focus:placeholder-gray-400; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply focus:border-custom-light-500; @apply dark:focus:border-custom-dark-500; @apply dark:bg-gray-700; @apply dark:border-transparent; @apply dark:placeholder-gray-400; @apply dark:focus:placeholder-gray-500;
+  @apply border;
+  @apply border-gray-300;
+  @apply rounded;
+  @apply leading-5;
+  @apply bg-white;
+  @apply placeholder-gray-500;
+  @apply focus:outline-none;
+  @apply focus:placeholder-gray-400;
+  @apply focus:ring-1;
+  @apply focus:ring-custom-light-500;
+  @apply dark:focus:ring-custom-dark-500;
+  @apply focus:border-custom-light-500;
+  @apply dark:focus:border-custom-dark-500;
+  @apply dark:bg-gray-700;
+  @apply dark:border-transparent;
+  @apply dark:placeholder-gray-400;
+  @apply dark:focus:placeholder-gray-500;
 }
 
 .text-input {
-    @extend .text-input-base;
-    @apply h-10;
+  @extend .text-input-base;
+  @apply h-10;
 }
 
 .textarea-input {
-    @extend .text-input-base;
-    @apply h-60;
+  @extend .text-input-base;
+  @apply h-60;
 }
 
 .button-header {
-    @apply text-gray-900; @apply hover:bg-gray-100; @apply hover:text-gray-900; @apply rounded; @apply px-3; @apply py-2; @apply text-sm; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
+  @apply text-gray-900;
+  @apply hover:bg-gray-100;
+  @apply hover:text-gray-900;
+  @apply rounded;
+  @apply px-3;
+  @apply py-2;
+  @apply text-sm;
+  @apply font-medium;
+  @apply dark:text-gray-300;
+  @apply dark:hover:bg-gray-700;
+  @apply dark:hover:text-white;
 }
 
 .input-icon {
-    @apply pl-10; @apply pr-3; @apply py-2;
+  @apply pl-10;
+  @apply pr-3;
+  @apply py-2;
+}
+
+.button-outline {
+  @apply max-h-10;
+  @apply rounded;
+  @apply bg-transparent;
+  @apply border;
+  @apply border-custom-light-500;
+  @apply dark:border-custom-dark-500;
+  @apply px-4;
+  @apply py-2;
+  @apply text-sm;
+  @apply font-medium;
+  @apply text-gray-800;
+  @apply dark:text-gray-200;
+  @apply shadow-sm;
+  @apply focus:outline-none;
+  @apply focus:ring-1;
+  @apply focus:ring-custom-light-500;
+  @apply dark:focus:ring-custom-dark-500;
+  @apply disabled:bg-custom-light-550;
+  @apply dark:disabled:bg-custom-dark-550;
+}
+
+.button-base {
+  // @apply h-10;
+  @apply rounded;
+  @apply border;
+  @apply border-transparent;
+  @apply px-4;
+  @apply py-2;
+  @apply text-sm;
+  @apply font-medium;
+  @apply text-white;
+  @apply shadow-sm;
+  @apply focus:outline-none;
+  @apply focus:ring-1;
 }
 
 .button-primary {
-    @apply max-h-10; @apply rounded; @apply border; @apply border-transparent; @apply bg-custom-light-500; @apply dark:bg-custom-dark-500; @apply px-4; @apply py-2; @apply text-sm; @apply font-medium; @apply text-white; @apply shadow-sm; @apply hover:bg-custom-light-550; @apply dark:hover:bg-custom-dark-550; @apply focus:outline-none; @apply focus:ring-1; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply disabled:bg-custom-light-550; @apply dark:disabled:bg-custom-dark-550;
+  @apply button-base;
+  @apply bg-custom-light-500;
+  @apply dark:bg-custom-dark-500;
+  @apply hover:bg-custom-light-550;
+  @apply dark:hover:bg-custom-dark-600;
+  @apply focus:ring-custom-light-500;
+  @apply dark:focus:ring-custom-dark-500;
+  @apply disabled:bg-custom-light-550;
+  @apply dark:disabled:bg-custom-dark-600;
+}
+
+.button-success {
+  @apply button-base;
+  @apply bg-green-600;
+  @apply hover:bg-green-700;
+  @apply focus:ring-green-600;
+  @apply disabled:bg-green-700;
+}
+
+.button-warning {
+  @apply button-base;
+  @apply bg-orange-500;
+  @apply hover:bg-orange-600;
+  @apply focus:ring-orange-500;
+  @apply disabled:bg-orange-600;
+}
+
+.button-danger {
+  @apply button-base;
+  @apply bg-custom-dark-500;
+  @apply hover:bg-custom-dark-600;
+  @apply focus:ring-custom-dark-500;
+  @apply disabled:bg-custom-dark-600;
 }
 
 .button-icon {
-    @apply inline-flex; @apply items-center; @apply justify-center; @apply text-gray-400; @apply hover:text-gray-500; @apply focus:outline-none; @apply dark:hover:text-white;
+  @apply inline-flex;
+  @apply items-center;
+  @apply justify-center;
+  @apply text-gray-400;
+  @apply hover:text-gray-500;
+  @apply focus:outline-none;
+  @apply dark:hover:text-white;
+}
+
+.button-icon-round-base {
+  @apply h-8;
+  @apply w-8;
+  @apply flex-shrink-0;
+  @apply bg-white;
+  @apply p-1;
+  @apply rounded-full;
+  @apply focus:outline-none;
+  @apply focus:ring-2;
+  @apply focus:ring-offset-0;
+  @apply aspect-square;
+  @apply flex;
+  @apply items-center;
+  @apply justify-center;
+  @apply dark:bg-gray-800;
+  @apply dark:focus:ring-2;
+  @apply dark:focus:ring-offset-0;
+  @apply dark:focus:ring-offset-gray-800;
 }
 
 .button-icon-round {
-    @apply flex-shrink-0; @apply bg-white; @apply p-1; @apply text-gray-400; @apply rounded-full; @apply hover:text-gray-500; @apply focus:outline-none; @apply focus:ring-2; @apply focus:ring-offset-0; @apply focus:ring-custom-light-500; @apply dark:focus:ring-custom-dark-500; @apply dark:hover:text-white; @apply dark:bg-gray-800; @apply dark:focus:ring-2;  @apply dark:focus:ring-offset-0; @apply dark:focus:ring-offset-gray-800; 
-    @apply aspect-square;
-    @apply flex; @apply items-center; @apply justify-center;
-    &border {
-        @apply border; @apply border-gray-300; @apply dark:border-gray-600;
-    }
+  @apply button-icon-round-base;
+  @apply text-gray-400;
+  @apply hover:text-gray-500;
+  @apply dark:hover:text-white;
+  @apply focus:ring-custom-light-500;
+  @apply dark:focus:ring-custom-dark-500;
+
+  &border {
+    @apply border;
+    @apply border-gray-300;
+    @apply dark:border-gray-600;
+  }
+}
+
+.button-icon-like {
+  @apply button-icon-round-base;
+  @apply focus:ring-pink-500;
+  @apply text-pink-500;
 }
 
 .button-menu-mobile {
-    @apply block; @apply border-transparent; @apply text-gray-600; @apply hover:bg-gray-50; @apply hover:border-custom-light-500; @apply dark:hover:border-custom-dark-500; @apply hover:text-gray-800; @apply pl-3; @apply pr-4; @apply py-2; @apply border-l-4; @apply text-base; @apply font-medium; @apply dark:text-gray-300; @apply dark:hover:bg-gray-700; @apply dark:hover:text-white;
+  @apply block;
+  @apply border-transparent;
+  @apply text-gray-600;
+  @apply hover:bg-gray-50;
+  @apply hover:border-custom-light-500;
+  @apply dark:hover:border-custom-dark-500;
+  @apply hover:text-gray-800;
+  @apply pl-3;
+  @apply pr-4;
+  @apply py-2;
+  @apply border-l-4;
+  @apply text-base;
+  @apply font-medium;
+  @apply dark:text-gray-300;
+  @apply dark:hover:bg-gray-700;
+  @apply dark:hover:text-white;
+  @apply my-1;
+  @apply cursor-pointer;
+  @apply flex;
+  @apply items-center;
+}
+
+.pagination-button {
+  @apply max-w-fit;
+  @apply -mt-px;
+  @apply flex;
+  @apply flex-1;
+  @apply inline-flex;
+  @apply items-center;
+  @apply border-t-2;
+  @apply border-transparent;
+  @apply pt-4;
+  @apply px-1;
+  @apply text-sm;
+  @apply font-medium;
+  @apply text-gray-500;
+  @apply hover:border-custom-light-500;
+  @apply dark:hover:border-custom-dark-500;
+  @apply hover:text-gray-700;
+  @apply dark:hover:text-gray-300;
 }

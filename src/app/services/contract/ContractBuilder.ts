@@ -1,6 +1,6 @@
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { from, Observable, of } from 'rxjs';
-import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState, VariableType } from 'src/types/abi';
+import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState, VariableType, InternalType } from 'src/types/abi';
 import { EthereumService } from '../ethereum.service';
 
 export class ContractBuilder {
@@ -19,7 +19,7 @@ export class ContractBuilder {
   public getContractState(): Observable<IContractState> {
     if (this.readFunctions === undefined) return of({} as IContractState);
     const functionsToCall = Object.keys(this.readFunctions)
-      .filter((key) => this.readFunctions![key].inputs.length === 0)
+      .filter((key) => (this.readFunctions![key].inputs ?? []).length === 0)
       .map(async (key) => ({ key, value: await this.get(this.readFunctions![key].name, []) }));
 
     return from(Promise.all(functionsToCall).then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
@@ -44,8 +44,19 @@ export class ContractABI {
   public abi: ABI;
 
   constructor(abi: string) {
-    this.abi = JSON.parse(abi);
-    for (const f of this.abi) {
+    // prior to solidity 0.5.x internalType did not exist. Add internalType to all functions that don't have it
+    this.abi = JSON.parse(abi).map((f: ABIItem) => {
+      (f.inputs ?? []).map((i) => {
+        if (i.internalType === undefined) i.internalType = i.type as InternalType;
+        return i;
+      });
+      (f.outputs ?? []).map((o) => {
+        if (o.internalType === undefined) o.internalType = o.type as InternalType;
+        return o;
+      });
+      return f;
+    });
+    for (let f of this.abi) {
       this.functions = {
         ...this.functions,
         [this.getSignature(f)]: f,
@@ -85,8 +96,8 @@ export class ContractABI {
 
   public enums(): string[] {
     const enumMap = Object.keys(this.functions).reduce((obj, key) => {
-      const inputs = this.getEnumsFromArray(this.functions[key].inputs);
-      const outputs = this.getEnumsFromArray(this.functions[key].outputs);
+      const inputs = this.getEnumsFromArray(this.functions[key].inputs ?? []);
+      const outputs = this.getEnumsFromArray(this.functions[key].outputs ?? []);
       return {
         ...obj,
         ...inputs,
@@ -104,7 +115,7 @@ export class ContractABI {
   private getEnumsFromArray(arr: VariableType[]): { [key: string]: true } {
     if (arr === undefined) return {};
     return arr.reduce((obj, item) => {
-      if (item.type === 'uint8' && item.internalType.substring(0, 5) === 'enum ') {
+      if (item.type === 'uint8' && item.internalType?.substring(0, 5) === 'enum ') {
         return {
           ...obj,
           [item.internalType.substring(5)]: true,

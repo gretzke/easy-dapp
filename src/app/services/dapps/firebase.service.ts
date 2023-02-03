@@ -2,17 +2,26 @@ import { Injectable } from '@angular/core';
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 import { Firestore, getFirestore } from 'firebase/firestore';
-import { connectFunctionsEmulator, Functions, getFunctions, httpsCallable } from 'firebase/functions';
+import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 import { from, Observable } from 'rxjs';
+import { DappListType, Pagination } from 'src/app/store/app.reducer';
 import { environment } from 'src/environments/environment';
-import { IDappConfig } from 'src/types/abi';
-import { IContract, ICreateDappResponse } from 'src/types/api';
-import { IAbiResponse, IDappResponse, IDappsResponse, IMessageResponse, IVerificationResponse } from 'src/types/api';
+import { IDappConfig } from 'src/types/abi.d';
+import {
+  DappService,
+  IAbiResponse,
+  IContract,
+  ICreateDappResponse,
+  IDappResponse,
+  IDappsResponse,
+  IMessageResponse,
+  IVerificationResponse,
+} from 'src/types/api.d';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FirebaseService {
+export class FirebaseService implements DappService {
   private db: Firestore;
   private functions: Functions;
   private firebaseConfig = {
@@ -63,21 +72,20 @@ export class FirebaseService {
     return from(this.post('saveDapp', { id, config }) as Promise<{}>);
   }
 
-  public getDapps(chainId: number): Observable<IDappsResponse> {
-    return from(this.post('getDapps', { chainId }) as Promise<IDappsResponse>);
+  deleteDapp(id: string): Observable<{}> {
+    return from(this.post('deleteDapp', { id }) as Promise<{}>);
   }
 
-  public getDapp(id: string): Observable<IDappResponse> {
-    return from(this.post('getDapp', { id }) as Promise<IDappResponse>);
+  public getDapps(chainId: number, type?: DappListType, pagination?: Pagination, address?: string): Observable<IDappsResponse> {
+    return from(this.post('getDapps', { chainId, type, pagination, address }) as Promise<IDappsResponse>);
   }
 
-  public dappExists(id: string): Promise<{ data: boolean }> {
-    return this.post('dappExists', { id }) as Promise<{ data: boolean }>;
+  public getDapp(id: string, address?: string): Observable<IDappResponse> {
+    return from(this.post('getDapp', { id, address }) as Promise<IDappResponse>);
   }
 
-  public getAbiByDoc(docId: string) {
-    const getAbiByDoc = httpsCallable(this.functions, 'getAbiByDoc');
-    return getAbiByDoc({ docId });
+  public likeDapp(id: string, like: boolean): Observable<{}> {
+    return from(this.post('likeDapp', { id, like }) as Promise<{}>);
   }
 
   private post(endpoint: string, body: {}): Promise<{}> {

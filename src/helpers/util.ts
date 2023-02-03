@@ -1,5 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { ContractDataType, InputFormatterType, InputsConfig } from 'src/types/abi';
+import { FirebaseDate } from 'src/types/api';
+const { binary_to_base58 } = require('base58-js');
 
 const currentTimestamp = (Date.now() / 1000).toFixed(0);
 export const uintRegex = /^uint\d*$/;
@@ -7,7 +9,8 @@ export const intRegex = /^int\d*$/;
 export const bytesRegex = /^bytes\d*$/;
 
 export const dappId = (owner: string, url: string) => {
-  return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(owner + url));
+  const hash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(owner + url));
+  return binary_to_base58(ethers.utils.arrayify(hash));
 };
 
 export const getFunctionName = (signature: string) => {
@@ -31,22 +34,27 @@ export const placeholder = (type?: string, format?: InputFormatterType): string 
 
 export const transformValue = (type: string, value: string, config?: InputsConfig): ContractDataType | undefined => {
   if (!type) return '';
-  if (type === 'address') return value;
-  if (uintRegex.test(type)) {
+  else if (type === 'address') {
+    if (ethers.utils.isAddress(value)) return value;
+    return undefined;
+  } else if (uintRegex.test(type)) {
     if (!value) return undefined;
-    if (config && config.formatter === 'decimals') {
+    else if (config && config.formatter === 'decimals') {
       return ethers.utils.parseUnits(value, config.decimals ?? 18);
     }
     return BigNumber.from(value);
-  }
-  if (intRegex.test(type)) {
-    if (!value) return undefined;
-    if (config && config.formatter === 'decimals') {
+  } else if (intRegex.test(type)) {
+    if (!value || value == '-') return undefined;
+    else if (config && config.formatter === 'decimals') {
       return ethers.utils.parseUnits(value, config.decimals ?? 18);
     }
     return BigNumber.from(value);
-  }
-  if (type === 'bool') return value === 'true';
-  if (type === 'string') return value;
+  } else if (type === 'bool') return value === 'true';
+  else if (type === 'string') return value;
   else return value;
+};
+
+export const dateToMilliseconds = (date?: FirebaseDate): number => {
+  if (date === undefined) return 0;
+  return date._seconds * 1000 + date._nanoseconds / 1000000;
 };

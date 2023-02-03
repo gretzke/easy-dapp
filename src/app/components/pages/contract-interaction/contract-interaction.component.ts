@@ -1,11 +1,12 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { faGear, faGlasses, faPen } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
 import { Subscription } from 'rxjs';
-import { getDapp } from 'src/app/store/app.actions';
+import { getDapp, notify } from 'src/app/store/app.actions';
+import { explorers } from 'src/helpers/chainConfig';
 import { dappId } from 'src/helpers/util';
 import { FunctionType, IDapp, IDappConfig } from 'src/types/abi';
 import { getContractState, saveOrder } from './store/contract.actions';
@@ -24,13 +25,13 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   faPen = faPen;
   faGear = faGear;
   edit = false;
-  public tab: tab = 'read';
+  public tab: tab = 'write';
   public moveable = false;
   public config?: IDappConfig;
   public contract?: IDapp;
   private subscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private store: Store<{}>) {
+  constructor(private route: ActivatedRoute, private router: Router, private store: Store<{}>) {
     this.subscription = this.store.select(contractSelector).subscribe((contract) => {
       this.contract = contract;
       if (contract !== undefined) {
@@ -40,7 +41,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.store.select(editSelector).subscribe((edit) => {
-        if (!edit && this.tab === 'config') this.tab = 'read';
+        if (!edit && this.tab === 'config') this.tab = 'write';
         this.edit = edit;
       })
     );
@@ -50,18 +51,35 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
         this.config = config;
       })
     );
+    const path = this.route.snapshot.routeConfig?.path;
+    if (path === 'new-dapp' || path === 'new-dapp/:address') return;
+    this.subscription.add(
+      this.route.params.subscribe((params) => {
+        this.init(params);
+      })
+    );
   }
 
-  ngOnInit(): void {
+  private init(params: any) {
+    const owner = params.owner;
+    if (!owner || !ethers.utils.isAddress(owner)) {
+      this.store.dispatch(notify({ src: ContractInteractionComponent.name, message: 'Invalid url', notificationType: 'error' }));
+      this.router.navigate(['/']);
+      return;
+    }
     if (!this.firstDeployment) {
-      const id = dappId(this.route.snapshot.params.owner, this.route.snapshot.params.url);
-      let address;
-      if (this.route.snapshot.params.address && ethers.utils.isAddress(this.route.snapshot.params.address)) {
-        address = this.route.snapshot.params.address;
+      const id = dappId(params.owner.toLowerCase(), params.url);
+      const address = params.address;
+      if (address === undefined || ethers.utils.isAddress(address)) {
+        this.store.dispatch(getDapp({ src: ContractInteractionComponent.name, id, address }));
+      } else {
+        this.store.dispatch(notify({ src: ContractInteractionComponent.name, message: 'Invalid url', notificationType: 'error' }));
+        this.router.navigate(['/']);
       }
-      this.store.dispatch(getDapp({ src: ContractInteractionComponent.name, id, address }));
     }
   }
+
+  ngOnInit(): void {}
 
   saveOrder(event: CdkDragDrop<string[]>, type: FunctionType) {
     if (!this.config) return;
@@ -73,5 +91,10 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  public blockExplorerUrl(address: string) {
+    if (!this.contract || explorers[this.contract.chainId] === undefined) return '';
+    return explorers[this.contract.chainId].url + '/address/' + address;
   }
 }

@@ -1,5 +1,19 @@
+import { Observable } from 'rxjs';
+import { DappListType, Pagination } from 'src/app/store/app.reducer';
 import { IUser } from '.';
-import { IAbiData, IDapp, IDappConfig } from './abi';
+import { IDapp, IDappConfig } from './abi';
+
+export interface DappService {
+  createDapp(contract: IContract, chainId: number): Observable<ICreateDappResponse>;
+
+  saveDapp(id: string, config: IDappConfig, chainId?: number): Observable<{}>;
+
+  deleteDapp(id: string, chainId?: number): Observable<{}>;
+
+  getDapps(chainId: number, listType?: DappListType, pagination?: Pagination, address?: string): Observable<IDappsResponse>;
+
+  getDapp(id: string, address?: string, chainId?: number): Observable<IDappResponse>;
+}
 
 export interface IAbiResponse {
   data: {
@@ -31,6 +45,8 @@ export interface ICreateDappResponse {
 
 export interface IDappsResponse {
   data: IDapps;
+  total: number;
+  limit: number;
 }
 
 export interface IDappResponse {
@@ -49,4 +65,10 @@ export interface IContract {
   abi: string;
   config: IDappConfig;
   url: string;
+  proxy: boolean;
+}
+
+export interface FirebaseDate {
+  _seconds: number;
+  _nanoseconds: number;
 }

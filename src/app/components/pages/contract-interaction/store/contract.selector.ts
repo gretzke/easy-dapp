@@ -7,6 +7,9 @@ export const selectContractState = (state: any): ContractState => state[contract
 export const selectConfigState = (state: any): IDappConfig => state[contractStateKey].config;
 
 export const contractSelector = createSelector(selectContractState, (state) => state.contract);
+
+export const likedContractSelector = createSelector(selectContractState, (state) => state.contract?.liked ?? false);
+
 export const contractStateSelector = createSelector(selectContractState, (state) => state.state);
 export const configSelector = createSelector(selectContractState, (state) => state.config);
 
@@ -14,9 +17,9 @@ export const editSelector = createSelector(selectContractState, (state) => state
 export const deploymentTypeSelector = createSelector(selectAppState, selectContractState, (appState, contractState) => {
   if (contractState.tmpConfig.firstDeployment) return 'new';
   if (appState.user !== null) {
-    return appState.user.address === contractState.contract?.owner ? 'save' : 'fork';
+    return appState.user.address.toLowerCase() === contractState.contract?.owner.toLowerCase() ? 'save' : 'fork';
   }
-  return appState.chainData.wallet?.address === contractState.contract?.owner ? 'save' : 'fork';
+  return appState.chainData.wallet?.address.toLowerCase() === contractState.contract?.owner.toLowerCase() ? 'save' : 'fork';
 });
 export const urlSelector = createSelector(selectContractState, (state) => state.tmpConfig.url);
 

@@ -38,7 +38,14 @@ export const initialState: ContractState = {
 const contractReducer = createReducer(
   initialState.contract,
   on(GlobalActions.getDapp, () => undefined),
-  on(Actions.setContract, (_, action) => action.contract)
+  on(Actions.setContract, (_, action) => action.contract),
+  on(Actions.likeDapp, (state, action) => {
+    if (state === undefined) return state;
+    return {
+      ...state,
+      liked: action.liked,
+    };
+  })
 );
 
 const componentsReducer = createReducer(

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { connectWallet, login, logout } from 'src/app/store/app.actions';
 import { userSelector, walletSelector } from 'src/app/store/app.selector';
 import { IUser, IWallet } from 'src/types';
+import { faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: '[app-header-wallet-button]',
@@ -24,10 +25,13 @@ import { IUser, IWallet } from 'src/types';
   ],
 })
 export class HeaderWalletButtonComponent implements OnInit {
-  showModal = false;
   showDropdown = false;
   wallet$: Observable<IWallet | null>;
   user$: Observable<IUser | null>;
+  faUser = faUser;
+  faLogin = faRightToBracket;
+  faLogout = faRightFromBracket;
+
   constructor(private store: Store<{}>) {
     this.wallet$ = this.store.select(walletSelector);
     this.user$ = this.store.select(userSelector);
@@ -45,5 +49,9 @@ export class HeaderWalletButtonComponent implements OnInit {
 
   logout() {
     this.store.dispatch(logout({ src: HeaderWalletButtonComponent.name }));
+  }
+
+  trim(wallet: string) {
+    return wallet.slice(2, 8).toUpperCase();
   }
 }

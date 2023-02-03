@@ -27,6 +27,10 @@ export const sendContractTx = createAction(
 
 export const saveDapp = createAction('[CONFIG] save dapp', props<{ src: string }>());
 
+export const deleteDapp = createAction('[CONFIG] delete dapp', props<{ src: string }>());
+
+export const likeDapp = createAction('[CONFIG] like dapp', props<{ src: string; liked: boolean }>());
+
 export const saveOrder = createAction('[CONFIG] save order', props<{ src: string; functionType: FunctionType; order: string[] }>());
 
 export const setEdit = createAction('[CONFIG] set edit', props<{ src: string; edit: boolean }>());

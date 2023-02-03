@@ -15,7 +15,9 @@ export class AddressOutputConfigBarComponent implements OnInit {
 
   constructor(private store: Store<{}>) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.config === undefined) this.config = {};
+  }
 
   toggleContract() {
     if (this.config === undefined) this.config = {};

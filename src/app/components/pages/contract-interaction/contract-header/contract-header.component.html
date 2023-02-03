@@ -1,9 +1,26 @@
-<div class="flex justify-between pb-4" *ngIf="config$ | async as config">
+<div class="contract-header-grid pb-4" *ngIf="config$ | async as config">
   <div>
     <div class="text-2xl pb-2">
-      <p *ngIf="!(edit$ | async)" class="edit-text">
-        {{ config.name === '' ? 'Contract Interaction' : config.name }}
-      </p>
+      <div class="flex items-center mb-2" *ngIf="!(localMode$ | async)">
+        <button class="button-icon-like mr-1" (click)="toggleLike()">
+          <fa-icon [icon]="faHeart" *ngIf="!liked"></fa-icon>
+          <fa-icon [icon]="faHeartSolid" *ngIf="liked"></fa-icon>
+        </button>
+        <a
+          [href]="blockExplorerUrl"
+          target="_blank"
+          class="button-icon-round text-base ml-3"
+          *ngIf="blockExplorerUrl !== ''"
+          tippy="View contract in block explorer"
+        >
+          <fa-icon [icon]="faLink"></fa-icon>
+        </a>
+      </div>
+      <div class="flex items-center overflow-hidden">
+        <p *ngIf="!(edit$ | async)" class="title edit-text">
+          {{ config.name === '' ? 'Contract Interaction' : config.name }}
+        </p>
+      </div>
       <div app-edit-input *ngIf="edit$ | async" [value]="config.name" placeholder="Title" (valueUpdated)="setName($event)"></div>
     </div>
     <div
@@ -26,13 +43,20 @@
       ></div>
     </div>
   </div>
-  <button class="button-primary" *ngIf="!(edit$ | async)" (click)="setEdit()">
-    <fa-icon [icon]="faPenToSquare" class="mr-2"></fa-icon> Edit
-  </button>
-  <div *ngIf="edit$ | async">
-    <button class="button-primary" (click)="saveDapp()">
-      <span *ngIf="(deploymentType$ | async) !== 'fork'"><fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon> Save</span>
-      <span *ngIf="(deploymentType$ | async) === 'fork'"><fa-icon [icon]="faCodeFork" class="mr-2"></fa-icon> Fork</span>
+  <div style="min-width: 100px; max-width: 100px">
+    <button class="button-primary w-full" *ngIf="!(edit$ | async)" (click)="setEdit()">
+      <span><fa-icon [icon]="faPenToSquare" class="mr-2"></fa-icon>Edit</span>
+    </button>
+    <button
+      [class]="'mb-2 w-full ' + ((deploymentType$ | async) === 'fork' ? 'button-warning' : 'button-success')"
+      (click)="saveDapp()"
+      *ngIf="edit$ | async"
+    >
+      <span *ngIf="(deploymentType$ | async) !== 'fork'"><fa-icon [icon]="faFloppyDisk" class="mr-2"></fa-icon>Save</span>
+      <span *ngIf="(deploymentType$ | async) === 'fork'"><fa-icon [icon]="faCodeFork" class="mr-2"></fa-icon>Fork</span>
+    </button>
+    <button class="button-danger w-full" *ngIf="(edit$ | async) && (deploymentType$ | async) === 'save'" (click)="deleteDapp()">
+      <span><fa-icon [icon]="faTrash" class="mr-2"></fa-icon>Delete</span>
     </button>
   </div>
 </div>

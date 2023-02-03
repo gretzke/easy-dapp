@@ -11,7 +11,7 @@ export class SymbolDirective {
 
   constructor(private el: ElementRef, private store: Store<{}>) {
     this.store.select(chainIdSelector).subscribe((chainId) => {
-      this.symbol = nativeCurrency[chainId].symbol;
+      this.symbol = nativeCurrency[chainId]?.symbol ?? 'ETH';
       this.el.nativeElement.innerHTML = this.symbol;
     });
   }

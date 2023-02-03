@@ -1,0 +1,20 @@
+.dapp-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+    grid-gap: 1rem;
+    margin: 1rem 0;
+}
+
+.dapp-list-grid>div {
+    max-width: 1fr;
+}
+
+.dapp-list-grid>div:first-child {
+    overflow: hidden;
+}
+
+.dapp-list-grid>div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

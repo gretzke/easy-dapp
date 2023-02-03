@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
 import { getErrorMessage, handleError } from 'src/helpers/errorMessages';
-import { IAbiResponse, IMessageResponse, IVerificationResponse } from '../../types/api';
+import { DappService, IAbiResponse, IMessageResponse, IVerificationResponse } from '../../types/api';
+import { contractSelector } from '../components/pages/contract-interaction/store/contract.selector';
+import { FirebaseService } from '../services/dapps/firebase.service';
+import { LocalDappService } from '../services/dapps/local-dapp.service';
+import { localModeSelector } from '../services/dapps/store/dapps.selector';
 import { EthereumService } from '../services/ethereum.service';
-import { FirebaseService } from '../services/firebase.service';
 import { NotificationService } from '../services/notification.service';
 import { UIService } from '../services/ui.service';
 import {
@@ -19,12 +23,12 @@ import {
   notify,
   resetUser,
   resetWallet,
+  setChainId,
   setDapps,
   setUser,
   setWallet,
   signMessage,
   submitSignature,
-  switchNetwork,
   walletChanged,
 } from './app.actions';
 import { chainIdSelector, userSelector, walletSelector } from './app.selector';
@@ -35,7 +39,9 @@ export class AppEffects {
     private actions$: Actions,
     private store: Store<{}>,
     private ui: UIService,
+    private router: Router,
     private firebase: FirebaseService,
+    private local: LocalDappService,
     private ethereum: EthereumService,
     private notification: NotificationService
   ) {}
@@ -44,7 +50,8 @@ export class AppEffects {
     () =>
       this.actions$.pipe(
         ofType(connectWallet),
-        tap(() => this.ethereum.connect())
+        withLatestFrom(this.store.select(chainIdSelector)),
+        tap(([_, chainId]) => this.ethereum.connect(chainId))
       ),
     { dispatch: false }
   );
@@ -57,7 +64,10 @@ export class AppEffects {
         this.ui.generateProfilePicture(action.address).pipe(
           tap(() => {
             const token = sessionStorage.getItem('jwt');
-            if ((token === null && user !== null) || (token !== null && (user === null || user.address !== action.address)))
+            if (
+              (token === null && user !== null) ||
+              (token !== null && (user === null || user.address.toLowerCase() !== action.address.toLowerCase()))
+            )
               this.store.dispatch(logout({ src: AppEffects.name }));
           }),
           map((img) => setWallet({ src: AppEffects.name, wallet: { address: action.address, img } }))
@@ -88,8 +98,22 @@ export class AppEffects {
   setChainId$ = createEffect(
     (): any =>
       this.actions$.pipe(
-        ofType(switchNetwork),
-        tap((action) => this.ethereum.switchNetwork(action.chainId))
+        ofType(setChainId),
+        withLatestFrom(this.store.select(walletSelector)),
+        tap(([action]) => {
+          const currentChainId = this.ethereum.getChainId();
+          if (currentChainId && currentChainId !== action.chainId) {
+            this.router.navigate(['/']);
+          }
+        }),
+        tap(([action, wallet]) => {
+          const currentChainId = this.ethereum.getChainId();
+          if (currentChainId && action.chainId && wallet !== null) {
+            this.ethereum
+              .switchNetwork(action.chainId)
+              .catch(() => this.store.dispatch(setChainId({ src: AppEffects.name, chainId: currentChainId })));
+          }
+        })
       ),
     { dispatch: false }
   );
@@ -97,13 +121,24 @@ export class AppEffects {
   getDapps$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(getDapps),
-      withLatestFrom(this.store.select(chainIdSelector)),
-      mergeMap(([_, chainId]) =>
-        this.firebase.getDapps(chainId).pipe(
-          map((dapps) => setDapps({ src: AppEffects.name, dapps: dapps.data })),
-          catchError((error) => of(notify({ src: AppEffects.name, notificationType: 'error', message: error.message })))
-        )
-      )
+      withLatestFrom(this.store.select(chainIdSelector), this.store.select(localModeSelector)),
+      mergeMap(([action, chainId, localMode]) => {
+        return this.getDappService(localMode)
+          .getDapps(chainId, action.listType, action.pagination, action.address)
+          .pipe(
+            map((dapps) =>
+              setDapps({
+                src: AppEffects.name,
+                dapps: dapps.data,
+                listType: action.listType,
+                total: dapps.total,
+                limit: dapps.limit,
+                pagination: action.pagination,
+              })
+            ),
+            catchError((error) => of(notify({ src: AppEffects.name, notificationType: 'error', message: getErrorMessage(error.message) })))
+          );
+      })
     )
   );
 
@@ -192,4 +227,6 @@ export class AppEffects {
       ),
     { dispatch: false }
   );
+
+  getDappService = (localMode: boolean): DappService => (localMode ? this.local : this.firebase);
 }

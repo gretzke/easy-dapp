@@ -55,8 +55,11 @@ export class UIService implements OnInit {
   }
 
   public generateProfilePicture(address: string): Observable<SafeResourceUrl> {
-    const url = blockies.create({ seed: address.toLowerCase(), size: 10, scale: 4 }).toDataURL();
-    return of(url);
+    return of(this.getProfilePicture(address));
+  }
+
+  public getProfilePicture(address: string): SafeResourceUrl {
+    return blockies.create({ seed: address.toLowerCase(), size: 10, scale: 4 }).toDataURL();
   }
 
   private _detectPrefersColorScheme() {

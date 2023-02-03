@@ -1,16 +1,10 @@
-- more items to user dropdown (address identifier, balance)
-- user profile page
-- favorite / likes
-- optimize indexing on db
-- add networks and restrict uploading for unknown networks / local storage for unknown networks
-- transaction tracking and more links in transactions dropdown (after network restriction)
-- Etherscan link next to edit button (after network restriction)
-- landing page
-- footer - link to github
-
 Optional:
 
-- cheat codes for local networks
+- cheat codes for local networks (skip time, etc)
 - auto parsing of function, input and output names from camelCase / snake_case?
 - ENS integration?
-- bool true / false dropdown
+
+fix:
+
+- ring arrows timepicker left right
+- dynamic array input required after deleting item

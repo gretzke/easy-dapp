@@ -1,16 +1,16 @@
 <div class="card" *ngIf="contract">
-  <app-contract-header></app-contract-header>
+  <app-contract-header [blockExplorerUrl]="blockExplorerUrl(contract.address)"></app-contract-header>
   <div>
     <div class="block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex" aria-label="Tabs">
-          <button [class]="'tab' + (tab === 'read' ? ' active' : '')" (click)="tab = 'read'">
-            <fa-icon [icon]="faGlasses" class="mr-2"></fa-icon>
-            <span>Read</span>
-          </button>
           <button [class]="'tab' + (tab === 'write' ? ' active' : '')" (click)="tab = 'write'">
             <fa-icon [icon]="faPen" class="mr-2"></fa-icon>
             <span>Write</span>
+          </button>
+          <button [class]="'tab' + (tab === 'read' ? ' active' : '')" (click)="tab = 'read'">
+            <fa-icon [icon]="faGlasses" class="mr-2"></fa-icon>
+            <span>Read</span>
           </button>
           <button [class]="'tab' + (tab === 'config' ? ' active' : '')" (click)="tab = 'config'" *ngIf="edit">
             <fa-icon [icon]="faGear" class="mr-2"></fa-icon>
@@ -21,22 +21,28 @@
     </div>
   </div>
   <div *ngIf="config">
-    <div *ngIf="tab === 'read'" cdkDropList (cdkDropListDropped)="saveOrder($event, 'read')">
+    <div *ngIf="tab === 'write'" cdkDropList (cdkDropListDropped)="saveOrder($event, 'write')">
+      <div *ngIf="config.write.order.length == 0" class="py-3 w-full flex items-center justify-center">
+        <span class="text-lg">No write functions found!</span>
+      </div>
       <div
         app-function
-        *ngFor="let signature of config.read.order"
-        type="read"
+        *ngFor="let signature of config.write.order"
+        type="write"
         [signature]="signature"
         cdkDrag
         [cdkDragDisabled]="!moveable"
         (moveable)="moveable = $event"
       ></div>
     </div>
-    <div *ngIf="tab === 'write'" cdkDropList (cdkDropListDropped)="saveOrder($event, 'write')">
+    <div *ngIf="tab === 'read'" cdkDropList (cdkDropListDropped)="saveOrder($event, 'read')">
+      <div *ngIf="config.write.order.length == 0" class="py-3 w-full flex items-center justify-center">
+        <span class="text-lg">No read functions found!</span>
+      </div>
       <div
         app-function
-        *ngFor="let signature of config.write.order"
-        type="write"
+        *ngFor="let signature of config.read.order"
+        type="read"
         [signature]="signature"
         cdkDrag
         [cdkDragDisabled]="!moveable"

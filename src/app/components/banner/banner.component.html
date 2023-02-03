@@ -1,0 +1,5 @@
+<div class="w-full bg-gray-200 dark:bg-gray-700 opacity-50 text-center py-3" *ngIf="localMode$ | async">
+  <span>
+    You are on {{ (devMode$ | async) ? 'a development' : 'an unsupported' }} network. Uploading dapps and etherscan support is disabled.
+  </span>
+</div>

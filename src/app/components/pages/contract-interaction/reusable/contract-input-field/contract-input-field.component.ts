@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { Store } from '@ngrx/store';
-import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { placeholder, transformValue, uintRegex } from 'src/helpers/util';
 import { InputType } from 'src/types';
 import { ContractDataType, InputsConfig, InternalType, VariableType } from 'src/types/abi';
 import { editSelector, enumSelector } from '../../store/contract.selector';
+import { ValueInputComponent } from '../value-input/value-input.component';
 
 @Component({
   selector: 'app-contract-input-field',
@@ -14,32 +14,25 @@ import { editSelector, enumSelector } from '../../store/contract.selector';
   styleUrls: ['./contract-input-field.component.scss'],
 })
 export class ContractInputFieldComponent implements OnInit, OnDestroy {
+  @ViewChild(ValueInputComponent) defaultInput!: ValueInputComponent;
   @Input() type?: VariableType;
   @Input() config?: InputsConfig;
   @Output() valueUpdated = new EventEmitter<ContractDataType>();
   @Output() configUpdated = new EventEmitter<InputsConfig>();
   faCalendar = faCalendar;
-  public form: FormGroup;
   public edit$ = this.store.select(editSelector);
   public inputType: InputType = 'default';
   public enum: string[] = [];
   public arrayDataType: InternalType = 'string';
   public arrayLength = 0;
-  private subscription: Subscription;
+  private subscription = new Subscription();
   public timestamp = new Date();
   public minDate = this.toDate(0);
   public tmpDate = new Date();
   public showDatePicker = false;
   private debounce = new Date();
 
-  constructor(private store: Store<{}>) {
-    this.form = new FormGroup({
-      value: new FormControl('', [Validators.required]),
-    });
-    this.subscription = this.form.controls.value.valueChanges.pipe(debounceTime(200), distinctUntilChanged()).subscribe((newValue) => {
-      this.updateValue(newValue);
-    });
-  }
+  constructor(private store: Store<{}>) {}
 
   ngOnInit(): void {
     if (this.type?.type === 'tuple') {
@@ -70,11 +63,15 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
 
   updateValue(value?: string) {
     if (this.type && value !== undefined) {
-      this.valueUpdated.emit(transformValue(this.type.internalType, value, this.config));
       if (this.config?.formatter === 'timestamp') {
+        if (value === '') {
+          this.valueUpdated.emit(undefined);
+          return;
+        }
         this.tmpDate = this.toDate(parseInt(value));
         this.timestamp = this.tmpDate;
       }
+      this.valueUpdated.emit(transformValue(this.type.internalType, value, this.config));
     } else {
       this.valueUpdated.emit(undefined);
     }
@@ -104,7 +101,7 @@ export class ContractInputFieldComponent implements OnInit, OnDestroy {
   setTimestamp(timestamp: Date) {
     this.timestamp = timestamp;
     const unix = (timestamp.getTime() / 1000).toFixed(0);
-    this.form.controls.value.setValue(unix);
+    this.defaultInput.form.controls.value.setValue(unix.toString());
   }
 
   registerSelect(event: Date) {

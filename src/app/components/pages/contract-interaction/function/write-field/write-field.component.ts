@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { EthereumService } from 'src/app/services/ethereum.service';
+import { nativeCurrency } from 'src/helpers/chainConfig';
 import { ApprovalConfig, ContractDataType, IFieldWithConfig, InputsConfig, IWriteFieldConfig } from 'src/types/abi';
 import { sendContractTx, updateInputConfig } from '../../store/contract.actions';
 
@@ -25,13 +26,13 @@ export class WriteFieldComponent implements OnInit, OnDestroy {
   constructor(private store: Store<{}>, private ethereum: EthereumService) {}
 
   ngOnInit(): void {
-    this.args = new Array(this.state.field.inputs.length);
+    this.args = new Array(this.state.field.inputs?.length ?? 0);
     let config = { ...this.state.config } as IWriteFieldConfig;
     this.approvalHook = config.approvalHook;
     if (config.name === undefined) config.name = '';
     if (config.description === undefined) config.description = '';
-    if (config.inputs === undefined) config.inputs = new Array(this.state.field.inputs.length).fill({});
-    if (config.outputs === undefined) config.outputs = new Array(this.state.field.outputs.length).fill({});
+    if (config.inputs === undefined) config.inputs = new Array(this.state.field.inputs?.length ?? 0).fill({});
+    if (config.outputs === undefined) config.outputs = new Array(this.state.field.outputs?.length ?? 0).fill({});
     this.state = { ...this.state, config: config };
   }
 
@@ -73,11 +74,15 @@ export class WriteFieldComponent implements OnInit, OnDestroy {
       updateInputConfig({
         src: WriteFieldComponent.name,
         signature: this.signature,
-        length: this.state.field.inputs.length,
+        length: this.state.field.inputs?.length ?? 0,
         index: index,
         config,
       })
     );
+  }
+
+  get nativeDecimals(): string {
+    return nativeCurrency[this.ethereum.chainId]?.decimals.toString() ?? '18';
   }
 
   ngOnDestroy(): void {

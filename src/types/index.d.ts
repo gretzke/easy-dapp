@@ -33,6 +33,7 @@ export interface IPendingTransaction {
   txHash: string;
   name: string;
   status: TransactionStatus;
+  url?: string;
 }
 
 export interface Explorers {
@@ -43,11 +44,13 @@ export interface Explorers {
 }
 
 export interface NativeCurrency {
-  [chainId: number]: {
-    decimals: number;
-    name: string;
-    symbol: string;
-  };
+  [chainId: number]:
+    | {
+        decimals: number;
+        name: string;
+        symbol: string;
+      }
+    | undefined;
 }
 
 export type InputType = 'default' | 'enum' | 'array' | 'tuple' | 'tuple[]';

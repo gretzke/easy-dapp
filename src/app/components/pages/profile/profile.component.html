@@ -1,0 +1,28 @@
+<div class="card">
+  <div class="flex items-center flex-col sm:flex-row">
+    <img class="h-12 w-12 lg:h-16 lg:w-16 rounded-full mr-5 mb-5 sm:mb-0" [src]="image" alt="blockie" />
+    <h1 class="text-sm sm:text-xl md:text-2xl">{{ address }}</h1>
+  </div>
+</div>
+<div class="card md:mt-3">
+  <div>
+    <div class="block">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex" aria-label="Tabs">
+          <button [class]="'tab' + (tab === 'dapps' ? ' active' : '')" (click)="tab = 'dapps'">
+            <fa-icon [icon]="faDapps" class="mr-2"></fa-icon>
+            <span>Dapps</span>
+          </button>
+          <button [class]="'tab' + (tab === 'likes' ? ' active' : '')" (click)="tab = 'likes'" *ngIf="!(localMode$ | async)">
+            <fa-icon [icon]="faHeart" class="mr-2"></fa-icon>
+            <span>Likes</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="address">
+  <app-dapp-list [type]="'user'" [address]="address" *ngIf="tab === 'dapps'"></app-dapp-list>
+  <app-dapp-list [type]="'liked'" [address]="address" *ngIf="tab === 'likes'"></app-dapp-list>
+</div>

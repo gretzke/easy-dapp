@@ -29,15 +29,11 @@
               {{ field.name }} <span class="text-muted">{{ field.internalType }}</span>
             </span>
             <div class="relative">
-              <input
-                appEnsureInput
-                [dataType]="field.internalType"
-                [formControlName]="field.name"
-                type="text"
-                name="value"
-                class="block w-full text-input"
+              <app-value-input
+                [type]="field.internalType"
                 [placeholder]="placeholder(field.type)"
-              />
+                (valueUpdated)="this.form.get(field.name)?.setValue($event)"
+              ></app-value-input>
             </div>
           </div>
         </div>

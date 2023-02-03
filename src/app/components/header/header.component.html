@@ -9,9 +9,9 @@
           </div>
         </div>
       </div>
-      <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
-        <!-- SEARCH BAR TODO: add functionality -->
-        <!-- <div class="max-w-lg w-full lg:max-w-xs dark:text-white">
+      <!-- SEARCH BAR TODO: add functionality -->
+      <!-- <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end"> -->
+      <!-- <div class="max-w-lg w-full lg:max-w-xs dark:text-white">
           <label for="search" class="sr-only">Search</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -20,6 +20,9 @@
             <input id="search" name="search" class="block w-full text-input input-icon" placeholder="Search" type="search" />
           </div>
         </div> -->
+      <!-- </div> -->
+      <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
+        <app-network-selection></app-network-selection>
       </div>
       <div class="flex items-center lg:hidden">
         <button type="button" (click)="toggleMenu()" class="button-icon" aria-controls="mobile-menu" aria-expanded="false">
@@ -38,11 +41,10 @@
 
   <!-- Mobile menu, show/hide based on menu state. -->
   <div *ngIf="showMenu" class="lg:hidden" id="mobile-menu">
-    <div class="py-2 space-y-1">
-      <a href="#" class="button-menu-mobile" *ngFor="let link of links">
-        {{ link.name }}
-      </a>
-    </div>
-    <div class="flex justify-center border-t border-gray-200 dark:border-gray-700 py-4" app-header-wallet-button></div>
+    <a [routerLink]="link.path" class="button-menu-mobile" *ngFor="let link of links">
+      {{ link.name }}
+    </a>
+    <div class="divider"></div>
+    <div class="flex justify-center" app-header-wallet-button></div>
   </div>
 </nav>

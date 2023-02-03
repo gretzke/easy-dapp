@@ -1,17 +1,33 @@
-<form [formGroup]="form">
-  <!-- 
+<form [formGroup]="form" *ngIf="form !== undefined">
+  <div *ngIf="type !== 'bool'">
+    <!-- 
     [value]="form.controls.value.value" is a workaround
     if removed, clearing the form does not update the UI
   -->
-  <input
-    appEnsureInput
-    [dataType]="type"
-    [config]="config"
-    formControlName="value"
-    [value]="form.controls.value.value"
-    type="text"
-    name="value"
-    class="block w-full text-input"
-    [placeholder]="placeholder"
-  />
+    <input
+      appEnsureInput
+      [dataType]="type"
+      [config]="config"
+      formControlName="value"
+      [value]="form.controls.value.value"
+      type="text"
+      name="value"
+      class="block w-full text-input"
+      [placeholder]="placeholder"
+    />
+    <p *ngIf="form.controls.value.dirty && form.controls.value.invalid" class="ml-3 mt-1 text-sm text-red-600">
+      <span *ngIf="form.controls.value.errors?.required">Required</span>
+    </p>
+  </div>
+
+  <div class="flex items-center ml-3" *ngIf="type === 'bool'">
+    <input
+      id="default-checkbox"
+      type="checkbox"
+      [value]="checked"
+      (click)="toggleChecked()"
+      class="w-4 h-4 text-custom-light-500 dark:text-custom-dark-500 bg-gray-100 border-gray-300 rounded-md focus:ring-transparent dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 mr-2"
+    />
+    <span class="text-muted">{{ checked ? 'true' : 'false' }}</span>
+  </div>
 </form>

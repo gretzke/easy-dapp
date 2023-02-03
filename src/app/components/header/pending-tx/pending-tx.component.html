@@ -1,7 +1,13 @@
 <div class="relative">
-  <button type="button" class="button-icon-round" (click)="showDropdown = !showDropdown">
+  <button type="button" class="button-icon-round" (click)="showDropdown = !showDropdown; unreadNotifications = 0">
     <span class="sr-only">View notifications</span>
     <div app-icon name="bell"></div>
+    <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" *ngIf="unreadNotifications !== 0">
+      <span
+        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-custom-light-400 dark:bg-custom-dark-400 opacity-75"
+      ></span>
+      <span class="relative inline-flex rounded-full h-3 w-3 bg-custom-light-500 dark:bg-custom-dark-500"></span>
+    </span>
   </button>
   <div
     @opacityScale
@@ -17,20 +23,39 @@
     <div *ngIf="pendingTransactions.length === 0">No past transactions</div>
     <div *ngIf="pendingTransactions.length > 0">
       <div *ngFor="let tx of pendingTransactions" class="dropdown-item">
-        <div class="">
+        <div class="flex justify-between items-center">
           <p class="text-lg inline">
             {{ tx.name }}
           </p>
-          <a
-            *ngIf="chainId && explorers[chainId] !== undefined"
-            app-icon
-            class="button-icon float-right"
-            name="link"
-            [href]="explorers[chainId].url + '/tx/' + tx.txHash"
-            target="_blank"
-          ></a>
+          <div>
+            <button class="button-icon mr-1" tippy="Copy transaction hash" (click)="copyTxHash(tx.txHash)">
+              <fa-icon [icon]="faClipboard"></fa-icon>
+            </button>
+            <a *ngIf="tx.url" class="button-icon mr-1" tippy="Go to dApp" [routerLink]="['/app/' + tx.url]">
+              <fa-icon [icon]="faApp"></fa-icon>
+            </a>
+            <a
+              *ngIf="chainId && explorers[chainId] !== undefined"
+              class="button-icon mr-1"
+              tippy="View on {{ explorers[chainId].name }}"
+              [href]="explorers[chainId].url + '/tx/' + tx.txHash"
+              target="_blank"
+            >
+              <fa-icon [icon]="faLink"></fa-icon>
+            </a>
+            <div class="inline-block" *ngIf="tx.status === 0" tippy="Transaction pending">
+              <span class="flex relative h-3 w-3 -mt-1 -mr-1">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-custom-light-400 dark:bg-custom-dark-400 opacity-75"
+                ></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-custom-light-500 dark:bg-custom-dark-500"></span>
+              </span>
+            </div>
+            <fa-icon class="text-green-600" [icon]="faCheck" tippy="Transaction successful" *ngIf="tx.status === 1"></fa-icon>
+            <fa-icon class="text-red-600" [icon]="faXmark" tippy="Transaction failed" *ngIf="tx.status === 2"></fa-icon>
+          </div>
         </div>
-        <p class="text-muted">{{ tx.txHash | slice: 0:30 }}...</p>
+        <p class="text-muted">{{ tx.txHash | slice : 0 : 30 }}...</p>
       </div>
     </div>
   </div>
