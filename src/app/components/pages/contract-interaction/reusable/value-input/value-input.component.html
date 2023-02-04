@@ -27,13 +27,7 @@
   </div>
 
   <div class="flex items-center ml-3" *ngIf="type === 'bool'">
-    <input
-      id="default-checkbox"
-      type="checkbox"
-      [value]="checked"
-      (click)="toggleChecked()"
-      class="w-4 h-4 text-custom-light-500 dark:text-custom-dark-500 bg-gray-100 border-gray-300 rounded-md focus:ring-transparent dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 mr-2"
-    />
-    <span class="text-muted">{{ checked ? 'true' : 'false' }}</span>
+    <input id="default-checkbox" type="checkbox" [value]="checked" (click)="toggleChecked()" class="checkbox w-4 h-4 mr-2" />
+    <span class="text-muted">({{ checked ? 'true' : 'false' }})</span>
   </div>
 </form>

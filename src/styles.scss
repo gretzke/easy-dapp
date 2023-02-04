@@ -96,11 +96,13 @@ body {
 .radio,
 .checkbox {
   @apply border-gray-300;
+  @apply dark:border-gray-600;
   @apply focus:ring-transparent;
   @apply focus:ring-offset-0;
   @apply text-custom-light-500;
   @apply dark:text-custom-dark-500;
-
+  @apply bg-gray-100;
+  @apply dark:bg-gray-700;
   &.checkbox {
     @apply rounded-md;
   }

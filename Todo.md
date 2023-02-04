@@ -1,3 +1,6 @@
+- analytics
+- shrink bundle size
+
 Optional:
 
 - cheat codes for local networks (skip time, etc)
@@ -6,5 +9,6 @@ Optional:
 
 fix:
 
+- connected wallet => load dapp => disconnect wallet => dapp navigates to /
 - ring arrows timepicker left right
 - dynamic array input required after deleting item
