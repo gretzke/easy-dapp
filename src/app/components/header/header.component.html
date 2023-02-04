@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
     <div class="relative flex h-16 items-center justify-between">
       <div class="flex px-2 lg:px-0">
-        <div app-header-logo></div>
+        <div app-header-logo [routerLink]="['/']" class="cursor-pointer"></div>
         <div class="hidden lg:ml-6 lg:block">
           <div class="flex space-x-4">
             <a [routerLink]="link.path" class="button-header" *ngFor="let link of links"> {{ link.name }} </a>
