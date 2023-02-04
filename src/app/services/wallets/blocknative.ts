@@ -91,7 +91,8 @@ export class BlockNative implements WalletProvider {
       const connectedWallets = wallets.map(({ label }) => label);
       window.localStorage.setItem(STORAGE_ID, JSON.stringify(connectedWallets));
       if (this.networkCallback) {
-        const chainId = Number(this.wallets[0]?.chains[0].id);
+        const chainIdHex = this.wallets[0]?.chains[0].id;
+        const chainId = chainIdHex ? Number(chainIdHex) : undefined;
         this.networkCallback(chainId);
       }
       if (this.accountCallback) {

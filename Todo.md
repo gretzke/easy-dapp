@@ -1,5 +1,3 @@
-- fill address from wallet
-
 Optional:
 
 - cheat codes for local networks (skip time, etc)

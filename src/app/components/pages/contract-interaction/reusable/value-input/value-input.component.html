@@ -18,6 +18,12 @@
     <p *ngIf="form.controls.value.dirty && form.controls.value.invalid" class="ml-3 mt-1 text-sm text-red-600">
       <span *ngIf="form.controls.value.errors?.required">Required</span>
     </p>
+
+    <div class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3">
+      <div *ngIf="isAddress()" tippy="Fill your wallet address" (click)="fillAddress()">
+        <fa-icon [icon]="faWallet"></fa-icon>
+      </div>
+    </div>
   </div>
 
   <div class="flex items-center ml-3" *ngIf="type === 'bool'">
