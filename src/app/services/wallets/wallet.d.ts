@@ -11,4 +11,5 @@ export interface WalletProvider {
   watchNetwork(callback: (chainId?: number) => void): void;
   switchNetwork(chainId: number): Promise<void>;
   fetchSigner(): Promise<ethers.Signer>;
+  fetchProvider(chainId: number): ethers.providers.JsonRpcProvider | null;
 }

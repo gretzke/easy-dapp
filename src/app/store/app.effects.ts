@@ -86,7 +86,7 @@ export class AppEffects {
         tap(([_, contract]) => {
           if (sessionStorage.getItem('jwt') !== null) this.store.dispatch(logout({ src: AppEffects.name }));
           this.ethereum.wallet.disconnect();
-          if (contract) {
+          if (contract && this.ethereum.provider === null) {
             this.router.navigate(['/']);
           }
         })

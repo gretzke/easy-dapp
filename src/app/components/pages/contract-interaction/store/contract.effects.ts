@@ -9,7 +9,7 @@ import { FirebaseService } from 'src/app/services/dapps/firebase.service';
 import { LocalDappService } from 'src/app/services/dapps/local-dapp.service';
 import { localModeSelector } from 'src/app/services/dapps/store/dapps.selector';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { connectWallet, getDapp, login, notify, requestChainIdChange, setChainId, setUser } from 'src/app/store/app.actions';
+import { connectWallet, getDapp, login, notify, requestChainIdChange, setChainId, setUser, setWallet } from 'src/app/store/app.actions';
 import { chainIdSelector, userSelector, walletSelector } from 'src/app/store/app.selector';
 import { getErrorMessage } from 'src/helpers/errorMessages';
 import { getFunctionName } from 'src/helpers/util';
@@ -46,8 +46,7 @@ export class ContractEffects {
   setContract$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(setContract),
-      withLatestFrom(this.store.select(chainIdSelector)),
-      mergeMap(([action, chainId]) => {
+      mergeMap((action) => {
         if (action.contract === undefined) {
           return of(setFunctions({ src: ContractEffects.name, functions: {}, enums: [] }));
         }
@@ -130,12 +129,20 @@ export class ContractEffects {
   sendContractTx$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(sendContractTx),
-      withLatestFrom(this.store.select(contractSelector), this.store.select(chainIdSelector)),
-      mergeMap(([action, contract, chainId]) => {
+      withLatestFrom(this.store.select(contractSelector), this.store.select(chainIdSelector), this.store.select(walletSelector)),
+      mergeMap(([action, contract, chainId, wallet]) => {
         if (contract && contract.chainId !== chainId) {
           this.store.dispatch(requestChainIdChange({ src: ContractEffects.name, chainId: contract.chainId }));
           return this.actions$.pipe(
             ofType(setChainId),
+            take(1),
+            mergeMap(() => of(action))
+          );
+        }
+        if (!wallet) {
+          this.store.dispatch(connectWallet({ src: ContractEffects.name }));
+          return this.actions$.pipe(
+            ofType(setWallet),
             take(1),
             mergeMap(() => of(action))
           );
@@ -289,7 +296,7 @@ export class ContractEffects {
                 data.originalAddress = data.address;
                 data.address = action.address;
               }
-              if (!wallet) {
+              if (!wallet && this.ethereum.provider === null) {
                 this.store.dispatch(connectWallet({ src: ContractEffects.name }));
                 return this.actions$.pipe(
                   ofType(setChainId),

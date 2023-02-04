@@ -1,4 +1,4 @@
-- read functions via public api?
+- fill address from wallet
 
 Optional:
 

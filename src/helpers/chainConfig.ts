@@ -86,3 +86,11 @@ export const nativeCurrency: NativeCurrency = chainArray.reduce(
   }),
   {}
 );
+
+export const rpcUrls: { [chainId: number]: string | undefined } = chainArray.reduce(
+  (rpcUrls, chain) => ({
+    ...rpcUrls,
+    [chain.id]: chain.rpcUrls.public.http[0],
+  }),
+  {}
+);

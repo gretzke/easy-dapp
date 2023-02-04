@@ -6,7 +6,7 @@ import { chains } from 'src/helpers/chainConfig';
 import { TokenType } from 'src/types/abi';
 import { ERC1155__factory, ERC20__factory, ERC721__factory } from 'src/types/typechain';
 import { watchPendingTransaction } from '../components/header/pending-tx/store/pendingtx.actions';
-import { notify, resetWallet, setChainId, walletChanged } from '../store/app.actions';
+import { notify, requestChainIdChange, resetWallet, setChainId, walletChanged } from '../store/app.actions';
 import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
 import { WalletProvider } from './wallets/wallet';
@@ -16,6 +16,7 @@ import { WalletProvider } from './wallets/wallet';
 })
 export class EthereumService {
   public signer: ethers.Signer | null = null;
+  public provider: ethers.providers.JsonRpcProvider | null = null;
   public chainId: number = undefined!;
   public wallet!: WalletProvider;
 
@@ -31,7 +32,7 @@ export class EthereumService {
     const account = this.wallet.getAccount();
     console.log('Startup', account);
     if (!account) {
-      this.store.dispatch(setChainId({ src: EthereumService.name, chainId: 1, oldChainId: this.chainId }));
+      this.store.dispatch(requestChainIdChange({ src: EthereumService.name, chainId: 1 }));
     }
   }
 
@@ -45,7 +46,8 @@ export class EthereumService {
 
   public async switchNetwork(chainId: number) {
     const account = this.wallet.getAccount();
-    if (!account || chainId === this.chainId) {
+    if (!account) {
+      this.provider = this.wallet.fetchProvider(chainId);
       this.store.dispatch(setChainId({ src: EthereumService.name, chainId, oldChainId: this.chainId }));
       return;
     }
@@ -87,19 +89,23 @@ export class EthereumService {
 
   private setupWatchers() {
     this.wallet.watchNetwork(async (chainId) => {
+      console.log('network', chainId);
       if (chainId) {
-        console.log('network', chainId);
         this.signer = (await this.wallet.fetchSigner()) as ethers.Signer;
         this.store.dispatch(setChainId({ src: EthereumService.name, chainId, oldChainId: this.chainId }));
         this.chainId = chainId;
       }
     });
     this.wallet.watchAccount(async (address) => {
+      console.log('address connected', address);
       if (address) {
-        console.log('address connected', address);
-        this.store.dispatch(walletChanged({ src: EthereumService.name, address }));
         this.signer = (await this.wallet.fetchSigner()) as ethers.Signer;
+        this.store.dispatch(walletChanged({ src: EthereumService.name, address }));
       } else {
+        this.signer = null;
+        if (this.chainId) {
+          this.provider = this.wallet.fetchProvider(this.chainId);
+        }
         this.store.dispatch(resetWallet({ src: EthereumService.name }));
       }
     });
@@ -165,6 +171,6 @@ export class EthereumService {
   }
 
   public transactionReceipt(txHash: string): Promise<ethers.providers.TransactionReceipt> | undefined {
-    return this.signer?.provider?.getTransactionReceipt(txHash);
+    return (this.signer?.provider ?? this.provider)?.getTransactionReceipt(txHash);
   }
 }

@@ -15,7 +15,7 @@ import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3mod
 import { Web3Modal } from '@web3modal/html';
 import { ethers } from 'ethers';
 import { environment } from 'src/environments/environment';
-import { chainArray } from 'src/helpers/chainConfig';
+import { chainArray, chains } from 'src/helpers/chainConfig';
 import { WalletProvider } from './wallet';
 
 export class WalletConnect implements WalletProvider {
@@ -80,5 +80,11 @@ export class WalletConnect implements WalletProvider {
 
   setSelectedChain(chain: Chain): void {
     this.modal.setSelectedChain(chain);
+  }
+
+  fetchProvider(chainId: number): ethers.providers.JsonRpcProvider | null {
+    const rpc = chains[chainId].blockExplorers?.default.url;
+    if (!rpc) return null;
+    return new ethers.providers.JsonRpcProvider(rpc, 'any');
   }
 }

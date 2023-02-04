@@ -2,7 +2,7 @@ import type { ChainWithDecimalId } from '@web3-onboard/common';
 import Onboard, { WalletState } from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import { ethers } from 'ethers';
-import { chainArray } from 'src/helpers/chainConfig';
+import { chainArray, rpcUrls } from 'src/helpers/chainConfig';
 import { WalletProvider } from './wallet';
 
 const blockNativeChains = chainArray.map((chain) => {
@@ -12,7 +12,7 @@ const blockNativeChains = chainArray.map((chain) => {
     label: chain.name,
     rpcUrl: chain.rpcUrls.public.http[0],
     blockExplorerUrl: chain.blockExplorers?.default.url ?? 'empty',
-    publicRpcUrl: chain.rpcUrls.public.http[0],
+    publicRpcUrl: rpcUrls[chain.id],
   } as ChainWithDecimalId;
 });
 
@@ -106,6 +106,12 @@ export class BlockNative implements WalletProvider {
 
   async fetchSigner(): Promise<ethers.Signer> {
     return new ethers.providers.Web3Provider(this.wallets[0]?.provider, 'any').getSigner();
+  }
+
+  fetchProvider(chainId: number): ethers.providers.JsonRpcProvider | null {
+    const rpc = rpcUrls[chainId];
+    if (!rpc) return null;
+    return new ethers.providers.JsonRpcProvider(rpc, 'any');
   }
 
   async switchNetwork(chainId: number): Promise<void> {

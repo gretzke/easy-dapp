@@ -22,7 +22,8 @@ export class ContractBuilder {
       .filter((key) => (this.readFunctions![key].inputs ?? []).length === 0)
       .map(async (key) => ({ key, value: await this.get(this.readFunctions![key].name, []) }));
 
-    return from(Promise.all(functionsToCall).then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
+    const res = from(Promise.all(functionsToCall).then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
+    return res;
   }
 
   public get(functionName: string, args: any[]): Promise<ContractDataType> {
@@ -34,8 +35,8 @@ export class ContractBuilder {
   }
 
   private contract(): ethers.Contract {
-    if (this.ethereum.signer === null) throw new Error('Signer is not set');
-    return new ethers.Contract(this.address, this.abi.abi, this.ethereum.signer);
+    if (this.ethereum.signer === null && this.ethereum.provider === null) throw new Error('Signer is not set');
+    return new ethers.Contract(this.address, this.abi.abi, this.ethereum.signer ?? this.ethereum.provider!);
   }
 }
 
