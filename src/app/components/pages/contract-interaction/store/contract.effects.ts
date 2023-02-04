@@ -9,7 +9,7 @@ import { FirebaseService } from 'src/app/services/dapps/firebase.service';
 import { LocalDappService } from 'src/app/services/dapps/local-dapp.service';
 import { localModeSelector } from 'src/app/services/dapps/store/dapps.selector';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { connectWallet, getDapp, login, notify, setChainId, setUser, walletChanged } from 'src/app/store/app.actions';
+import { connectWallet, getDapp, login, notify, requestChainIdChange, setChainId, setUser } from 'src/app/store/app.actions';
 import { chainIdSelector, userSelector, walletSelector } from 'src/app/store/app.selector';
 import { getErrorMessage } from 'src/helpers/errorMessages';
 import { getFunctionName } from 'src/helpers/util';
@@ -109,21 +109,37 @@ export class ContractEffects {
   getContractState$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(getContractState),
-      withLatestFrom(this.store.select(contractSelector)),
-      mergeMap(([_, contract]) =>
-        this.ethereum
+      withLatestFrom(this.store.select(contractSelector), this.store.select(chainIdSelector)),
+      mergeMap(([action, contract, chainId]) => {
+        if (contract && contract.chainId !== chainId) {
+          this.store.dispatch(requestChainIdChange({ src: ContractEffects.name, chainId: contract.chainId }));
+          return this.actions$.pipe(
+            ofType(setChainId),
+            take(1),
+            mergeMap(() => of(action))
+          );
+        }
+        return this.ethereum
           .getContractInstance(contract!.address, contract!.abi)
           .getContractState()
-          .pipe(map((state) => setContractState({ src: ContractEffects.name, state })))
-      )
+          .pipe(map((state) => setContractState({ src: ContractEffects.name, state })));
+      })
     )
   );
 
   sendContractTx$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(sendContractTx),
-      withLatestFrom(this.store.select(contractSelector)),
-      mergeMap(([action, contract]) => {
+      withLatestFrom(this.store.select(contractSelector), this.store.select(chainIdSelector)),
+      mergeMap(([action, contract, chainId]) => {
+        if (contract && contract.chainId !== chainId) {
+          this.store.dispatch(requestChainIdChange({ src: ContractEffects.name, chainId: contract.chainId }));
+          return this.actions$.pipe(
+            ofType(setChainId),
+            take(1),
+            mergeMap(() => of(action))
+          );
+        }
         const ci = this.ethereum.getContractInstance(contract!.address, contract!.abi);
         return ci.set(action.method, action.args, action.opt).pipe(
           map((tx: ContractTransaction) => {
@@ -151,8 +167,16 @@ export class ContractEffects {
   readContract$ = createEffect((): any =>
     this.actions$.pipe(
       ofType(readContract),
-      withLatestFrom(this.store.select(contractSelector)),
-      mergeMap(([action, contract]) => {
+      withLatestFrom(this.store.select(contractSelector), this.store.select(chainIdSelector)),
+      mergeMap(([action, contract, chainId]) => {
+        if (contract && contract.chainId !== chainId) {
+          this.store.dispatch(requestChainIdChange({ src: ContractEffects.name, chainId: contract.chainId }));
+          return this.actions$.pipe(
+            ofType(setChainId),
+            take(1),
+            mergeMap(() => of(action))
+          );
+        }
         const ci = this.ethereum.getContractInstance(contract!.address, contract!.abi);
         return from(ci.get(getFunctionName(action.signature), action.args)).pipe(
           map((val: ContractDataType) => setContractStateVariable({ src: ContractEffects.name, signature: action.signature, val })),
@@ -175,10 +199,11 @@ export class ContractEffects {
         this.store.select(localModeSelector)
       ),
       switchMap(([action, user, chainId, contract, config, deployment, url, localMode]) => {
-        if (user === null) {
+        if (user === null && !localMode) {
           this.store.dispatch(login({ src: ContractEffects.name }));
           return this.actions$.pipe(
             ofType(setUser),
+            take(1),
             mergeMap(() => of(action))
           );
         }
@@ -221,7 +246,7 @@ export class ContractEffects {
       ofType(deleteDapp),
       withLatestFrom(this.store.select(userSelector), this.store.select(contractSelector), this.store.select(localModeSelector)),
       switchMap(([action, user, contract, localMode]) => {
-        if (user === null) {
+        if (user === null && !localMode) {
           this.store.dispatch(login({ src: ContractEffects.name }));
           return this.actions$.pipe(
             ofType(setUser),
@@ -264,15 +289,13 @@ export class ContractEffects {
                 data.originalAddress = data.address;
                 data.address = action.address;
               }
-              if (dapp.data.chainId !== chainId || !wallet) {
-                this.store.dispatch(setChainId({ src: ContractEffects.name, chainId: dapp.data.chainId }));
+              if (!wallet) {
                 this.store.dispatch(connectWallet({ src: ContractEffects.name }));
-                const pipe = this.actions$.pipe(
-                  ofType(walletChanged),
+                return this.actions$.pipe(
+                  ofType(setChainId),
                   take(1),
                   map(() => setContract({ src: ContractEffects.name, contract: data }))
                 );
-                return pipe;
               }
               return of(setContract({ src: ContractEffects.name, contract: data }));
             }),

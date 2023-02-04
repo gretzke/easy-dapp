@@ -1,3 +1,5 @@
+- read functions via public api?
+
 Optional:
 
 - cheat codes for local networks (skip time, etc)

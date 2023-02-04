@@ -1,7 +1,6 @@
-<button *ngIf="(wallet$ | async) === null" type="button" class="relative button-primary" (click)="connect()">
+<button *ngIf="(wallet$ | async) === null" type="button" class="button-primary my-4" (click)="connect()">
   <span>Connect Wallet</span>
 </button>
-<!-- Profile dropdown -->
 <div class="relative flex-shrink-0 w-full" *ngIf="wallet$ | async as wallet">
   <div class="flex items-center justify-between py-4 lg:py-0">
     <div class="flex items-center ml-3 lg:ml-0">
@@ -16,6 +15,7 @@
         <span class="sr-only">Open user menu</span>
         <img class="profile-img rounded-full" [src]="wallet.img" alt="blockie" />
       </button>
+      <!-- MOBILE ADDRESS & ICONS -->
       <span class="ml-3 lg:hidden text-custom-light-500 dark:text-custom-dark-300">
         {{ trim(wallet.address) }}
       </span>
@@ -25,6 +25,8 @@
       <div app-pending-tx></div>
     </div>
   </div>
+  <!-- END MOBILE ADDRESS & ICONS -->
+  <!-- MOBILE DROPDOWN -->
   <div class="lg:hidden">
     <div class="divider"></div>
     <a [routerLink]="['/user', wallet.address]" class="button-menu-mobile">
@@ -45,7 +47,15 @@
       </div>
       Log out
     </div>
+    <div class="button-menu-mobile" *ngIf="(wallet$ | async) !== null" (click)="disconnect()">
+      <div class="w-6 h-6">
+        <fa-icon [icon]="faBan"></fa-icon>
+      </div>
+      Disconnect Wallet
+    </div>
   </div>
+  <!-- END MOBILE DROPDOWN -->
+
   <div
     @opacityScale
     *ngIf="showDropdown"
@@ -84,6 +94,14 @@
           <fa-icon [icon]="faLogout"></fa-icon>
         </div>
         Log out
+      </div>
+    </button>
+    <button class="dropdown-item" *ngIf="(wallet$ | async) !== null" (click)="disconnect()">
+      <div class="flex">
+        <div class="w-6 h-6 flex">
+          <fa-icon [icon]="faBan"></fa-icon>
+        </div>
+        Disconnect Wallet
       </div>
     </button>
   </div>

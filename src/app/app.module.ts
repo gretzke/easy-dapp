@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,7 +9,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { popperVariation, provideTippyConfig, TippyDirective, tooltipVariation } from '@ngneat/helipopper';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgParticlesModule } from 'ng-particles';
@@ -30,7 +29,6 @@ import { SelectMenuComponent } from './components/elements/select-menu/select-me
 import { SpinnerComponent } from './components/elements/spinners/spinner/spinner.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { DarkmodeToggleComponent } from './components/header/darkmode-toggle/darkmode-toggle.component';
-import { HeaderLinksComponent } from './components/header/header-links/header-links.component';
 import { HeaderLogoComponent } from './components/header/header-logo/header-logo.component';
 import { HeaderWalletButtonComponent } from './components/header/header-wallet-button/header-wallet-button.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -73,6 +71,8 @@ import { SymbolDirective } from './directives/symbol.directive';
 import { WalletResolver } from './resolver/WalletResolver';
 import { dappStorageKey, dappStorageReducer } from './services/dapps/store/dapps.reducer';
 import { EthereumService } from './services/ethereum.service';
+import { BlockNative } from './services/wallets/blocknative';
+import { WalletConnect } from './services/wallets/web3modal';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
 
@@ -83,7 +83,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     AppComponent,
     BackgroundComponent,
     HeaderComponent,
-    HeaderLinksComponent,
     HeaderLogoComponent,
     DarkmodeToggleComponent,
     IconComponent,
@@ -135,11 +134,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     StoreModule.forFeature(contractStateKey, contractStateReducer),
     StoreModule.forFeature(dappStorageKey, dappStorageReducer),
     StoreModule.forFeature(pendingTxStateKey, pendingTxReducer, { metaReducers: [pendingTxLocalStorageSyncReducer] }),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25, // Retains last 25 states
-      logOnly: environment.production, // Restrict extension to log-only mode
-      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
-    }),
     EffectsModule.forRoot([AppEffects, PendingTxEffects, ContractEffects]),
     TranslateModule.forRoot({
       loader: {
@@ -161,9 +155,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     CalendarModule,
     TippyDirective,
     ClipboardModule,
+    ...environment.modules,
   ],
   providers: [
-    EthereumService,
     WalletResolver,
     provideTippyConfig({
       defaultVariation: 'tooltip',
@@ -172,6 +166,17 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         popper: popperVariation,
       },
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (e: EthereumService) => {
+        if (environment.walletType === 'web3modal') {
+          return e.initWallet(new WalletConnect());
+        } else {
+          return e.initWallet(new BlockNative());
+        }
+      },
+      deps: [EthereumService],
+    },
   ],
   bootstrap: [AppComponent],
 })

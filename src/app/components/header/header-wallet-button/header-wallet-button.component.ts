@@ -2,10 +2,11 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { connectWallet, login, logout } from 'src/app/store/app.actions';
+import { connectWallet, login, logout, resetWallet } from 'src/app/store/app.actions';
 import { userSelector, walletSelector } from 'src/app/store/app.selector';
 import { IUser, IWallet } from 'src/types';
-import { faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faRightToBracket, faRightFromBracket, faBan } from '@fortawesome/free-solid-svg-icons';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: '[app-header-wallet-button]',
@@ -31,6 +32,7 @@ export class HeaderWalletButtonComponent implements OnInit {
   faUser = faUser;
   faLogin = faRightToBracket;
   faLogout = faRightFromBracket;
+  faBan = faBan;
 
   constructor(private store: Store<{}>) {
     this.wallet$ = this.store.select(walletSelector);
@@ -41,6 +43,7 @@ export class HeaderWalletButtonComponent implements OnInit {
 
   connect() {
     this.store.dispatch(connectWallet({ src: HeaderWalletButtonComponent.name }));
+    this.showDropdown = false;
   }
 
   login() {
@@ -51,7 +54,15 @@ export class HeaderWalletButtonComponent implements OnInit {
     this.store.dispatch(logout({ src: HeaderWalletButtonComponent.name }));
   }
 
+  disconnect() {
+    this.store.dispatch(resetWallet({ src: HeaderWalletButtonComponent.name }));
+  }
+
   trim(wallet: string) {
     return wallet.slice(2, 8).toUpperCase();
+  }
+
+  get isBlockNative() {
+    return environment.walletType === 'blocknative';
   }
 }

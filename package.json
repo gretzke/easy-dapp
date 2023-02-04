@@ -4,8 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --stats-json --configuration production",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
+    "analyze": "webpack-bundle-analyzer dist/easy-dapp/stats.json",
     "test": "ng test"
   },
   "private": true,
@@ -34,6 +36,8 @@
     "@ngx-translate/http-loader": "^7.0.0",
     "@tailwindcss/forms": "^0.5.3",
     "@wagmi/core": "^0.8.12",
+    "@web3-onboard/core": "^2.14.1",
+    "@web3-onboard/injected-wallets": "^2.6.2",
     "@web3modal/ethereum": "2.0.0",
     "@web3modal/html": "2.0.0",
     "base58-js": "^1.0.5",
@@ -67,6 +71,7 @@
     "karma-jasmine-html-reporter": "~1.7.0",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.2.4",
-    "typescript": "~4.8.4"
+    "typescript": "~4.8.4",
+    "webpack-bundle-analyzer": "^4.7.0"
   }
 }

@@ -38,6 +38,7 @@ export const initialState: ContractState = {
 const contractReducer = createReducer(
   initialState.contract,
   on(GlobalActions.getDapp, () => undefined),
+  on(GlobalActions.resetDapp, () => undefined),
   on(Actions.setContract, (_, action) => action.contract),
   on(Actions.likeDapp, (state, action) => {
     if (state === undefined) return state;
@@ -55,6 +56,7 @@ const componentsReducer = createReducer(
 
 const configReducer = createReducer(
   initialState.config,
+  on(GlobalActions.resetDapp, () => undefined),
   on(Actions.setContract, (_, action) => {
     if (!action.contract) return undefined;
     let newState = { ...action.contract.config };
@@ -153,6 +155,7 @@ const configReducer = createReducer(
 const stateReducer = createReducer(
   initialState.state,
   on(Actions.getContractState, (_) => ({})),
+  on(GlobalActions.resetDapp, () => ({})),
   on(Actions.setContractState, (_, action) => action.state),
   on(Actions.setContractStateVariable, (state, action) => ({ ...state, [action.signature]: action.val }))
 );

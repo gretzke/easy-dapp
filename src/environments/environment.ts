@@ -3,18 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 import { IEnvironment } from 'src/types/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 export const environment: IEnvironment = {
   production: false,
   walletConnectId: '8e6b5ffdcbc9794bf9f4a1952578365b',
   firebaseUrl: 'http://localhost:5001/easydapp-56895/europe-west1/',
+  modules: [
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+    }),
+  ],
+  walletType: 'blocknative',
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

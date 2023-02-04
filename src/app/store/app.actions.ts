@@ -5,7 +5,9 @@ import { DappListType, Pagination } from './app.reducer';
 
 export const setDarkmode = createAction('[CLIENT CONFIG] toggle dark mode', props<{ src: string; theme: ThemeMode }>());
 
-export const setChainId = createAction('[CHAIN DATA] set chain id', props<{ src: string; chainId: number }>());
+export const requestChainIdChange = createAction('[CHAIN DATA] request chain id change', props<{ src: string; chainId: number }>());
+
+export const setChainId = createAction('[CHAIN DATA] set chain id', props<{ src: string; chainId: number; oldChainId: number }>());
 
 export const connectWallet = createAction('[CHAIN DATA] connect wallet', props<{ src: string }>());
 
@@ -51,3 +53,7 @@ export const logout = createAction('[AUTH] logout', props<{ src: string }>());
 export const resetUser = createAction('[AUTH] reset user', props<{ src: string }>());
 
 export const getDapp = createAction('[FIREBASE] fetch dapp', props<{ src: string; id: string; address?: string }>());
+
+export const resetDapp = createAction('[CONFIG] delete dapp from cache', props<{ src: string }>());
+
+export const EMPTY_ACTION = createAction('[EMPTY] empty action', props<{ src: string }>());

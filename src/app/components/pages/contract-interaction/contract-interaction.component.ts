@@ -5,7 +5,7 @@ import { faGear, faGlasses, faPen } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
 import { Subscription } from 'rxjs';
-import { getDapp, notify } from 'src/app/store/app.actions';
+import { getDapp, notify, resetDapp } from 'src/app/store/app.actions';
 import { explorers } from 'src/helpers/chainConfig';
 import { dappId } from 'src/helpers/util';
 import { FunctionType, IDapp, IDappConfig } from 'src/types/abi';
@@ -91,6 +91,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.store.dispatch(resetDapp({ src: ContractInteractionComponent.name }));
   }
 
   public blockExplorerUrl(address: string) {

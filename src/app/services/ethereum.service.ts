@@ -1,31 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { configureChains, createClient, fetchSigner, getAccount, switchNetwork, watchAccount, watchNetwork } from '@wagmi/core';
-// import { ClientCtrl, ConfigCtrl, ModalCtrl } from '@web3modal/core';
-import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
-import { Web3Modal } from '@web3modal/html';
 import { ethers } from 'ethers';
 import { from, Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { chainArray, chains } from 'src/helpers/chainConfig';
+import { chains } from 'src/helpers/chainConfig';
 import { TokenType } from 'src/types/abi';
 import { ERC1155__factory, ERC20__factory, ERC721__factory } from 'src/types/typechain';
 import { watchPendingTransaction } from '../components/header/pending-tx/store/pendingtx.actions';
 import { notify, resetWallet, setChainId, walletChanged } from '../store/app.actions';
 import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
-
-// 1. Define constants
-const projectId = environment.walletConnectId;
-const { provider } = configureChains(chainArray, [walletConnectProvider({ projectId })]);
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors: modalConnectors({ appName: 'EasyDapp', chains: chainArray }),
-  provider,
-});
-const ethereumClient = new EthereumClient(wagmiClient, chainArray);
-
-const web3modal = new Web3Modal({ projectId }, ethereumClient);
+import { WalletProvider } from './wallets/wallet';
 
 @Injectable({
   providedIn: 'root',
@@ -33,27 +17,26 @@ const web3modal = new Web3Modal({ projectId }, ethereumClient);
 export class EthereumService {
   public signer: ethers.Signer | null = null;
   public chainId: number = undefined!;
+  public wallet!: WalletProvider;
 
-  constructor(private store: Store<{}>) {
+  constructor(private store: Store<{}>) {}
+
+  public async initWallet(wallet: WalletProvider) {
+    this.wallet = wallet;
     this.store.select(darkmodeSelector).subscribe((theme) => {
-      web3modal.setTheme({
-        themeMode: theme,
-        themeColor: 'blackWhite',
-      });
+      this.wallet.setTheme(theme ?? 'dark');
     });
     this.setupWatchers();
+    await this.wallet.init();
+    const account = this.wallet.getAccount();
+    console.log('Startup', account);
+    if (!account) {
+      this.store.dispatch(setChainId({ src: EthereumService.name, chainId: 1, oldChainId: this.chainId }));
+    }
   }
 
-  public async connect(chainId?: number): Promise<void> {
-    const selectedChain = chains[chainId ?? 0];
-    let route: 'SelectNetwork' | 'ConnectWallet' = 'SelectNetwork';
-    if (selectedChain) {
-      web3modal.setSelectedChain(selectedChain);
-      route = 'ConnectWallet';
-    }
-    web3modal.openModal({
-      route,
-    });
+  public async connect(): Promise<void> {
+    await this.wallet.connect();
   }
 
   getChainId() {
@@ -61,13 +44,13 @@ export class EthereumService {
   }
 
   public async switchNetwork(chainId: number) {
-    const account = getAccount();
-    if (!account.isConnected) {
-      this.connect();
+    const account = this.wallet.getAccount();
+    if (!account || chainId === this.chainId) {
+      this.store.dispatch(setChainId({ src: EthereumService.name, chainId, oldChainId: this.chainId }));
       return;
     }
     try {
-      await switchNetwork({ chainId });
+      await this.wallet.switchNetwork(chainId);
     } catch (e) {
       // could not switch network, try adding it first
       if (typeof window.ethereum === 'undefined') {
@@ -96,35 +79,28 @@ export class EthereumService {
           ],
         });
       } catch (e) {
-        this.store.dispatch(notify({ src: EthereumService.name, message: 'Failed to add chain', notificationType: 'error' }));
+        this.store.dispatch(notify({ src: EthereumService.name, message: 'Failed to switch chain', notificationType: 'error' }));
         throw e;
       }
     }
   }
 
   private setupWatchers() {
-    const account = getAccount();
-    console.log('Startup', account);
-    if (!account.isConnected) {
-      this.store.dispatch(setChainId({ src: EthereumService.name, chainId: 1 }));
-    }
-    watchAccount(async (data) => {
-      console.log('address connected', data.address);
-      if (data.address) {
-        // important dispatch before changing signer so effect run properly
-        this.store.dispatch(walletChanged({ src: EthereumService.name, address: data.address }));
-        this.signer = (await fetchSigner()) as ethers.Signer;
-      } else {
-        this.store.dispatch(resetWallet({ src: EthereumService.name }));
+    this.wallet.watchNetwork(async (chainId) => {
+      if (chainId) {
+        console.log('network', chainId);
+        this.signer = (await this.wallet.fetchSigner()) as ethers.Signer;
+        this.store.dispatch(setChainId({ src: EthereumService.name, chainId, oldChainId: this.chainId }));
+        this.chainId = chainId;
       }
     });
-    watchNetwork(async (data) => {
-      if (data.chain) {
-        console.log('network', data.chain.id);
-        // important dispatch before changing signer so setChainId effect runs properly
-        this.store.dispatch(setChainId({ src: EthereumService.name, chainId: data.chain.id }));
-        this.signer = (await fetchSigner()) as ethers.Signer;
-        this.chainId = data.chain.id;
+    this.wallet.watchAccount(async (address) => {
+      if (address) {
+        console.log('address connected', address);
+        this.store.dispatch(walletChanged({ src: EthereumService.name, address }));
+        this.signer = (await this.wallet.fetchSigner()) as ethers.Signer;
+      } else {
+        this.store.dispatch(resetWallet({ src: EthereumService.name }));
       }
     });
   }

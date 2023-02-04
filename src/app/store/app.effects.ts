@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { catchError, concatMap, EMPTY, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { getErrorMessage, handleError } from 'src/helpers/errorMessages';
 import { DappService, IAbiResponse, IMessageResponse, IVerificationResponse } from '../../types/api';
 import { contractSelector } from '../components/pages/contract-interaction/store/contract.selector';
@@ -30,6 +31,8 @@ import {
   signMessage,
   submitSignature,
   walletChanged,
+  requestChainIdChange,
+  EMPTY_ACTION,
 } from './app.actions';
 import { chainIdSelector, userSelector, walletSelector } from './app.selector';
 
@@ -50,8 +53,7 @@ export class AppEffects {
     () =>
       this.actions$.pipe(
         ofType(connectWallet),
-        withLatestFrom(this.store.select(chainIdSelector)),
-        tap(([_, chainId]) => this.ethereum.connect(chainId))
+        tap(() => this.ethereum.connect())
       ),
     { dispatch: false }
   );
@@ -80,8 +82,13 @@ export class AppEffects {
     (): any =>
       this.actions$.pipe(
         ofType(resetWallet),
-        tap(() => {
+        withLatestFrom(this.store.select(contractSelector)),
+        tap(([_, contract]) => {
           if (sessionStorage.getItem('jwt') !== null) this.store.dispatch(logout({ src: AppEffects.name }));
+          this.ethereum.wallet.disconnect();
+          if (contract) {
+            this.router.navigate(['/']);
+          }
         })
       ),
     { dispatch: false }
@@ -95,23 +102,25 @@ export class AppEffects {
     )
   );
 
+  requestChainIdChange$ = createEffect(
+    (): any =>
+      this.actions$.pipe(
+        ofType(requestChainIdChange),
+        tap((action) => {
+          this.ethereum.switchNetwork(action.chainId);
+        })
+      ),
+    { dispatch: false }
+  );
+
   setChainId$ = createEffect(
     (): any =>
       this.actions$.pipe(
         ofType(setChainId),
-        withLatestFrom(this.store.select(walletSelector)),
-        tap(([action]) => {
-          const currentChainId = this.ethereum.getChainId();
-          if (currentChainId && currentChainId !== action.chainId) {
+        withLatestFrom(this.store.select(contractSelector)),
+        tap(([action, contract]) => {
+          if (contract && contract.chainId !== action.chainId && contract.chainId === action.oldChainId) {
             this.router.navigate(['/']);
-          }
-        }),
-        tap(([action, wallet]) => {
-          const currentChainId = this.ethereum.getChainId();
-          if (currentChainId && action.chainId && wallet !== null) {
-            this.ethereum
-              .switchNetwork(action.chainId)
-              .catch(() => this.store.dispatch(setChainId({ src: AppEffects.name, chainId: currentChainId })));
           }
         })
       ),

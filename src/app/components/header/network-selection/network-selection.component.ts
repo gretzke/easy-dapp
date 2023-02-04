@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Chain } from '@wagmi/chains';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { setChainId } from 'src/app/store/app.actions';
+import { requestChainIdChange } from 'src/app/store/app.actions';
 import { chainIdSelector } from 'src/app/store/app.selector';
 import { chains, sortedChains } from 'src/helpers/chainConfig';
 
@@ -42,7 +42,7 @@ export class NetworkSelectionComponent implements OnInit {
   ngOnInit(): void {}
 
   selectNetwork(chainId: number): void {
-    this.store.dispatch(setChainId({ src: NetworkSelectionComponent.name, chainId }));
+    this.store.dispatch(requestChainIdChange({ src: NetworkSelectionComponent.name, chainId }));
     this.showModal = false;
   }
 
