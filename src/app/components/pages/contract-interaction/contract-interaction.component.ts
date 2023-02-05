@@ -1,5 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faGear, faGlasses, faPen } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
@@ -31,7 +32,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   public contract?: IDapp;
   private subscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private store: Store<{}>) {
+  constructor(private route: ActivatedRoute, private router: Router, private store: Store<{}>, private title: Title) {
     this.subscription = this.store.select(contractSelector).subscribe((contract) => {
       this.contract = contract;
       if (contract !== undefined) {
@@ -49,6 +50,9 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.store.select(configSelector).subscribe((config) => {
         this.config = config;
+        if (config?.name) {
+          this.title.setTitle(config.name);
+        }
       })
     );
     const path = this.route.snapshot.routeConfig?.path;
@@ -92,6 +96,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.store.dispatch(resetDapp({ src: ContractInteractionComponent.name }));
+    this.title.setTitle('EasyDapp');
   }
 
   public blockExplorerUrl(address: string) {
