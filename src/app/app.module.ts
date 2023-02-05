@@ -1,9 +1,9 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef, forwardRef, NgModule, PlatformRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { popperVariation, provideTippyConfig, TippyDirective, tooltipVariation } from '@ngneat/helipopper';
@@ -13,6 +13,12 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgParticlesModule } from 'ng-particles';
 import { ClipboardModule } from 'ngx-clipboard';
+import {
+  IGoogleAnalyticsSettings,
+  NgxGoogleAnalyticsModule,
+  NgxGoogleAnalyticsRouterModule,
+  NGX_GOOGLE_ANALYTICS_SETTINGS_TOKEN,
+} from 'ngx-google-analytics';
 import { ToastrModule } from 'ngx-toastr';
 import { CalendarModule } from 'primeng/calendar';
 import { environment } from 'src/environments/environment';
@@ -69,6 +75,7 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { EnsureInputDirective } from './directives/ensure-input.directive';
 import { SymbolDirective } from './directives/symbol.directive';
 import { WalletResolver } from './resolver/WalletResolver';
+import { AnalyticsService } from './services/analytics.service';
 import { dappStorageKey, dappStorageReducer } from './services/dapps/store/dapps.reducer';
 import { EthereumService } from './services/ethereum.service';
 import { BlockNative } from './services/wallets/blocknative';
@@ -155,6 +162,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     CalendarModule,
     TippyDirective,
     ClipboardModule,
+    NgxGoogleAnalyticsModule,
+    NgxGoogleAnalyticsRouterModule,
     ...environment.modules,
   ],
   providers: [
@@ -170,12 +179,25 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
       provide: APP_INITIALIZER,
       useFactory: (e: EthereumService) => {
         if (environment.walletType === 'web3modal') {
-          return e.initWallet(new WalletConnect());
+          return () => e.initWallet(new WalletConnect());
         } else {
-          return e.initWallet(new BlockNative());
+          return () => e.initWallet(new BlockNative());
         }
       },
+      multi: true,
       deps: [EthereumService],
+    },
+    {
+      provide: NGX_GOOGLE_ANALYTICS_SETTINGS_TOKEN,
+      useValue: {
+        trackingCode: environment.googleAnalytics,
+      },
+    },
+    {
+      provide: APP_BOOTSTRAP_LISTENER,
+      useFactory: (a: AnalyticsService) => (component: ComponentRef<AppComponent>) => a.init(component),
+      multi: true,
+      deps: [AnalyticsService],
     },
   ],
   bootstrap: [AppComponent],

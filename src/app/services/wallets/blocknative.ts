@@ -23,6 +23,8 @@ export class BlockNative implements WalletProvider {
   private wallets: WalletState[] = [];
   private accountCallback?: (account?: string) => void = () => {};
   private networkCallback?: (chainId?: number) => void = () => {};
+  private latestWallet?: string;
+  private latestChainId?: number;
 
   public async init() {
     // rehydrate previously connected wallets
@@ -93,10 +95,17 @@ export class BlockNative implements WalletProvider {
       if (this.networkCallback) {
         const chainIdHex = this.wallets[0]?.chains[0].id;
         const chainId = chainIdHex ? Number(chainIdHex) : undefined;
-        this.networkCallback(chainId);
+        if (chainId !== this.latestChainId) {
+          this.latestChainId = chainId;
+          this.networkCallback(chainId);
+        }
       }
       if (this.accountCallback) {
-        this.accountCallback(wallets[0]?.accounts[0]?.address);
+        const account = wallets[0]?.accounts[0]?.address;
+        if (account !== this.latestWallet) {
+          this.latestWallet = account;
+          this.accountCallback(account);
+        }
       }
     });
   }

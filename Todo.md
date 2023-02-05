@@ -1,4 +1,4 @@
-- analytics
+- cookie consent https://github.com/maxandriani/ngx-google-analytics/issues/40
 - shrink bundle size
 
 Optional:

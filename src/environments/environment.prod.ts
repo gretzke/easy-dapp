@@ -6,4 +6,5 @@ export const environment: IEnvironment = {
   firebaseUrl: 'https://europe-west1-easydapp-56895.cloudfunctions.net/',
   modules: [],
   walletType: 'blocknative',
+  googleAnalytics: 'G-5FL4G5MEZ1',
 };

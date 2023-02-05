@@ -16,4 +16,5 @@ export const environment: IEnvironment = {
     }),
   ],
   walletType: 'blocknative',
+  googleAnalytics: 'G-5FL4G5MEZ1',
 };

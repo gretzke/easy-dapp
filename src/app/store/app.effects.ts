@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, concatMap, EMPTY, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
+import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { chains } from 'src/helpers/chainConfig';
 import { getErrorMessage, handleError } from 'src/helpers/errorMessages';
 import { DappService, IAbiResponse, IMessageResponse, IVerificationResponse } from '../../types/api';
 import { contractSelector } from '../components/pages/contract-interaction/store/contract.selector';
@@ -22,6 +23,7 @@ import {
   login,
   logout,
   notify,
+  requestChainIdChange,
   resetUser,
   resetWallet,
   setChainId,
@@ -31,8 +33,6 @@ import {
   signMessage,
   submitSignature,
   walletChanged,
-  requestChainIdChange,
-  EMPTY_ACTION,
 } from './app.actions';
 import { chainIdSelector, userSelector, walletSelector } from './app.selector';
 
@@ -46,7 +46,8 @@ export class AppEffects {
     private firebase: FirebaseService,
     private local: LocalDappService,
     private ethereum: EthereumService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private ga: GoogleAnalyticsService
   ) {}
 
   connectWallet$ = createEffect(
@@ -119,6 +120,9 @@ export class AppEffects {
         ofType(setChainId),
         withLatestFrom(this.store.select(contractSelector)),
         tap(([action, contract]) => {
+          if (action.chainId) {
+            this.ga.event('chain_changed', 'user_action', chains[action.chainId].name, action.chainId);
+          }
           if (contract && contract.chainId !== action.chainId && contract.chainId === action.oldChainId) {
             this.router.navigate(['/']);
           }

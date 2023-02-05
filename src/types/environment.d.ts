@@ -6,4 +6,5 @@ export interface IEnvironment {
   firebaseUrl: string;
   modules: any[];
   walletType: WalletType;
+  googleAnalytics: string;
 }

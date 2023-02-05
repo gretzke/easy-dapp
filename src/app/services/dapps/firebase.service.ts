@@ -1,8 +1,4 @@
 import { Injectable } from '@angular/core';
-import { getAnalytics } from 'firebase/analytics';
-import { initializeApp } from 'firebase/app';
-import { Firestore, getFirestore } from 'firebase/firestore';
-import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 import { from, Observable } from 'rxjs';
 import { DappListType, Pagination } from 'src/app/store/app.reducer';
 import { environment } from 'src/environments/environment';
@@ -22,27 +18,7 @@ import {
   providedIn: 'root',
 })
 export class FirebaseService implements DappService {
-  private db: Firestore;
-  private functions: Functions;
-  private firebaseConfig = {
-    apiKey: 'AIzaSyBjcvt6HR-yYmwyjg2kRZl7_-k7fyIJou0',
-    authDomain: 'easydapp-56895.firebaseapp.com',
-    projectId: 'easydapp-56895',
-    storageBucket: 'easydapp-56895.appspot.com',
-    messagingSenderId: '690175200179',
-    appId: '1:690175200179:web:27fa9b3eb922f1e2d599c6',
-    measurementId: 'G-5FL4G5MEZ1',
-  };
-
-  constructor() {
-    const app = initializeApp(this.firebaseConfig);
-    const analytics = getAnalytics(app);
-    this.db = getFirestore(app);
-    this.functions = getFunctions(app, 'europe-west1');
-    if (!environment.production) {
-      connectFunctionsEmulator(this.functions, 'localhost', 5001);
-    }
-  }
+  constructor() {}
 
   public getAbi(chainId: number, address: string, proxy: boolean): Observable<IAbiResponse> {
     return from(this.post('getAbi', { chainId, address, proxy }) as Promise<IAbiResponse>);

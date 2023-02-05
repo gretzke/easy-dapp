@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take, takeWhile } from 'rxjs';
-import { EthereumService } from '../services/ethereum.service';
-import { chainIdSelector, walletSelector } from '../store/app.selector';
+import { filter, take } from 'rxjs';
+import { chainIdSelector } from '../store/app.selector';
 
 @Component({
   selector: 'app-root',
