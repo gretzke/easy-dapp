@@ -44,9 +44,7 @@ export class PendingTxComponent implements OnInit, OnDestroy {
   constructor(private store: Store<{}>, private pendingTx: PendingTxService, private clipboard: ClipboardService) {
     this.subscription.add(
       this.store.select(pendingTxSelector).subscribe((tx) => {
-        if (tx.pendingTx !== undefined) {
-          this.pendingTransactions = tx.pendingTx;
-        }
+        this.pendingTransactions = tx.pendingTx ?? [];
         if (this.chainId !== tx.chainId) {
           this.unreadNotifications = 0;
         }
