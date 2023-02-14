@@ -12,7 +12,7 @@ export class HeaderComponent {
   private wallet: IWallet | null = null;
   private _links = [
     { name: 'Dashboard', requireWallet: false, path: '/' },
-    { name: 'New Dapp', requireWallet: true, path: '/new-dapp' },
+    { name: 'New Dapp', requireWallet: false, path: '/new-dapp' },
   ];
 
   constructor(private store: Store<{}>) {

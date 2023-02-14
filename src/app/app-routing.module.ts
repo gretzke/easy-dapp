@@ -7,8 +7,8 @@ import { ProfileComponent } from './components/pages/profile/profile.component';
 import { WalletResolver } from './resolver/WalletResolver';
 
 const routes: Routes = [
-  { path: 'new-dapp', component: AddContractComponent, resolve: { wallet: WalletResolver } },
-  { path: 'new-dapp/:address', component: AddContractComponent, resolve: { wallet: WalletResolver } },
+  { path: 'new-dapp', component: AddContractComponent },
+  { path: 'new-dapp/:address', component: AddContractComponent },
   { path: 'app/:owner/:url', component: ContractInteractionComponent },
   { path: 'app/:owner/:url/:address', component: ContractInteractionComponent },
   { path: 'user/:address', component: ProfileComponent },

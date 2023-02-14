@@ -29,7 +29,7 @@
         <span *ngIf="form.controls.address.errors?.address">Invalid Address</span>
       </p>
     </div>
-    <div>
+    <div *ngIf="(form.controls.address.valid && !fetchingEtherscan && etherscanError !== '') || localMode">
       <label for="abi" class="block ml-3">ABI</label>
       <div class="mt-1">
         <textarea formControlName="abi" rows="4" name="abi" class="block w-full textarea-input" placeholder="..."></textarea>

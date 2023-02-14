@@ -1,6 +1,6 @@
 <p *ngIf="title" class="text-xl">{{ title }}</p>
 <div *ngIf="dapps === undefined">
-  <app-spinner></app-spinner>
+  <app-firebase-spinner></app-firebase-spinner>
 </div>
 <div *ngIf="dapps !== undefined">
   <div *ngIf="dapps.total === 0">

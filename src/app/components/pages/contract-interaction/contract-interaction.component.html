@@ -1,3 +1,6 @@
+<div *ngIf="!contract">
+  <app-firebase-spinner></app-firebase-spinner>
+</div>
 <div class="card" *ngIf="contract">
   <app-contract-header [blockExplorerUrl]="blockExplorerUrl(contract.address)"></app-contract-header>
   <div>

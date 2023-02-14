@@ -62,6 +62,9 @@ export class BlockNative implements WalletProvider {
           position: 'bottomLeft',
         },
       },
+      // connect: {
+      //   disableClose: true
+      // }
     });
   }
 

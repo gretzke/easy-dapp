@@ -82,6 +82,7 @@ import { BlockNative } from './services/wallets/blocknative';
 import { WalletConnect } from './services/wallets/web3modal';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
+import { FirebaseSpinnerComponent } from './components/elements/spinners/firebase-spinner/firebase-spinner.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -130,6 +131,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     DappListComponent,
     DappListItemComponent,
     SpinnerComponent,
+    FirebaseSpinnerComponent,
   ],
   imports: [
     BrowserModule,
