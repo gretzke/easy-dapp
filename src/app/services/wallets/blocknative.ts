@@ -4,6 +4,9 @@ import injectedModule from '@web3-onboard/injected-wallets';
 import { ethers } from 'ethers';
 import { chainArray, rpcUrls } from 'src/helpers/chainConfig';
 import { WalletProvider } from './wallet';
+import walletConnectModule from '@web3-onboard/walletconnect';
+
+const walletConnect = walletConnectModule();
 
 const blockNativeChains = chainArray.map((chain) => {
   return {
@@ -44,7 +47,7 @@ export class BlockNative implements WalletProvider {
     const injected = injectedModule({});
 
     this.onboard = Onboard({
-      wallets: [injected],
+      wallets: [injected, walletConnect],
       chains: blockNativeChains,
       appMetadata: {
         name: 'EasyDapp',
