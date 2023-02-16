@@ -4,6 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { GoogleAnalyticsService } from 'ngx-google-analytics';
 import { catchError, concatMap, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { chains } from 'src/helpers/chainConfig';
 import { getErrorMessage, handleError } from 'src/helpers/errorMessages';
 import { DappService, IAbiResponse, IMessageResponse, IVerificationResponse } from '../../types/api';
@@ -87,7 +88,7 @@ export class AppEffects {
         tap(([_, contract]) => {
           if (sessionStorage.getItem('jwt') !== null) this.store.dispatch(logout({ src: AppEffects.name }));
           this.ethereum.wallet.disconnect();
-          if (contract && this.ethereum.provider === null) {
+          if (environment.walletType === 'web3modal' && contract && this.ethereum.provider === null) {
             this.router.navigate(['/']);
           }
         })
@@ -123,7 +124,12 @@ export class AppEffects {
           if (action.chainId) {
             this.ga.event('chain_changed', 'user_action', chains[action.chainId].name, action.chainId);
           }
-          if (contract && contract.chainId !== action.chainId && contract.chainId === action.oldChainId) {
+          if (
+            environment.walletType === 'web3modal' &&
+            contract &&
+            contract.chainId !== action.chainId &&
+            contract.chainId === action.oldChainId
+          ) {
             this.router.navigate(['/']);
           }
         })

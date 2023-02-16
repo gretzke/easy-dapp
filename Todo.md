@@ -3,6 +3,7 @@
 - shrink bundle size
 - cancel edits
 - local mode
+- add reload button to getters without input to fetch latest state
 
 Optional:
 
@@ -12,7 +13,5 @@ Optional:
 
 fix:
 
-- connected wallet => load dapp => disconnect wallet => dapp navigates to /
-- go to app => connect with incorrect chain => should prompt to change chain
 - ring arrows timepicker left right
 - dynamic array input required after deleting item
