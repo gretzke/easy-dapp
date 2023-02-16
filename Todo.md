@@ -3,7 +3,6 @@
 - shrink bundle size
 - cancel edits
 - local mode
-- array list wallet icon misaligned
 
 Optional:
 
