@@ -14,4 +14,3 @@ Optional:
 fix:
 
 - ring arrows timepicker left right
-- dynamic array input required after deleting item

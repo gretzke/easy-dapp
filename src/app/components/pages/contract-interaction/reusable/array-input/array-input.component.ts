@@ -53,6 +53,7 @@ export class ArrayInputComponent implements OnInit {
       const nextItem = this.arrayInputs.get(i + 1)?.form.controls.value;
       if (i === this.values.length - 2) {
         item?.setValue(null);
+        item?.markAsPristine();
       } else {
         item?.setValue(nextItem?.value);
       }
