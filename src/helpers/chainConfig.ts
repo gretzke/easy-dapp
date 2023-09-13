@@ -1,7 +1,7 @@
 import * as chain from '@wagmi/chains';
 import { Explorers, NativeCurrency } from 'src/types';
 
-export const chainArray = [
+export const chainArray: chain.Chain[] = [
   // Ethereum
   chain.mainnet,
   chain.goerli,
@@ -54,7 +54,7 @@ export const chains: { [chainId: number]: chain.Chain } = chainArray.reduce((obj
   };
 }, {});
 
-export const sortedChains = {
+export const sortedChains: { [key: string]: chain.Chain[] } = {
   Ethereum: [chain.mainnet, chain.goerli, chain.sepolia],
   Polygon: [chain.polygon, chain.polygonMumbai],
   Arbitrum: [chain.arbitrum, chain.arbitrumGoerli],

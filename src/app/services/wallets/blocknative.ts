@@ -5,8 +5,9 @@ import { ethers } from 'ethers';
 import { chainArray, rpcUrls } from 'src/helpers/chainConfig';
 import { WalletProvider } from './wallet';
 import walletConnectModule from '@web3-onboard/walletconnect';
+import { environment } from '@environment';
 
-const walletConnect = walletConnectModule();
+const walletConnect = walletConnectModule({ projectId: environment.walletConnectId });
 
 const blockNativeChains = chainArray.map((chain) => {
   return {

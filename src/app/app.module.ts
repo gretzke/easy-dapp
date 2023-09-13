@@ -1,24 +1,19 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef, forwardRef, NgModule, PlatformRef } from '@angular/core';
+import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { popperVariation, provideTippyConfig, TippyDirective, tooltipVariation } from '@ngneat/helipopper';
+import { TippyDirective, popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/helipopper';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgParticlesModule } from 'ng-particles';
 import { ClipboardModule } from 'ngx-clipboard';
-import {
-  IGoogleAnalyticsSettings,
-  NgxGoogleAnalyticsModule,
-  NgxGoogleAnalyticsRouterModule,
-  NGX_GOOGLE_ANALYTICS_SETTINGS_TOKEN,
-} from 'ngx-google-analytics';
+import { NGX_GOOGLE_ANALYTICS_SETTINGS_TOKEN, NgxGoogleAnalyticsModule, NgxGoogleAnalyticsRouterModule } from 'ngx-google-analytics';
 import { ToastrModule } from 'ngx-toastr';
 import { CalendarModule } from 'primeng/calendar';
 import { environment } from 'src/environments/environment';
@@ -32,6 +27,7 @@ import { DividerComponent } from './components/elements/divider/divider.componen
 import { IconComponent } from './components/elements/icon/icon.component';
 import { LoaderComponent } from './components/elements/loader/loader.component';
 import { SelectMenuComponent } from './components/elements/select-menu/select-menu.component';
+import { FirebaseSpinnerComponent } from './components/elements/spinners/firebase-spinner/firebase-spinner.component';
 import { SpinnerComponent } from './components/elements/spinners/spinner/spinner.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { DarkmodeToggleComponent } from './components/header/darkmode-toggle/darkmode-toggle.component';
@@ -79,10 +75,8 @@ import { AnalyticsService } from './services/analytics.service';
 import { dappStorageKey, dappStorageReducer } from './services/dapps/store/dapps.reducer';
 import { EthereumService } from './services/ethereum.service';
 import { BlockNative } from './services/wallets/blocknative';
-import { WalletConnect } from './services/wallets/web3modal';
 import { AppEffects } from './store/app.effects';
 import { localStorageSyncReducer, reducers } from './store/app.reducer';
-import { FirebaseSpinnerComponent } from './components/elements/spinners/firebase-spinner/firebase-spinner.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -180,11 +174,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     {
       provide: APP_INITIALIZER,
       useFactory: (e: EthereumService) => {
-        if (environment.walletType === 'web3modal') {
-          return () => e.initWallet(new WalletConnect());
-        } else {
-          return () => e.initWallet(new BlockNative());
-        }
+        return () => e.initWallet(new BlockNative());
       },
       multi: true,
       deps: [EthereumService],

@@ -1,4 +1,3 @@
-import { Chain } from '@wagmi/core';
 import { ethers } from 'ethers';
 
 export interface WalletProvider {

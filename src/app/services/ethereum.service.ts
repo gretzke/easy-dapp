@@ -10,6 +10,13 @@ import { notify, requestChainIdChange, resetWallet, setChainId, walletChanged } 
 import { darkmodeSelector } from '../store/app.selector';
 import { ContractBuilder } from './contract/ContractBuilder';
 import { WalletProvider } from './wallets/wallet';
+import { MetaMaskInpageProvider } from '@metamask/providers';
+
+declare global {
+  interface Window {
+    ethereum?: MetaMaskInpageProvider;
+  }
+}
 
 @Injectable({
   providedIn: 'root',
