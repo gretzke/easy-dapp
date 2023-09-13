@@ -1,7 +1,7 @@
-import { EventEmitter, Injectable, OnDestroy, Output } from '@angular/core';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { interval, Subscription } from 'rxjs';
-import { IPendingTransaction, TransactionStatus } from 'src/types';
+import { interval } from 'rxjs';
+import { IPendingTransaction, TransactionStatus } from 'src/types/index.d';
 import { resolvePendingTransaction } from '../components/header/pending-tx/store/pendingtx.actions';
 import { pendingTxSelector } from '../components/header/pending-tx/store/pendingtx.selector';
 import { notify } from '../store/app.actions';
