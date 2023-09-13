@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { filter, map, mergeMap, Observable, of, take } from 'rxjs';
@@ -7,7 +7,7 @@ import { connectWallet, setWallet } from '../store/app.actions';
 import { chainIdSelector, walletSelector } from '../store/app.selector';
 
 @Injectable()
-export class WalletResolver implements Resolve<boolean> {
+export class WalletResolver  {
   constructor(private store: Store<{}>, private actions$: Actions) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
