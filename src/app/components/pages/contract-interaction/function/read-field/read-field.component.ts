@@ -8,6 +8,7 @@ import {
   IContractState,
   IFieldWithConfig,
   InputsConfig,
+  NestedOutputsConfig,
   OutputsConfig,
   ValidDataType,
   VariableType,
@@ -71,7 +72,35 @@ export class ReadFieldComponent implements OnInit {
     return 'default';
   }
 
-  setOutputConfig(index: number, config: OutputsConfig) {
+  public outputConfig(index: number, key?: string): OutputsConfig | undefined {
+    if (!this.state || !this.state.config || !this.state.config.outputs) return undefined;
+    let config = this.state.config.outputs[index];
+    if (key && (config as NestedOutputsConfig).nested === true) {
+      config = (config as NestedOutputsConfig).configs[key];
+    }
+    return config as OutputsConfig;
+  }
+
+  setOutputConfig(index: number, config: OutputsConfig, key?: string) {
+    if (key) {
+      const newConfig: NestedOutputsConfig = {
+        nested: true,
+        configs: {
+          ...(this.state.config?.outputs[index] as NestedOutputsConfig).configs,
+          [key]: config,
+        },
+      };
+      this.store.dispatch(
+        updateOutputConfig({
+          src: ReadFieldComponent.name,
+          signature: this.signature,
+          length: this.state.field.outputs?.length ?? 0,
+          index: index,
+          config: newConfig,
+        })
+      );
+      return;
+    }
     this.store.dispatch(
       updateOutputConfig({
         src: ReadFieldComponent.name,
@@ -83,8 +112,12 @@ export class ReadFieldComponent implements OnInit {
     );
   }
 
+  getStructValue(val: ContractDataType, name: string): ValidDataType {
+    return (val as any)[name];
+  }
+
   getValue(val: ContractDataType, type: VariableType, index: number): ValidDataType {
-    if (/[\[\]]/.test(type.type)) {
+    if (/[\[\]]/.test(type.type) || type.type == 'tuple') {
       return val as ValidDataType;
     }
     if (Array.isArray(val)) return val[index];
@@ -103,10 +136,5 @@ export class ReadFieldComponent implements OnInit {
   public inputConfig(index: number) {
     if (!this.state || !this.state.config || !this.state.config.inputs) return undefined;
     return this.state.config.inputs[index];
-  }
-
-  public outputConfig(index: number) {
-    if (!this.state || !this.state.config || !this.state.config.outputs) return undefined;
-    return this.state.config.outputs[index];
   }
 }

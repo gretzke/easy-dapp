@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~16.2.5",
     "@angular/platform-browser-dynamic": "~16.2.5",
     "@angular/router": "~16.2.5",
+    "@enzoferey/ethers-error-parser": "^0.2.3",
     "@fortawesome/angular-fontawesome": "^0.13.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
@@ -35,7 +36,6 @@
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "@tailwindcss/forms": "^0.5.3",
-    "@wagmi/chains": "^1.8.0",
     "@web3-onboard/core": "^2.21.1",
     "@web3-onboard/injected-wallets": "^2.10.6",
     "@web3-onboard/walletconnect": "^2.4.6",
@@ -53,6 +53,7 @@
     "tslib": "^2.3.0",
     "tsparticles": "^2.5.3",
     "tsparticles-engine": "^2.5.2",
+    "viem": "^1.10.9",
     "zone.js": "^0.13.3"
   },
   "devDependencies": {
@@ -60,7 +61,7 @@
     "@angular/cli": "^16.2.2",
     "@angular/compiler-cli": "^16.2.5",
     "@types/jasmine": "~3.8.0",
-    "@types/node": "^12.11.1",
+    "@types/node": "^17.0.33",
     "autoprefixer": "^10.4.13",
     "jasmine-core": "~3.8.0",
     "karma": "~6.3.0",

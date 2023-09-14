@@ -70,6 +70,7 @@ export class StructInputComponent implements OnInit, OnDestroy {
   update(newValue?: { [key: string]: string }) {
     if (this.form.valid && this.type && this.type.components && newValue !== undefined) {
       const parsedValue: { [key: string]: ContractDataType } = {};
+      const displayedValue: { [key: string]: string } = {};
       for (const component of this.type.components) {
         const transformedValue = transformValue(component.type, newValue[component.name]);
         if (transformedValue === undefined) {
@@ -78,9 +79,10 @@ export class StructInputComponent implements OnInit, OnDestroy {
           return;
         }
         parsedValue[component.name] = transformedValue;
+        displayedValue[component.name] = transformedValue.toString();
       }
       this.valueUpdated.emit(parsedValue);
-      this.transformedValue = JSON.stringify(parsedValue);
+      this.transformedValue = JSON.stringify(displayedValue);
     } else {
       if (newValue === undefined) {
         this.resetForm();

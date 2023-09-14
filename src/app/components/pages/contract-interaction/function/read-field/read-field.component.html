@@ -9,15 +9,24 @@
     (configUpdated)="setInputConfig(i, $event)"
   ></app-contract-input-field>
   <button class="button-primary" *ngIf="state.field.inputs?.length ?? 0 > 0" (click)="sendTx()" [disabled]="!allArgsValid">Get</button>
-
-  <!-- RESULT -->
   <div *ngFor="let output of state.field.outputs; let i = index">
     <div class="pt-3 text-gray-700 dark:text-gray-300" *ngIf="signature && contractState[signature] !== undefined">
+      <ng-container *ngIf="output.type === 'tuple'">
+        <p class="text-muted">{{ output.internalType }}</p>
+        <app-output-formatter
+          *ngFor="let component of output.components"
+          [type]="component"
+          [config]="outputConfig(i, component.name)"
+          [value]="getStructValue(contractState[signature], component.name)"
+          (configUpdated)="setOutputConfig(i, $event, component.name)"
+        ></app-output-formatter>
+      </ng-container>
       <app-output-formatter
         [type]="output"
         [config]="outputConfig(i)"
         [value]="getValue(contractState[signature], output, i)"
         (configUpdated)="setOutputConfig(i, $event)"
+        *ngIf="output.type !== 'tuple'"
       ></app-output-formatter>
     </div>
   </div>

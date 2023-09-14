@@ -56,7 +56,7 @@ export class ContractInteractionComponent implements OnInit, OnDestroy {
       })
     );
     const path = this.route.snapshot.routeConfig?.path;
-    if (path === 'new-dapp' || path === 'new-dapp/:address') return;
+    if (path === 'new-dapp' || path === 'new-dapp/:address' || path === 'address' || path === 'address/:address') return;
     this.subscription.add(
       this.route.params.subscribe((params) => {
         this.init(params);

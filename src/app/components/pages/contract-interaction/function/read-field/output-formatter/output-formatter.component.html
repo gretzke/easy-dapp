@@ -13,13 +13,13 @@
   (configUpdated)="setConfig($event)"
 ></div>
 <div>
-  <div class="text-base sm:text-lg">
+  <div class="text-base sm:text-lg" [style]="isError ? { color: 'red' } : {}">
     <div
       app-edit-input
       *ngIf="edit$ | async"
       [value]="name"
       [placeholder]="type.name !== '' ? type.name : 'Name'"
-      class="inline-block mr-3 w-1/6"
+      class="inline-block mr-3 w-1/6 mb-5"
       (valueUpdated)="setName($event)"
     ></div>
     <span class="mr-2" *ngIf="!(edit$ | async) && name !== ''">{{ name }}</span>

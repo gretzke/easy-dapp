@@ -6,6 +6,7 @@ import { map, Observable } from 'rxjs';
 import { FunctionType, IFieldWithConfig } from 'src/types/abi';
 import { updateFunctionConfig } from '../store/contract.actions';
 import { editSelector, fieldSelector } from '../store/contract.selector';
+import { toSpaceCase } from 'src/helpers/util';
 
 @Component({
   selector: '[app-function]',
@@ -64,9 +65,9 @@ export class FunctionComponent implements OnInit {
     return this.state$?.pipe(
       map((state) => {
         if (!state.field) return '';
-        if (!state.config) return state.field.name;
+        if (!state.config) return toSpaceCase(state.field.name);
         if (state.config.name !== undefined) return state.config.name;
-        return state.field.name;
+        return toSpaceCase(state.field.name);
       })
     );
   }

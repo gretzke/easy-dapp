@@ -6,11 +6,12 @@ import { Store } from '@ngrx/store';
 import { debounceTime, Observable, Subscription, take } from 'rxjs';
 import { localModeSelector } from 'src/app/services/dapps/store/dapps.selector';
 import { EthereumService } from 'src/app/services/ethereum.service';
-import { abiError, abiResponse, getAbi, notify } from 'src/app/store/app.actions';
+import { abiError, abiResponse, getAbi, notify, requestChainIdChange } from 'src/app/store/app.actions';
 import { chainIdSelector, userChainIdSelector } from 'src/app/store/app.selector';
 import { IDapp } from 'src/types/abi';
 import { setContract } from '../contract-interaction/store/contract.actions';
 import { contractSelector } from '../contract-interaction/store/contract.selector';
+import { chainIdByName } from 'src/helpers/chainConfig';
 
 @Component({
   selector: 'app-add-contract',
@@ -27,6 +28,15 @@ export class AddContractComponent implements OnInit, OnDestroy {
   public localMode = true;
 
   constructor(private ethereum: EthereumService, private store: Store<{}>, private actions: Actions, private route: ActivatedRoute) {
+    if (this.route.snapshot.queryParams.network !== undefined) {
+      this.store.dispatch(
+        requestChainIdChange({ src: AddContractComponent.name, chainId: chainIdByName(this.route.snapshot.queryParams.network) })
+      );
+    }
+    if (this.route.snapshot.queryParams.proxy === 't') {
+      this.proxy = true;
+    }
+
     this.form = new FormGroup({
       address: new FormControl('', [Validators.required], [this.addressValidator()]),
       abi: new FormControl('', [Validators.required], [this.jsonValidator()]),

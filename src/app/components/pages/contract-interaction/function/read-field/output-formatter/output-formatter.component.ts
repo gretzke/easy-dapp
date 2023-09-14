@@ -3,8 +3,9 @@ import { Store } from '@ngrx/store';
 import { ethers } from 'ethers';
 import { Subscription } from 'rxjs';
 import { OutputType } from 'src/types';
-import { OutputsConfig, ValidDataType, VariableType } from 'src/types/abi';
+import { OutputsConfig, ValidDataType, ValidReturnDataType, VariableType } from 'src/types/abi';
 import { editSelector, enumSelector } from '../../../store/contract.selector';
+import { EthersErr, parseEthersError } from 'src/helpers/errorMessages';
 
 @Component({
   selector: 'app-output-formatter',
@@ -13,7 +14,7 @@ import { editSelector, enumSelector } from '../../../store/contract.selector';
 })
 export class OutputFormatterComponent implements OnInit, OnDestroy {
   @Input() type!: VariableType;
-  @Input() value: ValidDataType = '';
+  @Input() value: ValidReturnDataType = '';
   @Input() config?: OutputsConfig;
   @Output() configUpdated = new EventEmitter<OutputsConfig>();
   public edit$ = this.store.select(editSelector);
@@ -62,7 +63,15 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
     }
   }
 
+  get isError(): boolean {
+    if (!this.value) return false;
+    return (this.value as EthersErr).reverted === true;
+  }
+
   get formattedValue(): string {
+    if (this.isError) {
+      return parseEthersError((this.value as EthersErr).reason);
+    }
     switch (this.outputType) {
       case 'enum':
         const index = this.value as number;
@@ -71,6 +80,17 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
         return new Date((this.value as number) * 1000).toLocaleString();
       case 'decimals':
         return ethers.utils.formatUnits(this.value.toString(), this.config?.decimals ?? '18');
+      // case 'tuple':
+      //   let result: string[] = [];
+      //   const abi = this.type.components!;
+      //   for (const struct of this.value as ValidDataType[]) {
+      //     const items: string[] = [];
+      //     for (const i of (struct as ValidDataType[]).keys()) {
+      //       items.push(`${abi[i].name}: ${(struct as ValidDataType[])[i].toString()}`);
+      //     }
+      //     result.push('{' + items.join(', ') + '}');
+      //   }
+      //   return result.join(', ');
       case 'tuple[]':
         let res: string[] = [];
         const abiComponent = this.type.components!;
@@ -87,7 +107,7 @@ export class OutputFormatterComponent implements OnInit, OnDestroy {
         if (arr.length === 0) return '[]';
         return `${arr.map((v) => v.toString()).join(', ')}`;
       default:
-        return this.value.toString();
+        return this.value?.toString();
     }
   }
 

@@ -1,6 +1,15 @@
 import { createAction, props } from '@ngrx/store';
 import { BigNumber } from 'ethers';
-import { AbiFunctions, ContractDataType, FunctionType, IContractState, IDapp, InputsConfig, OutputsConfig } from 'src/types/abi';
+import {
+  AbiFunctions,
+  ContractDataType,
+  FunctionType,
+  IContractState,
+  IDapp,
+  InputsConfig,
+  NestedOutputsConfig,
+  OutputsConfig,
+} from 'src/types/abi';
 
 export const setContract = createAction('[CONTRACT] set contract', props<{ src: string; contract?: IDapp; firstDeployment?: true }>());
 
@@ -55,5 +64,5 @@ export const updateInputConfig = createAction(
 
 export const updateOutputConfig = createAction(
   '[CONFIG] set output config',
-  props<{ src: string; signature: string; index: number; length: number; config: OutputsConfig }>()
+  props<{ src: string; signature: string; index: number; length: number; config: OutputsConfig | NestedOutputsConfig }>()
 );

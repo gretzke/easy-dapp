@@ -1,11 +1,25 @@
-import * as chain from '@wagmi/chains';
+import * as chain from 'viem/chains';
 import { Explorers, NativeCurrency } from 'src/types';
+
+const sepolia = {
+  ...chain.sepolia,
+  rpcUrls: {
+    ...chain.sepolia.rpcUrls,
+    // default rpc seems to be down
+    default: {
+      http: ['https://rpc.notadegen.com/eth/sepolia'],
+    },
+    public: {
+      http: ['https://rpc.notadegen.com/eth/sepolia'],
+    },
+  },
+};
 
 export const chainArray: chain.Chain[] = [
   // Ethereum
   chain.mainnet,
   chain.goerli,
-  chain.sepolia,
+  sepolia,
   // Polygon
   chain.polygon,
   chain.polygonMumbai,
@@ -94,3 +108,16 @@ export const rpcUrls: { [chainId: number]: string | undefined } = chainArray.red
   }),
   {}
 );
+
+export const chainIdByName = (name: string): number => {
+  const chains: { [key: string]: number } = chainArray.reduce((obj, chain) => {
+    return {
+      ...obj,
+      [chain.name]: chain.id,
+    };
+  }, {});
+  if (chains[name]) {
+    return chains[name];
+  }
+  throw new Error(`Chain ${name} not found`);
+};

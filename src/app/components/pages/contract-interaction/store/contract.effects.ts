@@ -11,7 +11,7 @@ import { localModeSelector } from 'src/app/services/dapps/store/dapps.selector';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { connectWallet, getDapp, login, notify, requestChainIdChange, setChainId, setUser, setWallet } from 'src/app/store/app.actions';
 import { chainIdSelector, userSelector, walletSelector } from 'src/app/store/app.selector';
-import { getErrorMessage } from 'src/helpers/errorMessages';
+import { getErrorMessage, parseEthersError } from 'src/helpers/errorMessages';
 import { getFunctionName } from 'src/helpers/util';
 import { ContractDataType } from 'src/types/abi';
 import { DappService } from 'src/types/api';
@@ -31,6 +31,7 @@ import {
   setUrl,
 } from './contract.actions';
 import { configSelector, contractSelector, deploymentTypeSelector, urlSelector } from './contract.selector';
+import { chainIdByName, chains } from 'src/helpers/chainConfig';
 
 @Injectable()
 export class ContractEffects {
@@ -156,6 +157,9 @@ export class ContractEffects {
               if (contract.originalAddress) {
                 url += '/' + contract.address;
               }
+              if (!contract.url) {
+                url = undefined;
+              }
             }
             return watchPendingTransaction({
               src: ContractEffects.name,
@@ -165,7 +169,10 @@ export class ContractEffects {
               url,
             });
           }),
-          catchError((error) => of(notify({ src: ContractEffects.name, notificationType: 'error', message: error.message })))
+          catchError((error) => {
+            const ethersError = parseEthersError(error);
+            return of(notify({ src: ContractEffects.name, notificationType: 'error', message: ethersError }));
+          })
         );
       })
     )

@@ -58,3 +58,23 @@ export const dateToMilliseconds = (date?: FirebaseDate): number => {
   if (date === undefined) return 0;
   return date._seconds * 1000 + date._nanoseconds / 1000000;
 };
+
+export const toSpaceCase = (str: string): string => {
+  return (
+    str
+      // replace underscores and dashes with a space
+      .replace(/[-_]/g, ' ')
+      // insert a space between lower & upper: HttpRequest => Http Request
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // space before last upper in a sequence followed by lower: XMLHttp => XML Http
+      .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+      // add space between numbers and letters: Col1 => Col 1
+      .replace(/([a-zA-Z])([0-9])/g, '$1 $2')
+      .replace(/([0-9])([a-zA-Z])/g, '$1 $2')
+      // uppercase the first character
+      .replace(/^./, (firstChar) => firstChar.toUpperCase())
+      // replace multiple whitespaces with one
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
+};

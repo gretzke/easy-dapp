@@ -1,5 +1,6 @@
 import { BigNumber, BigNumberish } from 'ethers';
 import { FirebaseDate } from './api';
+import { EthersErr } from 'src/helpers/errorMessages';
 
 type StateMutabilityRead = 'view' | 'pure';
 type StateMutabilityWrite = 'nonpayable' | 'payable';
@@ -40,6 +41,8 @@ export interface AbiFunctions {
 
 export type ValidDataType = BigNumber | BigNumberish | string | boolean | number | { [key: string]: ContractDataType };
 
+export type ValidReturnDataType = ValidDataType | EthersErr;
+
 export type ContractDataType = ValidDataType | ValidDataType[];
 
 export interface IContractState {
@@ -66,12 +69,19 @@ export interface OutputsConfig {
   url?: string;
 }
 
+export interface NestedOutputsConfig {
+  nested: true;
+  configs: {
+    [key: string]: OutputsConfig;
+  };
+}
+
 export interface IBaseFieldConfig {
   name: string;
   description: string;
   hidden: boolean;
   inputs: InputsConfig[];
-  outputs: OutputsConfig[];
+  outputs: (OutputsConfig | NestedOutputsConfig)[];
 }
 
 export interface IReadFieldConfig extends IBaseFieldConfig {}

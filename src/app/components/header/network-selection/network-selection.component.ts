@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Chain } from '@wagmi/chains';
+import { Chain } from 'viem/chains';
 import { EthereumService } from 'src/app/services/ethereum.service';
 import { requestChainIdChange } from 'src/app/store/app.actions';
 import { chainIdSelector } from 'src/app/store/app.selector';

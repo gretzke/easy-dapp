@@ -1,7 +1,8 @@
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
-import { from, Observable, of } from 'rxjs';
+import { from, Observable, of, reduce } from 'rxjs';
 import { ABI, AbiFunctions, ABIItem, ContractDataType, IContractState, VariableType, InternalType } from 'src/types/abi';
 import { EthereumService } from '../ethereum.service';
+import { parseEthersError } from 'src/helpers/errorMessages';
 
 export class ContractBuilder {
   public readFunctions?: AbiFunctions;
@@ -20,9 +21,12 @@ export class ContractBuilder {
     if (this.readFunctions === undefined) return of({} as IContractState);
     const functionsToCall = Object.keys(this.readFunctions)
       .filter((key) => (this.readFunctions![key].inputs ?? []).length === 0)
-      .map(async (key) => ({ key, value: await this.get(this.readFunctions![key].name, []) }));
-
-    const res = from(Promise.all(functionsToCall).then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
+      .map(async (key) => ({
+        key,
+        value: await this.get(this.readFunctions![key].name, []).catch((e) => ({ reverted: true, reason: e })),
+      }));
+    const result = Promise.all(functionsToCall);
+    const res = from(result.then((res) => res.reduce((obj, item) => ({ ...obj, [item.key]: item.value }), {})));
     return res;
   }
 

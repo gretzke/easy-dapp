@@ -9,6 +9,9 @@ import { WalletResolver } from './resolver/WalletResolver';
 const routes: Routes = [
   { path: 'new-dapp', component: AddContractComponent },
   { path: 'new-dapp/:address', component: AddContractComponent },
+  // address as alias for new-dapp
+  { path: 'address', component: AddContractComponent },
+  { path: 'address/:address', component: AddContractComponent },
   { path: 'app/:owner/:url', component: ContractInteractionComponent },
   { path: 'app/:owner/:url/:address', component: ContractInteractionComponent },
   { path: 'user/:address', component: ProfileComponent },

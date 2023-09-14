@@ -1,4 +1,5 @@
 import { IApiError } from 'src/types/api';
+import { getParsedEthersError, EthersError, ReturnValue } from '@enzoferey/ethers-error-parser';
 
 export const handleError = (errString: string): IApiError => {
   const e = JSON.parse(errString).error;
@@ -16,7 +17,7 @@ const parseErrors: { [key: string]: string } = {
   DAPP_DOES_NOT_EXISTS: 'Dapp does not exist',
   INVALID_ID: 'Invalid ID',
   OWNER_NOT_FOUND: "You don't have an account",
-  TOO_MANY_DAPPS: 'Accounts are currently limited to 5 Dapps per chain',
+  TOO_MANY_DAPPS: 'Accounts are currently limited to 500 Dapps per chain',
 };
 
 export const getErrorMessage = (errString: string): string => {
@@ -29,4 +30,14 @@ export const getErrorMessage = (errString: string): string => {
     return parseErrors[details] ?? details;
   }
   return details;
+};
+
+export interface EthersErr {
+  reverted: true;
+  reason: EthersError;
+}
+
+export const parseEthersError = (error: EthersError): string => {
+  const ethersError = getParsedEthersError(error);
+  return ethersError.errorCode + (ethersError.context ? ': ' + ethersError.context : '');
 };
